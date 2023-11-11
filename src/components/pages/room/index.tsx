@@ -1,0 +1,83 @@
+import { blue } from '@mui/material/colors';
+import './index.css';
+import { LeftControlTypes, RightControlTypes, StatusThemes, statusbarHeight, switchColor, switchLeftControl, switchRightControl, switchTitle } from '../../sections/StatusBar';
+import { Paper, Tab, Tabs, Typography } from '@mui/material';
+import { styled } from '@mui/material/styles'
+import { useEffect, useState } from 'react';
+import { SigmaRouter } from '../../../App';
+import SliderPage from '../../layouts/SliderPage';
+import { Dashboard, Description, Message } from '@mui/icons-material';
+import Chat from '../../tabs/Chat';
+import RoomControl from '../../custom/components/RoomControl';
+import useDesk from '../../hooks/useDesk';
+import Desk from '../../tabs/Desk';
+import Files from '../../tabs/Files';
+import { SigmaTab, SigmaTabs } from '../../custom/elements/SigmaTabs';
+
+const Room = (props: { id: string, isOnTop: boolean }) => {
+  const [activeTab, setActiveTab] = useState('desktop')
+  const [editMode, setEditMode] = useState(false)
+  const [showRoomControl, setShowRoomControl] = useState(false)
+  const close = () => {
+    SigmaRouter.back()
+  }
+  const { addWidget, desktop } = useDesk(activeTab === 'desktop', editMode);
+  useEffect(() => {
+    if (props.isOnTop) {
+      switchLeftControl && switchLeftControl(LeftControlTypes.BACK, close)
+      switchRightControl && switchRightControl(RightControlTypes.COMMANDS, () => setShowRoomControl(true))
+      switchTitle && switchTitle('Sample Room')
+      switchColor && switchColor(blue[50], StatusThemes.LIGHT)
+    }
+  }, [props.isOnTop])
+  return (
+    <SliderPage id={props.id} direction='up'>
+      <div style={{
+        position: 'relative', width: '100%', height: '100%', zIndex: 2, transition: 'opacity .25s',
+      }}>
+        <Paper style={{
+          borderRadius: '16px 16px 0px 0px', width: '100%', height: `calc(100% - ${statusbarHeight() + 16}px)`,
+          position: 'relative', marginTop: statusbarHeight() + 16, background: 'transparent'
+        }}>
+          <img
+            style={{
+              borderRadius: '16px 16px 0px 0px', width: '100%', height: '100%',
+              position: 'absolute', left: 0, top: 0
+            }}
+            src={'https://i.pinimg.com/564x/16/34/f4/1634f4abfd9b4ae437143bbb156ea130.jpg'}
+            alt={'desktop-wallpaper'}
+          />
+          <Chat show={activeTab === 'chat'} />
+          <Desk show={activeTab === 'desktop'} editMode={editMode} desktopKey={desktop.key} />
+          <Files show={activeTab === 'files'} />
+          <Paper
+            style={{
+              borderRadius: '16px 16px 0px 0px', width: '100%', height: 'auto', position: 'absolute', left: 0, top: 0, backgroundColor: blue[50]
+            }}
+          >
+            <SigmaTabs
+              onChange={(e, newValue) => {
+                setActiveTab(newValue)
+              }}
+              value={activeTab}
+            >
+              <SigmaTab icon={<><Dashboard /><Typography variant={'body2'} style={{ marginLeft: 4, marginTop: 2 }}>Desktop</Typography></>} value={'desktop'} />
+              <SigmaTab icon={<><Message /><Typography variant={'body2'} style={{ marginLeft: 4, marginTop: 2 }}>Chat</Typography></>} value={'chat'} />
+              <SigmaTab icon={<><Description /><Typography variant={'body2'} style={{ marginLeft: 4, marginTop: 2 }}>Files</Typography></>} value={'files'} />
+            </SigmaTabs>
+          </Paper>
+        </Paper>
+        <RoomControl
+          onClose={() => setShowRoomControl(false)}
+          shown={showRoomControl}
+          toggleEditMode={(v) => setEditMode(v)}
+          openToolbox={() => {
+            addWidget()
+          }}
+        />
+      </div>
+    </SliderPage>
+  )
+}
+
+export default Room
