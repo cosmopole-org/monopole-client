@@ -7,18 +7,30 @@ class TowerService {
     storage: DatabaseDriver
     network: NetworkDriver
     memory: {
+        myHumanId: State<any>,
         spaces: State<any>,
         humans: State<any>,
-        machines: State<any>
+        machines: State<any>,
+        known: {
+            spaces: State<any>,
+            humans: State<any>,
+            machines: State<any>,
+        }
     }
 
     constructor(
         storage: DatabaseDriver,
         network: NetworkDriver,
         memory: {
+            myHumanId: State<any>,
             spaces: State<any>,
             humans: State<any>,
-            machines: State<any>
+            machines: State<any>,
+            known: {
+                spaces: State<any>,
+                humans: State<any>,
+                machines: State<any>,
+            }
         }
     ) {
         this.storage = storage
@@ -33,6 +45,8 @@ class TowerService {
             await this.storage.factories.room?.create(room)
             let newSpaces = memoryUtils.spaces.prepareSpaces([tower], [room], { ...this.memory.spaces.get({ noproxy: true }) })
             this.memory.spaces.set(newSpaces)
+            let newKnownSpaces = memoryUtils.spaces.prepareSpaces([tower], [room], { ...this.memory.known.spaces.get({ noproxy: true }) })
+            this.memory.known.spaces.set(newKnownSpaces)
             return body
         })
     }
@@ -56,6 +70,14 @@ class TowerService {
 
     async join(data: { towerId: string }): Promise<void> {
         return this.network.request('tower/join', { towerId: data.towerId })
+    }
+
+    async readById(data: { towerId: string }): Promise<void> {
+        return this.network.request('tower/readById', { towerId: data.towerId }).then((body: any) => {
+            let { tower, rooms } = body
+            this.memory.known.spaces.set(memoryUtils.spaces.prepareSpaces([tower], rooms, { ...this.memory.known.spaces.get({ noproxy: true }) }))
+            return body
+        })
     }
 }
 

@@ -24,9 +24,12 @@ import { useHookstate } from '@hookstate/core';
 
 const Tower = (props: { id: string, isOnTop: boolean, tower: any }) => {
     const [pointedRoom, setPointedRoom] = useState();
-    const spaces = useHookstate(api.memory.spaces)
-    const rooms = spaces.get({ noproxy: true })[props.tower.id].rooms
-    console.log(rooms)
+    const spaces = useHookstate(api.memory.known.spaces)
+    let tower = spaces.get({ noproxy: true })[props.tower.id]
+    if (!tower) {
+        api.services.tower.readById({ towerId: props.tower.id })
+    }
+    const rooms = tower ? tower.rooms : []
     const close = useCallback(() => {
         SigmaRouter.back()
     }, [])

@@ -7,18 +7,30 @@ class RoomService {
     storage: DatabaseDriver
     network: NetworkDriver
     memory: {
+        myHumanId: State<any>,
         spaces: State<any>,
         humans: State<any>,
-        machines: State<any>
+        machines: State<any>,
+        known: {
+            spaces: State<any>,
+            humans: State<any>,
+            machines: State<any>,        
+        }
     }
 
     constructor(
         storage: DatabaseDriver,
         network: NetworkDriver,
         memory: {
+            myHumanId: State<any>,
             spaces: State<any>,
             humans: State<any>,
-            machines: State<any>
+            machines: State<any>,
+            known: {
+                spaces: State<any>,
+                humans: State<any>,
+                machines: State<any>,        
+            }
         }
     ) {
         this.storage = storage

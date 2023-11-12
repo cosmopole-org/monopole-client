@@ -10,7 +10,12 @@ class HumanService {
         myHumanId: State<any>,
         spaces: State<any>,
         humans: State<any>,
-        machines: State<any>
+        machines: State<any>,
+        known: {
+            spaces: State<any>,
+            humans: State<any>,
+            machines: State<any>,        
+        }
     }
     network: NetworkDriver
 
@@ -32,7 +37,12 @@ class HumanService {
             myHumanId: State<any>,
             spaces: State<any>,
             humans: State<any>,
-            machines: State<any>
+            machines: State<any>,
+            known: {
+                spaces: State<any>,
+                humans: State<any>,
+                machines: State<any>,        
+            }
         }
     ) {
         this.storage = storage
@@ -62,8 +72,10 @@ class HumanService {
                         this.storage.factories.room?.createBatch(rooms)
                         this.storage.factories.human?.create(human)
                         localStorage.setItem('myHumanId', human.id)
-                        let newSpaces = memoryUtils.spaces.prepareSpaces(towers, rooms, { ...this.memory.spaces.get() })
+                        let newSpaces = memoryUtils.spaces.prepareSpaces(towers, rooms, { ...this.memory.spaces.get({ noproxy: true }) })
                         this.memory.spaces.set(newSpaces)
+                        let newKnownSpaces = memoryUtils.spaces.prepareSpaces(towers, rooms, { ...this.memory.known.spaces.get({ noproxy: true }) })
+                        this.memory.known.spaces.set(newKnownSpaces)
                         this.memory.humans.set(memoryUtils.humans.prepareHumans([human], this.memory.humans.get({ noproxy: true })))
                         this.memory.myHumanId.set(human.id)
                     }
@@ -85,6 +97,8 @@ class HumanService {
                     localStorage.setItem('myHumanId', human.id)
                     let newSpaces = memoryUtils.spaces.prepareSpaces([tower], [room], { ...this.memory.spaces.get({ noproxy: true }) })
                     this.memory.spaces.set(newSpaces)
+                    let newKnownSpaces = memoryUtils.spaces.prepareSpaces([tower], [room], { ...this.memory.known.spaces.get({ noproxy: true }) })
+                    this.memory.known.spaces.set(newKnownSpaces)
                     this.memory.humans.set(memoryUtils.humans.prepareHumans([human], this.memory.humans.get({ noproxy: true })))
                     this.memory.myHumanId.set(human.id)
                 }

@@ -28,7 +28,12 @@ class Api {
         myHumanId: State<any>,
         spaces: State<{ [id: string]: ITower }>,
         humans: State<{ [id: string]: IHuman }>,
-        machines: State<any>
+        machines: State<any>,
+        known: {
+            spaces: State<any>,
+            humans: State<any>,
+            machines: State<any>,
+        }
     }
 
     constructor(storage: DatabaseDriver) {
@@ -42,6 +47,11 @@ class Api {
             spaces: hookstate(spaces),
             humans: hookstate(humans),
             machines: hookstate(machines),
+            known: {
+                spaces: hookstate(spaces),
+                humans: hookstate(humans),
+                machines: hookstate(machines),
+            }
         }
         memoryUtils.fill(this.storage, this.memory)
         this.network = new NetworkDriver()
