@@ -18,6 +18,7 @@ import Splash from './components/pages/splash';
 import CreateTower from './components/forms/createTower';
 import CreateRoom from './components/forms/createRoom';
 import UpdateProfile from './components/forms/updateProfile';
+import { AppletSheet } from './components/custom/components/AppletSheet';
 
 let lastNaviationType: string | undefined = undefined
 let loaded: boolean = false;
@@ -114,6 +115,7 @@ function App() {
         <ThemeProvider theme={theme}>
             <div style={{ width: '100%', height: '100vh', overflow: 'hidden' }}>
                 {result}
+                <AppletSheet />
                 <StatusBar.Component />
             </div>
         </ThemeProvider>

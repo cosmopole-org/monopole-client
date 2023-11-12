@@ -27,56 +27,53 @@ const Room = (props: { id: string, isOnTop: boolean }) => {
       switchLeftControl && switchLeftControl(LeftControlTypes.BACK, close)
       switchRightControl && switchRightControl(RightControlTypes.COMMANDS, () => setShowRoomControl(true))
       switchTitle && switchTitle('Sample Room')
-      switchColor && switchColor(blue[50], StatusThemes.LIGHT)
+      switchColor && switchColor(blue[500], StatusThemes.DARK)
     }
   }, [props.isOnTop])
   return (
-    <SliderPage id={props.id} direction='up'>
+    <SliderPage id={props.id}>
       <div style={{
         position: 'relative', width: '100%', height: '100%', zIndex: 2, transition: 'opacity .25s',
       }}>
-        <Paper style={{
-          borderRadius: '16px 16px 0px 0px', width: '100%', height: `calc(100% - ${statusbarHeight() + 16}px)`,
-          position: 'relative', marginTop: statusbarHeight() + 16, background: 'transparent'
-        }}>
-          <img
-            style={{
-              borderRadius: '16px 16px 0px 0px', width: '100%', height: '100%',
-              position: 'absolute', left: 0, top: 0
-            }}
-            src={'https://i.pinimg.com/564x/16/34/f4/1634f4abfd9b4ae437143bbb156ea130.jpg'}
-            alt={'desktop-wallpaper'}
-          />
+        <img
+          style={{
+            borderRadius: '16px 16px 0px 0px', width: '100%', height: '100%',
+            position: 'absolute', left: 0, top: 0
+          }}
+          src={'https://i.pinimg.com/564x/16/34/f4/1634f4abfd9b4ae437143bbb156ea130.jpg'}
+          alt={'desktop-wallpaper'}
+        />
+        <div style={{ width: '100%', height: `calc(100% - ${statusbarHeight() + 16}px)`, paddingTop: statusbarHeight() + 16 }}>
           <Chat show={activeTab === 'chat'} />
           <Desk show={activeTab === 'desktop'} editMode={editMode} desktopKey={desktop.key} />
           <Files show={activeTab === 'files'} />
-          <Paper
-            style={{
-              borderRadius: '16px 16px 0px 0px', width: '100%', height: 'auto', position: 'absolute', left: 0, top: 0, backgroundColor: blue[50]
-            }}
-          >
-            <SigmaTabs
-              onChange={(e, newValue) => {
-                setActiveTab(newValue)
-              }}
-              value={activeTab}
-            >
-              <SigmaTab icon={<><Dashboard /><Typography variant={'body2'} style={{ marginLeft: 4, marginTop: 2 }}>Desktop</Typography></>} value={'desktop'} />
-              <SigmaTab icon={<><Message /><Typography variant={'body2'} style={{ marginLeft: 4, marginTop: 2 }}>Chat</Typography></>} value={'chat'} />
-              <SigmaTab icon={<><Description /><Typography variant={'body2'} style={{ marginLeft: 4, marginTop: 2 }}>Files</Typography></>} value={'files'} />
-            </SigmaTabs>
-          </Paper>
-        </Paper>
-        <RoomControl
-          onClose={() => setShowRoomControl(false)}
-          shown={showRoomControl}
-          toggleEditMode={(v) => setEditMode(v)}
-          openToolbox={() => {
-            addWidget()
+        </div>
+        <Paper
+          style={{
+            borderRadius: 0, width: '100%', height: 'auto', paddingTop: statusbarHeight() + 16, position: 'absolute', left: 0, top: 0, backgroundColor: blue[50]
           }}
-        />
+        >
+          <SigmaTabs
+            onChange={(e, newValue) => {
+              setActiveTab(newValue)
+            }}
+            value={activeTab}
+          >
+            <SigmaTab icon={<><Dashboard /><Typography variant={'body2'} style={{ marginLeft: 4, marginTop: 2 }}>Desktop</Typography></>} value={'desktop'} />
+            <SigmaTab icon={<><Message /><Typography variant={'body2'} style={{ marginLeft: 4, marginTop: 2 }}>Chat</Typography></>} value={'chat'} />
+            <SigmaTab icon={<><Description /><Typography variant={'body2'} style={{ marginLeft: 4, marginTop: 2 }}>Files</Typography></>} value={'files'} />
+          </SigmaTabs>
+        </Paper>
       </div>
-    </SliderPage>
+      <RoomControl
+        onClose={() => setShowRoomControl(false)}
+        shown={showRoomControl}
+        toggleEditMode={(v) => setEditMode(v)}
+        openToolbox={() => {
+          addWidget()
+        }}
+      />
+    </SliderPage >
   )
 }
 

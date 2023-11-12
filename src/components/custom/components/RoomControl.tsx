@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { Add, Edit, KeyboardCommandKey } from '@mui/icons-material';
-import { Card, Divider, Drawer } from '@mui/material';
+import { Card, Divider, Drawer, SwipeableDrawer } from '@mui/material';
 import SigmaMenuItem from '../elements/SigmaMenuItem';
 import { blue } from '@mui/material/colors';
 
 const RoomControl = (props: { toggleEditMode: (v: boolean) => void, openToolbox: () => void, shown: boolean, onClose: () => void }) => {
     return (
         <React.Fragment>
-            <Drawer anchor='bottom' open={props.shown} onClose={() => props.onClose()}
+            <SwipeableDrawer anchor='bottom' open={props.shown} onOpen={() => {}} onClose={() => props.onClose()}
                 PaperProps={{
                     style: {
                         borderRadius: '24px 24px 0px 0px'
@@ -23,7 +23,7 @@ const RoomControl = (props: { toggleEditMode: (v: boolean) => void, openToolbox:
                 <SigmaMenuItem onClick={() => { props.onClose(); }} icon={KeyboardCommandKey} caption='Create new whiteboard' />
                 <SigmaMenuItem onClick={() => { props.onClose(); }} icon={KeyboardCommandKey} caption='Start a call' />
                 <SigmaMenuItem onClick={() => { props.onClose(); }} icon={KeyboardCommandKey} caption='Upload new file' />
-            </Drawer>
+            </SwipeableDrawer>
         </React.Fragment >
     );
 }

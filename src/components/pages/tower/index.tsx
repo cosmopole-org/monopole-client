@@ -67,7 +67,7 @@ const Tower = (props: { id: string, isOnTop: boolean, tower: any }) => {
                                             }}
                                             room={room}
                                             key={`tower-room-item-${room.id}`}
-                                            onClick={() => SigmaRouter.navigate('room', { overPrevious: true })}
+                                            onClick={() => SigmaRouter.navigate('room', { initialData: { room } })}
                                         />
                                     )
                                 })

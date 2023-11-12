@@ -1,6 +1,7 @@
 import { CircularProgress } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import Desktop from 'sigma-desktop/dist/Desktop';
+import { openAppletSheet } from "../custom/components/AppletSheet";
 
 const Desk = (props: { editMode: boolean, show: boolean, desktopKey: string }) => {
     const desktopWrapperRef = useRef(null)
@@ -13,6 +14,7 @@ const Desk = (props: { editMode: boolean, show: boolean, desktopKey: string }) =
     return (
         <div
             ref={desktopWrapperRef}
+            onClick={() => openAppletSheet()}
             style={{ display: props.show ? 'block' : 'none', width: '100%', height: 'calc(100% - 32px - 16px)', position: 'relative', paddingTop: 32 + 16, overflowY: 'auto' }}
         >
             {
