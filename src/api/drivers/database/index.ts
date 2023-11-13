@@ -4,6 +4,7 @@ import tables from './schemas'
 import TowerFactory from './factories/tower';
 import RoomFactory from './factories/room';
 import HumanFactory from './factories/human';
+import MachineFactory from './factories/machine';
 
 class DatabaseDriver {
 
@@ -15,7 +16,8 @@ class DatabaseDriver {
         tower: TowerFactory | undefined,
         room: RoomFactory | undefined,
         human: HumanFactory | undefined,
-    } = { tower: undefined, room: undefined, human: undefined }
+        machine: MachineFactory | undefined,
+    } = { tower: undefined, room: undefined, human: undefined, machine: undefined }
 
     private async prepareDatabase() {
         this.schemaBuilder = lf.schema.create('sigma', 1);
@@ -39,6 +41,7 @@ class DatabaseDriver {
         this.factories.tower = new TowerFactory(this.db as lf.Database, this.tables['tower'] as lf.schema.Table)
         this.factories.room = new RoomFactory(this.db as lf.Database, this.tables['room'] as lf.schema.Table)
         this.factories.human = new HumanFactory(this.db as lf.Database, this.tables['human'] as lf.schema.Table)
+        this.factories.machine = new MachineFactory(this.db as lf.Database, this.tables['machine'] as lf.schema.Table)
     }
 
     constructor(onCreate: () => void) {

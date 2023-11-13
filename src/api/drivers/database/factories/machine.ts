@@ -2,18 +2,18 @@
 import lf from 'lovefield'
 import BaseFactory from './base'
 import IHuman from '../../../models/human';
+import IMachine from '../../../models/machine';
 
-class HumanFactory extends BaseFactory {
+class MachineFactory extends BaseFactory {
 
     public static initialize(db: lf.Database, table: lf.schema.Table) {
-        return new HumanFactory(db, table)
+        return new MachineFactory(db, table)
     }
 
     private _create(data: any) {
         return this.table.createRow({
             id: data.id,
-            firstName: data.firstName,
-            lastName: data.lastName,
+            name: data.name,
             secret: data.secret
         });
     }
@@ -32,16 +32,15 @@ class HumanFactory extends BaseFactory {
         return this.db.select().from(this.table).exec();
     }
 
-    public async update(data: IHuman) {
+    public async update(data: IMachine) {
         let updateQuery = this.db.update(this.table).where(this.table.id.eq(data.id));
-        updateQuery.set(this.table.firstName, data.firstName)
-        updateQuery.set(this.table.lastName, data.lastName)
+        updateQuery.set(this.table.name, data.name)
         updateQuery.set(this.table.secret, data.secret)
         await updateQuery.exec();
     }
 
-    public async remove(humanId: string) {
-        this.db.delete().from(this.table).where(this.table.id.eq(humanId)).exec()
+    public async remove(machineId: string) {
+        this.db.delete().from(this.table).where(this.table.id.eq(machineId)).exec()
     }
 
     constructor(db: lf.Database, table: lf.schema.Table) {
@@ -49,4 +48,4 @@ class HumanFactory extends BaseFactory {
     }
 }
 
-export default HumanFactory
+export default MachineFactory

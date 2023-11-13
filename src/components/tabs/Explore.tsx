@@ -62,7 +62,7 @@ const Explore = (props: { isOnTop: boolean, show: boolean }) => {
     }, [props.show, props.isOnTop])
     return (
         <div ref={containerRef} style={{ position: 'relative', width: '100%', height: '100%' }}>
-            <MachineBar containerRef={MachineBarHandler.pulseContainerRef} />
+            <MachineBar machines={[]} containerRef={MachineBarHandler.pulseContainerRef} />
             <TowersList.Component />
             <TowerMoreMenu
                 tower={pointedTower}

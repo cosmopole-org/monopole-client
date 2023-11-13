@@ -40,7 +40,6 @@ const transformRoom = (room: IRoom, spaces: any) => {
 }
 
 const removeRoom = (towerId: string, roomId: string, spaces: any) => {
-    console.log(towerId, roomId, spaces)
     delete spaces[towerId].rooms[roomId]
     return spaces
 }

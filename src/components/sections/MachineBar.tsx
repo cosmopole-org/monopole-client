@@ -3,7 +3,7 @@ import { SigmaRouter } from "../../App"
 import MachineTag from "../custom/components/MachineTag"
 import { statusbarHeight } from "./StatusBar"
 
-const MachineBar = (props: { containerRef: any }) => {
+const MachineBar = (props: { containerRef: any, machines: Array<any> }) => {
     return (
         <div ref={props.containerRef} style={{
             width: '100%',
@@ -19,10 +19,10 @@ const MachineBar = (props: { containerRef: any }) => {
         }}>
             <div style={{ width: 'auto', height: '100%', display: 'flex', position: 'relative' }}>
                 {
-                    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(index => (
-                        <MachineTag key={`machine-tag-${index}`} onClick={() => {
-                            SigmaRouter.navigate('profile')
-                        }}/>
+                    props.machines.map((machine: any) => (
+                        <MachineTag key={`machine-tag-${machine.id}`} onClick={() => {
+                            SigmaRouter.navigate('profile', { initialData: { machine } })
+                        }} />
                     ))
                 }
             </div>

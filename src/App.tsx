@@ -19,6 +19,8 @@ import CreateTower from './components/forms/createTower';
 import CreateRoom from './components/forms/createRoom';
 import UpdateProfile from './components/forms/updateProfile';
 import { AppletSheet } from './components/custom/components/AppletSheet';
+import Machines from './components/pages/machines';
+import CreateMachine from './components/forms/createMachine';
 
 let lastNaviationType: string | undefined = undefined
 let loaded: boolean = false;
@@ -33,10 +35,12 @@ let pages: { [id: string]: any } = {
     'room': Room,
     'tower': Tower,
     'profile': Profile,
+    'machines': Machines,
     // forms
     'createTower': CreateTower,
     'createRoom': CreateRoom,
-    "updateProfile": UpdateProfile
+    'updateProfile': UpdateProfile,
+    'createMachine': CreateMachine
 }
 
 export let SigmaRouter = {

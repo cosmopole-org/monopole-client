@@ -42,8 +42,8 @@ class TowerFactory extends BaseFactory {
         await updateQuery.exec();
     }
 
-    public remove() {
-
+    public async remove(towerId: string) {
+        this.db.delete().from(this.table).where(this.table.id.eq(towerId)).exec()
     }
 
     constructor(db: lf.Database, table: lf.schema.Table) {

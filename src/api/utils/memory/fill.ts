@@ -25,6 +25,9 @@ const fill = async (
     let humans = await storage.factories.human?.read()
     memory.humans.set(memoryUtils.humans.prepareHumans(humans as Array<any>, { ...memory.humans.get({ noproxy: true }) }))
     memory.known.humans.set(memoryUtils.humans.prepareHumans(humans as Array<any>, { ...memory.known.humans.get({ noproxy: true }) }))
+    let machines = await storage.factories.machine?.read()
+    memory.machines.set(memoryUtils.machines.prepareMachines(machines as Array<any>, { ...memory.machines.get({ noproxy: true }) }))
+    memory.known.machines.set(memoryUtils.machines.prepareMachines(machines as Array<any>, { ...memory.known.machines.get({ noproxy: true }) }))
 }
 
 export default fill

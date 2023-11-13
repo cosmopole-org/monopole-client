@@ -1,7 +1,7 @@
 import { useRef } from "react"
 import { Avatar, Card, IconButton, Typography } from "@mui/material"
 import { blue } from "@mui/material/colors"
-import { Edit } from "@mui/icons-material"
+import { ArrowBack, ArrowForward, ArrowRight, DarkMode, Edit, SmartToy } from "@mui/icons-material"
 import SigmaSwitch from "../custom/elements/SigmaSwitch"
 import { api } from "../.."
 import { SigmaRouter } from "../../App"
@@ -34,10 +34,33 @@ const Settings = (props: { isOnTop: boolean, show: boolean }) => {
                 paddingLeft: 16, paddingRight: 16, backgroundColor: blue[100], borderRadius: 24, height: 'auto', display: 'flex',
                 marginLeft: 16, width: 'calc(100% - 64px)', position: 'relative', marginTop: 16, paddingTop: 8, paddingBottom: 8
             }}>
+                <IconButton>
+                    <DarkMode />
+                </IconButton>
                 <Typography style={{ flex: 1, marginTop: 8 }}>
                     Dark Theme
                 </Typography>
                 <SigmaSwitch />
+            </Card>
+            <Card
+                elevation={0}
+                style={{
+                    paddingLeft: 16, paddingRight: 16, backgroundColor: blue[100], borderRadius: 24, height: 'auto', display: 'flex',
+                    marginLeft: 16, width: 'calc(100% - 64px)', position: 'relative', marginTop: 16, paddingTop: 8, paddingBottom: 8
+                }}
+                onClick={() => {
+                    SigmaRouter.navigate('machines')
+                }}
+            >
+                <IconButton>
+                    <SmartToy />
+                </IconButton>
+                <Typography style={{ flex: 1, marginTop: 8 }}>
+                    My Machines
+                </Typography>
+                <IconButton>
+                    <ArrowForward />
+                </IconButton>
             </Card>
         </div>
     )

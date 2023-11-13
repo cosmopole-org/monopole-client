@@ -22,7 +22,8 @@ class Api {
         human: Services.HumanService,
         tower: Services.TowerService,
         room: Services.RoomService,
-        invite: Services.InviteService
+        invite: Services.InviteService,
+        machine: Services.MachineService
     }
     memory: {
         myHumanId: State<any>,
@@ -59,6 +60,7 @@ class Api {
             human: new Services.HumanService(this.storage, this.network, this.memory),
             tower: new Services.TowerService(this.storage, this.network, this.memory),
             room: new Services.RoomService(this.storage, this.network, this.memory),
+            machine: new Services.MachineService(this.storage, this.network, this.memory),
             invite: new Services.InviteService(this.network)
         }
     }
