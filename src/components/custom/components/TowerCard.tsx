@@ -1,15 +1,15 @@
 import { Avatar, Card, IconButton, Rating, Typography } from "@mui/material"
 import SigmaBadgeButton from "../elements/SigmaBadgeButton"
 import { MoreVert } from "@mui/icons-material"
-import { blue } from "@mui/material/colors"
-import { SigmaRouter } from "../../../App"
+import { SigmaRouter, themeColor } from "../../../App"
+import SigmaAvatar from "../elements/SigmaAvatar"
 
 const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void, showRating?: boolean }) => {
     return (
-        <Card elevation={0} style={{ ...props.style, position: 'relative', width: 'calc(100% - 32px)', padding: 16, height: 176, backgroundColor: blue[50], borderRadius: 24 }}>
-            <Avatar style={{ width: 48, height: 48, backgroundColor: blue[500] }}>
+        <Card elevation={0} style={{ ...props.style, position: 'relative', width: 'calc(100% - 32px)', padding: 16, height: 176, backgroundColor: themeColor.get({noproxy: true})[50], borderRadius: 24 }}>
+            <SigmaAvatar style={{ width: 48, height: 48 }}>
                 {props.tower.title.substring(0, 1)}
-            </Avatar>
+            </SigmaAvatar>
             <Typography variant={'h6'} style={{ marginTop: 16 }}>
                 {props.tower.title}
             </Typography>

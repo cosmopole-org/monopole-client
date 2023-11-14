@@ -1,11 +1,12 @@
 import { Avatar } from "@mui/material"
-import { blue } from "@mui/material/colors"
+import { themeColor } from "../../../App"
+import SigmaAvatar from "../elements/SigmaAvatar"
 
 const StoryAvatar = () => {
     return (
-        <Avatar style={{ width: 48, height: 48, maxWidth: 48, backgroundColor: blue[500], marginLeft: 16 }}>
+        <SigmaAvatar style={{ width: 48, height: 48, maxWidth: 48, marginLeft: 16 }}>
             A
-        </Avatar>
+        </SigmaAvatar>
     )
 }
 

@@ -2,7 +2,7 @@
 import { styled } from "@mui/material/styles";
 import { TextField } from "@mui/material";
 
-interface SigmaTabsProps {
+interface SigmaTextFieldProps {
     label?: string;
     defaultValue?: string,
     value?: string;
@@ -10,7 +10,7 @@ interface SigmaTabsProps {
     style?: any
 }
 
-const SigmaTextField = styled((props: SigmaTabsProps) => (
+const SigmaTextField = styled((props: SigmaTextFieldProps) => (
     <TextField
         {...props}
         style={{
@@ -24,12 +24,17 @@ const SigmaTextField = styled((props: SigmaTabsProps) => (
             }
         }}
     />
-))({
+))(({ theme }) => ({
+    textTransform: 'none',
+    fontWeight: theme.typography.fontWeightRegular,
+    fontSize: theme.typography.pxToRem(15),
+    marginRight: theme.spacing(1),
+    color: '#666',
     '& .MuiOutlinedInput-root': {
         '& fieldset': {
             borderRadius: 16
         },
-    },
-});
+    }
+}))
 
 export default SigmaTextField

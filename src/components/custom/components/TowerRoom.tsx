@@ -1,15 +1,16 @@
 import { MoreVert, People } from "@mui/icons-material"
 import { Avatar, IconButton, Typography } from "@mui/material"
-import { blue } from "@mui/material/colors"
+import { themeColor } from "../../../App"
+import SigmaAvatar from "../elements/SigmaAvatar"
 
 const TowerRoom = (props: { onClick: () => void, openMenu?: (roomId: string) => void, room: any }) => {
     return (
         <div
             onClick={props.onClick}
-            style={{ textAlign: 'left', width: '100%', borderRadius: 16, marginTop: 8, backgroundColor: blue[50], paddingLeft: 16, paddingRight: 16, paddingTop: 8, paddingBottom: 8, display: 'flex' }}>
-            <Avatar style={{ width: 40, height: 40, backgroundColor: blue[500] }}>
+            style={{ textAlign: 'left', width: '100%', borderRadius: 16, marginTop: 8, backgroundColor: themeColor.get({noproxy: true})[50], paddingLeft: 16, paddingRight: 16, paddingTop: 8, paddingBottom: 8, display: 'flex' }}>
+            <SigmaAvatar style={{ width: 40, height: 40 }}>
                 {props.room.title.substring(0, 1)}
-            </Avatar>
+            </SigmaAvatar>
             <Typography style={{ marginLeft: 8, marginTop: 8, maxWidth: 200, flex: 1 }}>
                 {props.room.title}
             </Typography>

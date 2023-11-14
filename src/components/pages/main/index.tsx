@@ -1,5 +1,4 @@
 
-import { blue } from '@mui/material/colors';
 import './index.css';
 import SigmaBottomNavigation from '../../custom/elements/SigmaBottomNavigation';
 import { Explore as ExploreIcon, Home as HomeIcon } from '@mui/icons-material';
@@ -11,8 +10,9 @@ import Settings from '../../tabs/Settings';
 import { LeftControlTypes, RightControlTypes, StatusThemes, switchColor, switchLeftControl, switchRightControl, switchTitle } from '../../sections/StatusBar';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { Avatar } from '@mui/material';
-import { SigmaRouter } from '../../../App';
+import { SigmaRouter, themeColor } from '../../../App';
 import { api } from '../../..';
+import SigmaAvatar from '../../custom/elements/SigmaAvatar';
 
 const Main = (props: { id: string, isOnTop: boolean }) => {
     const navigate = useNavigate()
@@ -52,13 +52,13 @@ const Main = (props: { id: string, isOnTop: boolean }) => {
         if (props.isOnTop) {
             switchLeftControl && switchLeftControl(LeftControlTypes.NOTIFICATIONS)
             switchRightControl && switchRightControl(RightControlTypes.NONE)
-            switchColor && switchColor(blue[500], StatusThemes.DARK)
+            switchColor && switchColor(themeColor.get({noproxy: true})[300], StatusThemes.DARK)
             updateTitle(value)
         }
     }, [props.isOnTop])
     return (
         <SliderPage id={props.id}>
-            <div style={{ position: 'relative', width: '100%', height: '100%', background: blue[50] }}>
+            <div style={{ position: 'relative', width: '100%', height: '100%', background: themeColor.get({noproxy: true})[50] }}>
                 <div ref={contentRef} style={{ width: '100%', height: '100%', transition: 'transform .35s, opacity .35s' }}>
                     <Routes>
                         <Route path='/explore' Component={() => <Explore show={value === 0} isOnTop={props.isOnTop} />} />
@@ -72,7 +72,7 @@ const Main = (props: { id: string, isOnTop: boolean }) => {
                     items={[
                         { label: 'Explore', icon: ExploreIcon },
                         { label: 'Home', icon: HomeIcon },
-                        { label: 'Settings', icon: () => <Avatar style={{backgroundColor: blue[500], height: 32, width: 32, marginLeft: 8}}>K</Avatar> }
+                        { label: 'Settings', icon: () => <SigmaAvatar style={{ height: 32, width: 32, marginLeft: 8}}>K</SigmaAvatar> }
                     ]}
                 />
             </div>

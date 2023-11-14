@@ -1,6 +1,6 @@
 import { ArrowUpward, NavigateNext } from "@mui/icons-material";
 import { Breadcrumbs, IconButton, Link, Paper, Typography } from "@mui/material";
-import { blue } from "@mui/material/colors";
+import { themeColor } from "../../../App";
 
 const breadcrumbs = [
     <Link underline="hover" key="1" color="inherit">
@@ -16,7 +16,7 @@ const breadcrumbs = [
 
 const FilesAddressBar = (props: { style?: any }) => {
     return (
-        <Paper style={{ ...props.style, display: 'flex', backgroundColor: blue[50], borderRadius: 24 }}>
+        <Paper style={{ ...props.style, display: 'flex', backgroundColor: themeColor.get({noproxy: true})[50], borderRadius: 24 }}>
             <IconButton>
                 <ArrowUpward />
             </IconButton>

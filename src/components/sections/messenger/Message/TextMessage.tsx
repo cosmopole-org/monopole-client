@@ -6,8 +6,8 @@ import {
 import {
     DoneAll
 } from "@mui/icons-material";
-import { blue } from "@mui/material/colors";
 import './bubble.css'
+import { themeColor } from "../../../../App";
 
 const TextMessage = (props: { side: string, separate?: boolean, lastOfSection?: boolean, firstOfSection?: boolean }) => {
     return (
@@ -22,7 +22,7 @@ const TextMessage = (props: { side: string, separate?: boolean, lastOfSection?: 
                 position: "relative",
                 zIndex: 0,
                 padding: 8,
-                backgroundColor: props.side === 'left' ? '#fff' : blue[200]
+                backgroundColor: props.side === 'left' ? '#fff' : themeColor.get({noproxy: true})[200]
             }}
             elevation={0}
             className={(props.side === 'right' ? "bubble" : "bubble2") + (props.lastOfSection ? (" " + props.side) : "")}

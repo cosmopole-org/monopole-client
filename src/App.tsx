@@ -8,7 +8,7 @@ import './App.css';
 import { useEffect, useState } from "react";
 import { Shadow, exitShadow } from "./components/custom/components/Shadow";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { blue, purple } from "@mui/material/colors";
+import * as colors from "@mui/material/colors";
 import Auth from "./components/pages/auth";
 import Main from "./components/pages/main";
 import Tower from "./components/pages/tower";
@@ -21,6 +21,50 @@ import UpdateProfile from './components/forms/updateProfile';
 import { AppletSheet } from './components/custom/components/AppletSheet';
 import Machines from './components/pages/machines';
 import CreateMachine from './components/forms/createMachine';
+import { hookstate } from '@hookstate/core';
+import { switchColor } from './components/sections/StatusBar';
+
+const useForceUpdate = () => {
+    const [value, setValue] = useState(0); // integer state
+    return () => setValue(value => ++value); // update the state to force render
+}
+
+let forceUpdate = () => {};
+
+let tempThemeColorName = localStorage.getItem('themeColor')
+if (tempThemeColorName === null) {
+    tempThemeColorName = 'blue'
+    localStorage.setItem('themeColor', tempThemeColorName)
+}
+export let themeColorName = hookstate(tempThemeColorName)
+export let themeColor = hookstate((colors as { [id: string]: any })[tempThemeColorName])
+let theme = createTheme({
+    palette: {
+        primary: {
+            main: themeColor.get({noproxy: true})[300],
+        },
+        secondary: {
+            main: colors.purple[400],
+        },
+    },
+});
+export let reconstructMaterialPalette = (name: string, color: any) => {
+    localStorage.setItem('themeColor', name)
+    themeColorName.set(name)
+    theme = createTheme({
+        palette: {
+            primary: {
+                main: color[300],
+            },
+            secondary: {
+                main: colors.purple[400],
+            },
+        },
+    });
+    switchColor && switchColor(color[300], StatusBar.StatusThemes.DARK)
+    themeColor.set(color)
+    forceUpdate()
+}
 
 let lastNaviationType: string | undefined = undefined
 let loaded: boolean = false;
@@ -83,18 +127,8 @@ export let SigmaRouter = {
     removeBottom: () => { historyStack.splice(0, 1) }
 }
 
-let theme = createTheme({
-    palette: {
-        primary: {
-            main: blue[500],
-        },
-        secondary: {
-            main: purple[500],
-        },
-    },
-});
-
 function App() {
+    forceUpdate = useForceUpdate()
     const [_, setCurrentRoute] = useState(historyStack[historyStack.length - 1]?.id)
     refToCurrentRouteStateChanger = setCurrentRoute
     useEffect(() => {

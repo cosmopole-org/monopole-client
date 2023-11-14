@@ -1,10 +1,10 @@
-import { blue } from '@mui/material/colors';
+
 import './index.css';
 import { LeftControlTypes, RightControlTypes, StatusThemes, statusbarHeight, switchColor, switchLeftControl, switchRightControl, switchTitle } from '../../sections/StatusBar';
 import { Paper, Tab, Tabs, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles'
 import { useEffect, useState } from 'react';
-import { SigmaRouter } from '../../../App';
+import { SigmaRouter, themeColor } from '../../../App';
 import SliderPage from '../../layouts/SliderPage';
 import { Dashboard, Description, Message } from '@mui/icons-material';
 import Chat from '../../tabs/Chat';
@@ -27,7 +27,7 @@ const Room = (props: { id: string, isOnTop: boolean }) => {
       switchLeftControl && switchLeftControl(LeftControlTypes.BACK, close)
       switchRightControl && switchRightControl(RightControlTypes.COMMANDS, () => setShowRoomControl(true))
       switchTitle && switchTitle('Sample Room')
-      switchColor && switchColor(blue[500], StatusThemes.DARK)
+      switchColor && switchColor(themeColor.get({noproxy: true})[300], StatusThemes.DARK)
     }
   }, [props.isOnTop])
   return (
@@ -50,7 +50,7 @@ const Room = (props: { id: string, isOnTop: boolean }) => {
         </div>
         <Paper
           style={{
-            borderRadius: 0, width: '100%', height: 'auto', paddingTop: statusbarHeight() + 16, position: 'absolute', left: 0, top: 0, backgroundColor: blue[50]
+            borderRadius: 0, width: '100%', height: 'auto', paddingTop: statusbarHeight() + 16, position: 'absolute', left: 0, top: 0, backgroundColor: themeColor.get({noproxy: true})[50]
           }}
         >
           <SigmaTabs

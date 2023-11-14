@@ -2,7 +2,8 @@
 import {
     Avatar,
 } from "@mui/material";
-import { blue } from "@mui/material/colors";
+import { themeColor } from "../../../../App";
+import SigmaAvatar from "../../../custom/elements/SigmaAvatar";
 
 const MessageRow = (props: { side: string, separate?: boolean, children: any, lastOfSection?: boolean }) => {
     return (
@@ -20,9 +21,9 @@ const MessageRow = (props: { side: string, separate?: boolean, children: any, la
         >
             {
                 (props.side === 'left' && props.lastOfSection) ? (
-                    <Avatar style={{ marginRight: -4, backgroundColor: blue[500], marginTop: 'auto', marginBottom: 0, width: 32, height: 32 }}>
+                    <SigmaAvatar style={{ marginRight: -4, marginTop: 'auto', marginBottom: 0, width: 32, height: 32 }}>
                         A
-                    </Avatar>
+                    </SigmaAvatar>
                 ) : (
                     <div style={{ marginTop: 'auto', marginBottom: 0, width: 42, height: 42 }}>
                        

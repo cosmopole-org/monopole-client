@@ -7,8 +7,8 @@ const MachineBar = (props: { containerRef: any, machines: Array<any> }) => {
     return (
         <div ref={props.containerRef} style={{
             width: '100%',
-            height: 160,
-            paddingTop: statusbarHeight() + 84,
+            height: 184,
+            paddingTop: statusbarHeight() + 80,
             overflowX: 'auto',
             position: 'absolute',
             left: 0,
@@ -20,9 +20,7 @@ const MachineBar = (props: { containerRef: any, machines: Array<any> }) => {
             <div style={{ width: 'auto', height: '100%', display: 'flex', position: 'relative' }}>
                 {
                     props.machines.map((machine: any) => (
-                        <MachineTag key={`machine-tag-${machine.id}`} onClick={() => {
-                            SigmaRouter.navigate('profile', { initialData: { machine } })
-                        }} />
+                        <MachineTag key={`machine-tag-${machine.id}`} machine={machine} />
                     ))
                 }
             </div>

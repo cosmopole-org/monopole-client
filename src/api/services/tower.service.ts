@@ -51,7 +51,7 @@ class TowerService {
         })
     }
 
-    async search(data: { query: string, offset?: number, count?: number }): Promise<void> {
+    async search(data: { query: string, offset?: number, count?: number }): Promise<any> {
         return this.network.request('tower/search', { query: data.query, offset: data.offset, count: data.count })
     }
 

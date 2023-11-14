@@ -1,7 +1,7 @@
 import { IconButton, InputBase, Paper } from "@mui/material"
-import { blue } from "@mui/material/colors"
 import { InsertEmoticon, Send, Widgets } from "@mui/icons-material"
 import Message from "../sections/messenger/embedded/Message"
+import { themeColor } from "../../App"
 
 const Chat = (props: { show: boolean }) => {
     return (
@@ -30,14 +30,14 @@ const Chat = (props: { show: boolean }) => {
             </div>
             <Paper style={{
                 borderRadius: 0, width: '100%',
-                minHeight: 56, height: 'auto', position: 'absolute', left: 0, bottom: 0, backgroundColor: blue[100],
+                minHeight: 56, height: 'auto', position: 'absolute', left: 0, bottom: 0, backgroundColor: themeColor.get({noproxy: true})[100],
                 display: 'flex', paddingTop: 2
             }}>
                 <IconButton><InsertEmoticon /></IconButton>
                 <InputBase multiline placeholder="type your message..." style={{
                     flex: 1, height: '100%', borderRadius: 16, paddingLeft: 8, paddingRight: 8,
                     paddingTop: 8, paddingBottom: 6, marginTop: 8, marginBottom: 8,
-                    backgroundColor: blue[50]
+                    backgroundColor: themeColor.get({noproxy: true})[50]
                 }} />
                 <IconButton><Widgets /></IconButton>
                 <IconButton style={{ marginRight: 8 }}><Send /></IconButton>

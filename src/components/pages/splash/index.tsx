@@ -1,8 +1,7 @@
 
-import { blue } from '@mui/material/colors';
 import './index.css';
 import { useEffect } from 'react';
-import { SigmaRouter } from '../../../App';
+import { SigmaRouter, themeColor } from '../../../App';
 import { api } from '../../..';
 
 const Splash = (props: { id: string, isOnTop: boolean }) => {
@@ -21,7 +20,7 @@ const Splash = (props: { id: string, isOnTop: boolean }) => {
                 width: 176,
                 height: 176,
                 borderRadius: '50%',
-                backgroundColor: blue[100],
+                backgroundColor: themeColor.get({noproxy: true})[100],
                 position: 'absolute',
                 left: '50%',
                 top: '50%',

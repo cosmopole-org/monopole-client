@@ -1,9 +1,9 @@
-import { blue } from '@mui/material/colors';
+
 import './index.css';
 import { LeftControlTypes, RightControlTypes, StatusThemes, switchColor, switchLeftControl, switchRightControl, switchTitle } from '../../sections/StatusBar';
 import { Typography } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
-import { SigmaRouter } from '../../../App';
+import { SigmaRouter, themeColor } from '../../../App';
 import SliderPage from '../../layouts/SliderPage';
 import Timeline from '@mui/lab/Timeline';
 import TimelineItem from '@mui/lab/TimelineItem';
@@ -14,8 +14,6 @@ import TimelineOppositeContent, {
     timelineOppositeContentClasses,
 } from '@mui/lab/TimelineOppositeContent';
 import TowerRoom from '../../custom/components/TowerRoom';
-import ITower from '../../../api/models/tower';
-import IRoom from '../../../api/models/room';
 import SigmaFab from '../../custom/elements/SigmaFab';
 import { Add } from '@mui/icons-material';
 import RoomMoreMenu from '../../custom/components/RoomMoreMenu';
@@ -38,7 +36,7 @@ const Tower = (props: { id: string, isOnTop: boolean, tower: any }) => {
             switchLeftControl && switchLeftControl(LeftControlTypes.BACK, close)
             switchRightControl && switchRightControl(RightControlTypes.SETTINGS)
             switchTitle && switchTitle('Sample Tower')
-            switchColor && switchColor(blue[50], StatusThemes.LIGHT)
+            switchColor && switchColor(themeColor.get({noproxy: true})[50], StatusThemes.LIGHT)
         }
     }, [props.isOnTop])
     return (

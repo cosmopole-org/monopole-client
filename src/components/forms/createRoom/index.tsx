@@ -1,8 +1,8 @@
-import { blue } from '@mui/material/colors';
+
 import './index.css';
 import { LeftControlTypes, RightControlTypes, StatusThemes, statusbarHeight, switchColor, switchLeftControl, switchRightControl, switchTitle } from '../../sections/StatusBar';
 import { useEffect, useRef } from 'react';
-import { SigmaRouter } from '../../../App';
+import { SigmaRouter, themeColor } from '../../../App';
 import SliderPage from '../../layouts/SliderPage';
 import { Done } from '@mui/icons-material';
 import SigmaFab from '../../custom/elements/SigmaFab';
@@ -17,13 +17,13 @@ const CreateRoom = (props: { id: string, isOnTop: boolean, towerId: any, room?: 
       switchLeftControl && switchLeftControl(LeftControlTypes.BACK, () => SigmaRouter.back())
       switchRightControl && switchRightControl(RightControlTypes.NONE)
       switchTitle && switchTitle(isEditing ? 'Edit Room' : 'Create Room')
-      switchColor && switchColor(blue[500], StatusThemes.DARK)
+      switchColor && switchColor(themeColor.get({noproxy: true})[300], StatusThemes.DARK)
     }
   }, [])
   return (
     <SliderPage id={props.id}>
       <div style={{
-        position: 'relative', width: 'calc(100% - 32px)', height: 'calc(100% - 32px)', zIndex: 2, transition: 'opacity .25s', backgroundColor: blue[50], padding: 16
+        position: 'relative', width: 'calc(100% - 32px)', height: 'calc(100% - 32px)', zIndex: 2, transition: 'opacity .25s', backgroundColor: themeColor.get({noproxy: true})[50], padding: 16
       }}>
         <SigmaTextField
           defaultValue={isEditing ? props.room.title : ''}

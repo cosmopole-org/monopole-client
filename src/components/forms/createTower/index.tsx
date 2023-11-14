@@ -1,8 +1,8 @@
-import { blue } from '@mui/material/colors';
+
 import './index.css';
 import { LeftControlTypes, RightControlTypes, StatusThemes, statusbarHeight, switchColor, switchLeftControl, switchRightControl, switchTitle } from '../../sections/StatusBar';
 import { useEffect, useRef, useState } from 'react';
-import { SigmaRouter } from '../../../App';
+import { SigmaRouter, themeColor } from '../../../App';
 import SliderPage from '../../layouts/SliderPage';
 import { Done, Edit } from '@mui/icons-material';
 import SigmaFab from '../../custom/elements/SigmaFab';
@@ -23,13 +23,13 @@ const CreateTower = (props: { id: string, isOnTop: boolean, tower?: any }) => {
       switchLeftControl && switchLeftControl(LeftControlTypes.BACK, () => SigmaRouter.back())
       switchRightControl && switchRightControl(RightControlTypes.NONE)
       switchTitle && switchTitle(isEditing ? 'Edit Tower' : 'Create Tower')
-      switchColor && switchColor(blue[500], StatusThemes.DARK)
+      switchColor && switchColor(themeColor.get({noproxy: true})[300], StatusThemes.DARK)
     }
   }, [])
   return (
     <SliderPage id={props.id}>
       <div style={{
-        position: 'relative', width: 'calc(100% - 32px)', height: 'calc(100% - 32px)', zIndex: 2, transition: 'opacity .25s', backgroundColor: blue[50], padding: 16
+        position: 'relative', width: 'calc(100% - 32px)', height: 'calc(100% - 32px)', zIndex: 2, transition: 'opacity .25s', backgroundColor: themeColor.get({noproxy: true})[50], padding: 16
       }}>
         <SigmaTextField
           label={'Title'}
@@ -38,7 +38,7 @@ const CreateTower = (props: { id: string, isOnTop: boolean, tower?: any }) => {
           onChange={e => setTitle(e.target.value)}
         />
         <Card elevation={0} style={{
-          paddingLeft: 16, paddingRight: 16, backgroundColor: blue[100], borderRadius: 24, height: 'auto', display: 'flex',
+          paddingLeft: 16, paddingRight: 16, backgroundColor: themeColor.get({noproxy: true})[100], borderRadius: 24, height: 'auto', display: 'flex',
           width: 'calc(100% - 32px)', position: 'relative', marginTop: 16, paddingTop: 8, paddingBottom: 8
         }}>
           <Typography style={{ flex: 1, marginTop: 8 }}>

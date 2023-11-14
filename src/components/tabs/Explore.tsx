@@ -8,25 +8,34 @@ import MachineBar from "../sections/MachineBar"
 import { api } from "../.."
 import ITower from "../../api/models/tower"
 import TowerMoreMenu from "../custom/components/TowerMoreMenu"
+import IMachine from "../../api/models/machine"
 
 let savedSCrollTop = 0,
     cachedSearchBarTop: { value: number, maxValue: number } = {
         value: 24 + statusbarHeight(),
         maxValue: 24 + statusbarHeight()
     },
-    cachedTowers: Array<ITower> = []
+    cachedTowers: Array<ITower> = [],
+    cachedMachines: Array<IMachine> = []
 
 const Explore = (props: { isOnTop: boolean, show: boolean }) => {
     const [pointedTower, setPointedTower] = useState()
     const containerRef = useRef(null)
     const [searchText, setSearchText] = useState('')
     const [towers, setTowers] = useState(cachedTowers)
+    const [machines, setMachines] = useState(cachedMachines)
     const search = useCallback((text: string) => {
-        api.services.tower.search({ query: text, offset: 0, count: 15 }).then((body: any) => {
+        Promise.all([
+            api.services.tower.search({ query: text, offset: 0, count: 15 }),
+            api.services.machine.search({ query: text, offset: 0, count: 15 })
+        ])
+        .then(([body, body2]) => {
             cachedTowers = body.towers
+            cachedMachines = body2.machines
             setTowers(body.towers)
+            setMachines(body2.machines)
         }).catch(ex => console.log(ex))
-    }, [searchText, setTowers])
+    }, [searchText, setTowers, setMachines])
     useEffect(() => {
         search(searchText)
     }, [])
@@ -42,8 +51,8 @@ const Explore = (props: { isOnTop: boolean, show: boolean }) => {
             }
         },
         savedSCrollTop,
-        { paddingTop: 252 + statusbarHeight() },
-        184,
+        { paddingTop: 252 + 28 + statusbarHeight() },
+        184 + 28,
         true,
         props.show,
         towers
@@ -62,7 +71,7 @@ const Explore = (props: { isOnTop: boolean, show: boolean }) => {
     }, [props.show, props.isOnTop])
     return (
         <div ref={containerRef} style={{ position: 'relative', width: '100%', height: '100%' }}>
-            <MachineBar machines={[]} containerRef={MachineBarHandler.pulseContainerRef} />
+            <MachineBar machines={machines} containerRef={MachineBarHandler.pulseContainerRef} />
             <TowersList.Component />
             <TowerMoreMenu
                 tower={pointedTower}

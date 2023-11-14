@@ -1,6 +1,5 @@
 
 import { Fab } from "@mui/material"
-import { blue } from "@mui/material/colors"
 
 const SigmaFab = (props: { children?: any, onClick?: any, style?: any }) => {
     return (

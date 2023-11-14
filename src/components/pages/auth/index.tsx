@@ -1,11 +1,10 @@
 
-import { blue } from '@mui/material/colors';
 import './index.css';
 import SliderPage from '../../layouts/SliderPage';
 import React, { useEffect, useRef, useState } from 'react';
 import { LeftControlTypes, RightControlTypes, StatusThemes, switchColor, switchLeftControl, switchRightControl, switchTitle } from '../../sections/StatusBar';
 import { Button, Card, CircularProgress, InputBase } from '@mui/material';
-import { SigmaRouter } from '../../../App';
+import { SigmaRouter, themeColor } from '../../../App';
 import { api } from '../../..';
 
 const Auth = (props: { id: string, isOnTop: boolean }) => {
@@ -19,7 +18,7 @@ const Auth = (props: { id: string, isOnTop: boolean }) => {
         if (props.isOnTop) {
             switchLeftControl && switchLeftControl(LeftControlTypes.NOTIFICATIONS)
             switchRightControl && switchRightControl(RightControlTypes.NONE)
-            switchColor && switchColor(blue[500], StatusThemes.DARK)
+            switchColor && switchColor(themeColor.get({noproxy: true})[300], StatusThemes.DARK)
             switchTitle && switchTitle('Logging in')
         }
     }, [props.isOnTop])
@@ -30,17 +29,17 @@ const Auth = (props: { id: string, isOnTop: boolean }) => {
     }, [])
     return (
         <SliderPage id={props.id}>
-            <div style={{ position: 'relative', width: '100%', height: '100%', background: blue[50] }}>
+            <div style={{ position: 'relative', width: '100%', height: '100%', background: themeColor.get({noproxy: true})[50] }}>
                 <div style={{
                     width: '80%', height: 'auto', position: 'absolute', left: '50%', top: '50%',
                     transform: 'translate(-50%, -50%)', transition: 'translate .25s, top .25s'
                 }}>
                     <Card elevation={0} style={{
-                        backgroundColor: blue[100], width: '90%', maxWidth: 400, height: 100, borderRadius: 24, padding: 16
+                        backgroundColor: themeColor.get({noproxy: true})[100], width: '90%', maxWidth: 400, height: 100, borderRadius: 24, padding: 16
                     }}>
                         <div style={{ width: '100%', height: 48, display: 'flex' }}>
                             <InputBase disabled={level !== 0 || pending} defaultValue={'+98'} style={{
-                                width: 56, height: 48, borderRadius: 16, backgroundColor: blue[50]
+                                width: 56, height: 48, borderRadius: 16, backgroundColor: themeColor.get({noproxy: true})[50]
                             }}
                                 inputProps={{
                                     style: {
@@ -49,7 +48,7 @@ const Auth = (props: { id: string, isOnTop: boolean }) => {
                                 }}
                             />
                             <InputBase disabled={level !== 0 || pending} placeholder={'Phone Number'} style={{
-                                flex: 1, height: 48, borderRadius: 16, backgroundColor: blue[50],
+                                flex: 1, height: 48, borderRadius: 16, backgroundColor: themeColor.get({noproxy: true})[50],
                                 paddingLeft: 16, marginLeft: 8
                             }} onChange={e => { phoneRef.current = e.target.value }} />
                         </div>
@@ -74,10 +73,10 @@ const Auth = (props: { id: string, isOnTop: boolean }) => {
                         </Button>
                     </Card>
                     <Card elevation={0} style={{
-                        backgroundColor: blue[100], width: '90%', maxWidth: 400, height: 100, borderRadius: 24, padding: 16, marginTop: 16
+                        backgroundColor: themeColor.get({noproxy: true})[100], width: '90%', maxWidth: 400, height: 100, borderRadius: 24, padding: 16, marginTop: 16
                     }}>
                         <InputBase disabled={level !== 1 || pending} placeholder={'Verification Code'} style={{
-                            width: '100%', height: 48, borderRadius: 16, backgroundColor: blue[50],
+                            width: '100%', height: 48, borderRadius: 16, backgroundColor: themeColor.get({noproxy: true})[50],
                             paddingLeft: 16
                         }} onChange={e => { vCodeRef.current = e.target.value }} />
                         <Button disabled={level !== 1 || pending} variant='contained' style={{ borderRadius: 16, marginTop: 16, width: '100%' }}
@@ -109,15 +108,15 @@ const Auth = (props: { id: string, isOnTop: boolean }) => {
                         </Button>
                     </Card>
                     <Card elevation={0} style={{
-                        backgroundColor: blue[100], width: '90%', maxWidth: 400, height: 168,
+                        backgroundColor: themeColor.get({noproxy: true})[100], width: '90%', maxWidth: 400, height: 168,
                         borderRadius: 24, padding: 16, marginTop: 16
                     }}>
                         <InputBase disabled={level !== 2 || pending} placeholder={'First Name'} style={{
-                            width: '100%', height: 48, borderRadius: 16, backgroundColor: blue[50],
+                            width: '100%', height: 48, borderRadius: 16, backgroundColor: themeColor.get({noproxy: true})[50],
                             paddingLeft: 16
                         }} onChange={e => { firstNameRef.current = e.target.value }} />
                         <InputBase disabled={level !== 2 || pending} placeholder={'Last Name'} style={{
-                            width: '100%', height: 48, borderRadius: 16, backgroundColor: blue[50],
+                            width: '100%', height: 48, borderRadius: 16, backgroundColor: themeColor.get({noproxy: true})[50],
                             paddingLeft: 16, marginTop: 16
                         }} onChange={e => { lastNameRef.current = e.target.value }} />
                         <Button disabled={level !== 2 || pending} variant='contained' style={{ borderRadius: 16, marginTop: 16, width: '100%' }}

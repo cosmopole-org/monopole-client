@@ -67,7 +67,7 @@ class MachineService {
         })
     }
 
-    async search(data: { query: string, offset?: number, count?: number }): Promise<void> {
+    async search(data: { query: string, offset?: number, count?: number }): Promise<any> {
         return this.network.request('machine/search', { query: data.query, offset: data.offset, count: data.count }).then(async (body: any) => {
             this.memory.known.machines.set(memoryUtils.machines.prepareMachines(body.machines, { ...this.memory.known.machines.get({ noproxy: true }) }))
             return body

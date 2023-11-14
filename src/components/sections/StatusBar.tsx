@@ -1,8 +1,7 @@
 import { ArrowBack, Dashboard, KeyboardCommandKey, Notifications, Settings } from "@mui/icons-material"
 import { IconButton, Paper, Typography } from "@mui/material"
-import { blue } from "@mui/material/colors"
 import { useState } from "react"
-import { SigmaRouter } from "../../App"
+import { SigmaRouter, themeColor } from "../../App"
 
 const statusbarHeight = () => 40
 const LeftControlTypes = {
@@ -29,7 +28,7 @@ const StatusBar = () => {
     const [leftControlType, setLeftControlType] = useState(LeftControlTypes.NOTIFICATIONS)
     const [rightControlType, setRightControlType] = useState(RightControlTypes.NONE)
     const [title, setTitle] = useState('')
-    const [color, setColor] = useState(blue[500].toString())
+    const [color, setColor] = useState(themeColor.get({noproxy: true})[300].toString())
     const [theme, setTheme] = useState(StatusThemes.LIGHT)
     switchLeftControl = (type: number, functionality?: () => void) => {
         setLeftControlType(type)
