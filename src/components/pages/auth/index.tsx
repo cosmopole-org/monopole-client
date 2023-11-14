@@ -18,7 +18,7 @@ const Auth = (props: { id: string, isOnTop: boolean }) => {
         if (props.isOnTop) {
             switchLeftControl && switchLeftControl(LeftControlTypes.NOTIFICATIONS)
             switchRightControl && switchRightControl(RightControlTypes.NONE)
-            switchColor && switchColor(themeColor.get({noproxy: true})[300], StatusThemes.DARK)
+            switchColor && switchColor(themeColor.get({noproxy: true})[500], StatusThemes.DARK)
             switchTitle && switchTitle('Logging in')
         }
     }, [props.isOnTop])

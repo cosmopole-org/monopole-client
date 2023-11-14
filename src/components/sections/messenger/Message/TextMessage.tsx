@@ -7,7 +7,7 @@ import {
     DoneAll
 } from "@mui/icons-material";
 import './bubble.css'
-import { themeColor } from "../../../../App";
+import { themeColor, themeColorSecGroup } from "../../../../App";
 
 const TextMessage = (props: { side: string, separate?: boolean, lastOfSection?: boolean, firstOfSection?: boolean }) => {
     return (
@@ -22,7 +22,7 @@ const TextMessage = (props: { side: string, separate?: boolean, lastOfSection?: 
                 position: "relative",
                 zIndex: 0,
                 padding: 8,
-                backgroundColor: props.side === 'left' ? '#fff' : themeColor.get({noproxy: true})[200]
+                background: props.side === 'right' ? `linear-gradient(135deg, ${themeColor.get({noproxy: true})[500]}, ${themeColor.get({noproxy: true})[300]}) border-box` : '#fff'
             }}
             elevation={0}
             className={(props.side === 'right' ? "bubble" : "bubble2") + (props.lastOfSection ? (" " + props.side) : "")}
@@ -31,7 +31,7 @@ const TextMessage = (props: { side: string, separate?: boolean, lastOfSection?: 
                 variant={"caption"}
                 style={{
                     textAlign: "left", fontWeight: 'bold', borderRadius: 8, marginTop: 0,
-                    background: 'transparent', color: props.side === 'left' ? '#666' : '#000'
+                    background: 'transparent', color: props.side === 'left' ? '#666' : '#fff'
                 }}
             >
                 Keyhan
@@ -40,7 +40,7 @@ const TextMessage = (props: { side: string, separate?: boolean, lastOfSection?: 
                 style={{
                     textAlign: "left", wordWrap: 'break-word',
                     display: 'flex', wordBreak: 'break-word', fontSize: 14, height: 'auto',
-                    paddingBottom: 8, color: props.side === 'left' ? '#666' : '#000'
+                    paddingBottom: 8, color: props.side === 'left' ? '#666' : '#fff'
                 }}
             >
                 {'This is a test message from Sigma...'}
@@ -51,7 +51,7 @@ const TextMessage = (props: { side: string, separate?: boolean, lastOfSection?: 
                 borderRadius: "16px 16px 0px 16px"
             }}>
                 <Typography
-                    style={{ textAlign: "right", flex: 1, fontSize: 12 }}
+                    style={{ textAlign: "right", flex: 1, fontSize: 12, color: props.side === 'left' ? '#666' : '#fff' }}
                 >
                     {(new Date(Date.now())).toTimeString().substring(0, 5)}
                 </Typography>
@@ -59,7 +59,8 @@ const TextMessage = (props: { side: string, separate?: boolean, lastOfSection?: 
                     style={{
                         width: 16,
                         height: 16,
-                        marginLeft: 2
+                        marginLeft: 2,
+                        fill: props.side === 'left' ? '#666' : '#fff'
                     }}
                 />
             </div>

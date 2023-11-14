@@ -19,7 +19,7 @@ const Machines = (props: { id: string, isOnTop: boolean }) => {
       switchLeftControl && switchLeftControl(LeftControlTypes.BACK, close)
       switchRightControl && switchRightControl(RightControlTypes.NONE)
       switchTitle && switchTitle('Machines')
-      switchColor && switchColor(themeColor.get({noproxy: true})[300], StatusThemes.DARK)
+      switchColor && switchColor(themeColor.get({noproxy: true})[500], StatusThemes.DARK)
     }
   }, [props.isOnTop])
   return (

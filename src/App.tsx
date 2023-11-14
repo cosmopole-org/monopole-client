@@ -29,7 +29,7 @@ const useForceUpdate = () => {
     return () => setValue(value => ++value); // update the state to force render
 }
 
-let forceUpdate = () => {};
+let forceUpdate = () => { };
 
 let tempThemeColorName = localStorage.getItem('themeColor')
 if (tempThemeColorName === null) {
@@ -38,30 +38,33 @@ if (tempThemeColorName === null) {
 }
 export let themeColorName = hookstate(tempThemeColorName)
 export let themeColor = hookstate((colors as { [id: string]: any })[tempThemeColorName])
+export let themeColorSecGroup = hookstate(colors.blue)
 let theme = createTheme({
     palette: {
         primary: {
-            main: themeColor.get({noproxy: true})[300],
+            main: themeColor.get({ noproxy: true })[500],
         },
         secondary: {
-            main: colors.purple[400],
+            main: colors.purple[500],
         },
     },
 });
 export let reconstructMaterialPalette = (name: string, color: any) => {
     localStorage.setItem('themeColor', name)
+    var metaThemeColor = document.querySelector("meta[name=theme-color]");
+    metaThemeColor?.setAttribute("content", color[50]);
     themeColorName.set(name)
     theme = createTheme({
         palette: {
             primary: {
-                main: color[300],
+                main: color[500],
             },
             secondary: {
-                main: colors.purple[400],
+                main: colors.purple[500],
             },
         },
     });
-    switchColor && switchColor(color[300], StatusBar.StatusThemes.DARK)
+    switchColor && switchColor(color[500], StatusBar.StatusThemes.DARK)
     themeColor.set(color)
     forceUpdate()
 }

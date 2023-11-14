@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import Desktop from 'sigma-desktop/dist/Desktop';
 import { openAppletSheet } from "../custom/components/AppletSheet";
 
-const Desk = (props: { editMode: boolean, show: boolean, desktopKey: string }) => {
+const Desk = (props: { editMode: boolean, show: boolean, desktopKey: string, workers: Array<any> }) => {
     const desktopWrapperRef = useRef(null)
     const [loadDesktop, setLoadDesktop] = useState(false)
     useEffect(() => {

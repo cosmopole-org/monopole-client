@@ -18,7 +18,7 @@ const UpdateProfile = (props: { id: string, isOnTop: boolean }) => {
       switchLeftControl && switchLeftControl(LeftControlTypes.BACK, () => SigmaRouter.back())
       switchRightControl && switchRightControl(RightControlTypes.NONE)
       switchTitle && switchTitle('Edit My Profile')
-      switchColor && switchColor(themeColor.get({noproxy: true})[300], StatusThemes.DARK)
+      switchColor && switchColor(themeColor.get({noproxy: true})[500], StatusThemes.DARK)
     }
   }, [])
   return (

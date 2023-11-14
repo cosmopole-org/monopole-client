@@ -32,7 +32,7 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
             <div style={{ display: 'flex', marginTop: 16 }}>
                 <SigmaBadgeButton caption='View tower' onClick={() => SigmaRouter.navigate('tower', { initialData: { tower: props.tower } })} />
                 <SigmaBadgeButton style={{ marginLeft: 8 }} caption='Open main room' onClick={() => {
-                    SigmaRouter.navigate('room');
+                    //SigmaRouter.navigate('room');
                 }} />
             </div>
         </Card>

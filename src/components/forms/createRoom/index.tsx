@@ -17,7 +17,7 @@ const CreateRoom = (props: { id: string, isOnTop: boolean, towerId: any, room?: 
       switchLeftControl && switchLeftControl(LeftControlTypes.BACK, () => SigmaRouter.back())
       switchRightControl && switchRightControl(RightControlTypes.NONE)
       switchTitle && switchTitle(isEditing ? 'Edit Room' : 'Create Room')
-      switchColor && switchColor(themeColor.get({noproxy: true})[300], StatusThemes.DARK)
+      switchColor && switchColor(themeColor.get({noproxy: true})[500], StatusThemes.DARK)
     }
   }, [])
   return (

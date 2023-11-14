@@ -1,9 +1,9 @@
 
 import { Fab } from "@mui/material"
 
-const SigmaFab = (props: { children?: any, onClick?: any, style?: any }) => {
+const SigmaFab = (props: { children?: any, onClick?: any, style?: any, size?: any }) => {
     return (
-        <Fab color="primary" onClick={props.onClick} style={{ ...props.style, borderRadius: 16 }}>
+        <Fab color="primary" size={props.size} onClick={props.onClick} style={{ ...props.style, borderRadius: 16 }}>
             {props.children ? props.children : null}
         </Fab>
     )

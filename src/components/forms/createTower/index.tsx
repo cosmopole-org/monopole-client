@@ -23,7 +23,7 @@ const CreateTower = (props: { id: string, isOnTop: boolean, tower?: any }) => {
       switchLeftControl && switchLeftControl(LeftControlTypes.BACK, () => SigmaRouter.back())
       switchRightControl && switchRightControl(RightControlTypes.NONE)
       switchTitle && switchTitle(isEditing ? 'Edit Tower' : 'Create Tower')
-      switchColor && switchColor(themeColor.get({noproxy: true})[300], StatusThemes.DARK)
+      switchColor && switchColor(themeColor.get({noproxy: true})[500], StatusThemes.DARK)
     }
   }, [])
   return (

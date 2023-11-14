@@ -28,7 +28,7 @@ const StatusBar = () => {
     const [leftControlType, setLeftControlType] = useState(LeftControlTypes.NOTIFICATIONS)
     const [rightControlType, setRightControlType] = useState(RightControlTypes.NONE)
     const [title, setTitle] = useState('')
-    const [color, setColor] = useState(themeColor.get({noproxy: true})[300].toString())
+    const [color, setColor] = useState(themeColor.get({noproxy: true})[500].toString())
     const [theme, setTheme] = useState(StatusThemes.LIGHT)
     switchLeftControl = (type: number, functionality?: () => void) => {
         setLeftControlType(type)

@@ -17,7 +17,7 @@ const CreateMachine = (props: { id: string, isOnTop: boolean, machine?: any }) =
       switchLeftControl && switchLeftControl(LeftControlTypes.BACK, () => SigmaRouter.back())
       switchRightControl && switchRightControl(RightControlTypes.NONE)
       switchTitle && switchTitle(isEditing ? 'Edit Machine' : 'Create Machine')
-      switchColor && switchColor(themeColor.get({noproxy: true})[300], StatusThemes.DARK)
+      switchColor && switchColor(themeColor.get({noproxy: true})[500], StatusThemes.DARK)
     }
   }, [])
   return (

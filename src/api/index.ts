@@ -23,7 +23,9 @@ class Api {
         tower: Services.TowerService,
         room: Services.RoomService,
         invite: Services.InviteService,
-        machine: Services.MachineService
+        machine: Services.MachineService,
+        worker: Services.WorkerService
+
     }
     memory: {
         myHumanId: State<any>,
@@ -42,7 +44,7 @@ class Api {
         let myHumanId: string | undefined = undefined
         let spaces: { [id: string]: ITower } = {}
         let humans: { [id: string]: IHuman } = {}
-        let machines = {}
+        let machines: { [id: string]: IHuman } = {}
         this.memory = {
             myHumanId: hookstate(myHumanId),
             spaces: hookstate(spaces),
@@ -61,6 +63,7 @@ class Api {
             tower: new Services.TowerService(this.storage, this.network, this.memory),
             room: new Services.RoomService(this.storage, this.network, this.memory),
             machine: new Services.MachineService(this.storage, this.network, this.memory),
+            worker: new Services.WorkerService(this.storage, this.network, this.memory),
             invite: new Services.InviteService(this.network)
         }
     }

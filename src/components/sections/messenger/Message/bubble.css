@@ -11,7 +11,6 @@
       calc(var(--r)/-2) calc(var(--r)/-2) padding-box, 
     radial-gradient(50% 50%,#000 98%,#0000 101%) 
       0 0/var(--r) var(--r) space padding-box;
-  background: linear-gradient(135deg,rgb(206, 147, 216),rgb(144, 202, 249)) border-box;
 }
 .bubble2 {
   --r: 12px; /* the radius */

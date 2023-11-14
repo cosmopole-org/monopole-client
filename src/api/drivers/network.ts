@@ -1,6 +1,7 @@
 
 import { Socket, io } from 'socket.io-client';
 import config from '../../config';
+import { api } from '../..';
 
 class NetworkDriver {
 
@@ -9,12 +10,16 @@ class NetworkDriver {
 
     constructor() {
         this.socket = io(config.GATEWAY_ADDRESS)
+        this.socket.on('connect', () => {
+            api.services.human && api.services.human.signIn()
+        })
         this.listenToUpdate()
     }
 
     listenToUpdate() {
         this.socket.on('update', (update: any) => {
-            console.log('update', update)
+            let callback = this.updateListeners[update.type]
+            callback && callback(update)
         })
     }
 

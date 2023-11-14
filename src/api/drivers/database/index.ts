@@ -16,7 +16,7 @@ class DatabaseDriver {
         tower: TowerFactory | undefined,
         room: RoomFactory | undefined,
         human: HumanFactory | undefined,
-        machine: MachineFactory | undefined,
+        machine: MachineFactory | undefined
     } = { tower: undefined, room: undefined, human: undefined, machine: undefined }
 
     private async prepareDatabase() {
