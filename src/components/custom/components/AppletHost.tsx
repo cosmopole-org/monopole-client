@@ -1,6 +1,7 @@
 import MwcDriver from "applet-mwc"
 import { useEffect, useRef } from "react"
 import { Applet, Controls } from "applet-vm"
+import Native from "../../../resources/functions/native"
 
 let hostLoaded: { [id: string]: boolean } = {}
 
@@ -36,7 +37,7 @@ const Host = (props: { appletKey: string, code: string, index: number }) => {
             id={hostContainerrId}
             style={{
                 width: '100%',
-                height: 'calc(100% - 16px)',
+                height: '100%',
                 overflow: 'hidden',
                 transform: 'scale(0.65, 0.65)',
                 opacity: 0,

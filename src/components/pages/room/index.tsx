@@ -1,8 +1,7 @@
 
 import './index.css';
 import { LeftControlTypes, RightControlTypes, StatusThemes, statusbarHeight, switchColor, switchLeftControl, switchRightControl, switchTitle } from '../../sections/StatusBar';
-import { Paper, Tab, Tabs, Typography } from '@mui/material';
-import { styled } from '@mui/material/styles'
+import { Paper, Typography } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { SigmaRouter, themeColor } from '../../../App';
 import SliderPage from '../../layouts/SliderPage';
@@ -13,29 +12,83 @@ import useDesk from '../../hooks/useDesk';
 import Desk from '../../tabs/Desk';
 import Files from '../../tabs/Files';
 import { SigmaTab, SigmaTabs } from '../../custom/elements/SigmaTabs';
-import 'css-doodle';
 import { api } from '../../..';
-import { useHookstate } from '@hookstate/core';
 import IRoom from '../../../api/models/room';
 import sampleApplet from '../../../resources/code/sampleApplet';
+
+let cachedWorkers: Array<any> = []
+
+let saveLayouts = (layouts: ReactGridLayout.Layouts) => {
+  let updates: Array<any> = []
+  let workersDict: { [id: string]: any } = {}
+  cachedWorkers?.forEach((worker: any) => { workersDict[worker.id] = worker });
+  layouts.lg.map(sampleItem => sampleItem.i).forEach(itemId => {
+    let worker = workersDict[itemId]
+    let anyNew = false
+    Object.keys(layouts).forEach(layoutKey => {
+      let item = layouts[layoutKey].filter(item => item.i === itemId)[0]
+      console.log(worker, item, workersDict)
+      if (
+        worker && (
+          worker.secret.grid[layoutKey].x !== item.x ||
+          worker.secret.grid[layoutKey].y !== item.y ||
+          worker.secret.grid[layoutKey].w !== item.w ||
+          worker.secret.grid[layoutKey].h !== item.h
+        )
+      ) {
+        anyNew = true
+        worker.secret.grid[layoutKey].x = item.x
+        worker.secret.grid[layoutKey].y = item.y
+        worker.secret.grid[layoutKey].w = item.w
+        worker.secret.grid[layoutKey].h = item.h
+      }
+    })
+    if (anyNew) {
+      updates.push(worker)
+    }
+  })
+  return updates
+}
+
+let buildLayoutOfWorkers = () => {
+  return {
+    lg: cachedWorkers.map((w: any) => ({ ...w.secret.grid.lg, i: w.id, static: false })),
+    md: cachedWorkers.map((w: any) => ({ ...w.secret.grid.md, i: w.id, static: false })),
+    sm: cachedWorkers.map((w: any) => ({ ...w.secret.grid.sm, i: w.id, static: false })),
+    xs: cachedWorkers.map((w: any) => ({ ...w.secret.grid.xs, i: w.id, static: false })),
+    xxs: cachedWorkers.map((w: any) => ({ ...w.secret.grid.xxs, i: w.id, static: false }))
+  }
+}
 
 const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
   const [activeTab, setActiveTab] = useState('desktop')
   const [editMode, setEditMode] = useState(false)
   const [showRoomControl, setShowRoomControl] = useState(false)
-  const [workers, setWorkers] = useState<any>([])
+  const [workers, setWorkers] = useState<Array<any>>(cachedWorkers)
   const wallpaperContainerRef = useRef(null)
   const close = () => {
     SigmaRouter.back()
   }
-  const { desktop } = useDesk(activeTab === 'desktop', editMode);
+  const { desktop } = useDesk(
+    activeTab === 'desktop',
+    editMode,
+    (layouts: ReactGridLayout.Layouts) => {
+      saveLayouts(layouts).forEach((worker: any) => {
+        api.services.worker.update({ towerId: props.room.towerId, roomId: props.room.id, worker })
+      })
+    },
+    () => buildLayoutOfWorkers()
+  )
   useEffect(() => {
     api.services.worker.read({ towerId: props.room.towerId, roomId: props.room.id }).then((body: any) => {
-      body.workers.forEach((worker: any) => {
-        desktop.addWidget({ id: worker.id, jsxCode: sampleApplet, gridData: { w: 1, h: 4 } })
-      });
-      setWorkers(body.workers)
+      cachedWorkers = body.workers
+      let jsxContent: { [id: string]: string } = {}
+      body.workers.forEach((worker: any) => { jsxContent[worker.id] = sampleApplet })
+      desktop.fill(buildLayoutOfWorkers(), jsxContent)
     })
+    return () => {
+      cachedWorkers = []
+    }
   }, [])
   useEffect(() => {
     if (props.isOnTop) {
@@ -87,14 +140,31 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
         shown={showRoomControl}
         toggleEditMode={(v) => setEditMode(v)}
         openToolbox={() => {
-          const sampleMachine = Object.keys(api.memory.known.machines.get({ noproxy: true }))[0]
-          api.services.worker.create({ towerId: props.room.towerId, roomId: props.room.id, machineId: sampleMachine }).then((body: any) => {
-            desktop.addWidget({ id: body.worker.id, jsxCode: sampleApplet, gridData: { w: 1, h: 4 } })
-            setWorkers([...workers, body.worker])
+          const sampleMachineId = Object.keys(api.memory.known.machines.get({ noproxy: true }))[0]
+          let workersMax = 0
+          if (cachedWorkers.length > 0) {
+            workersMax = Math.max(...cachedWorkers.map(w => w.secret.grid.xxs.y + w.secret.grid.xxs.h)) + 1
+           }
+          api.services.worker.create({
+            towerId: props.room.towerId, roomId: props.room.id, machineId: sampleMachineId,
+            secret: {
+              grid: {
+                lg: { x: 0, y: workersMax, w: 2, h: 6 },
+                md: { x: 0, y: workersMax, w: 2, h: 6 },
+                sm: { x: 0, y: workersMax, w: 2, h: 6 },
+                xs: { x: 0, y: workersMax, w: 2, h: 6 },
+                xxs: { x: 0, y: workersMax, w: 2, h: 6 }
+              }
+            }
+          }).then((body: any) => {
+            cachedWorkers.push(body.worker)
+            desktop.addWidget({ id: body.worker.id, jsxCode: sampleApplet, gridData: body.worker.secret.grid.xxs })
+          }).catch(ex => {
+            console.log(ex)
           })
         }}
       />
-    </SliderPage >
+    </SliderPage>
   )
 }
 

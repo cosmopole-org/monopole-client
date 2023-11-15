@@ -7,7 +7,7 @@ const TowerRoom = (props: { onClick: () => void, openMenu?: (roomId: string) => 
     return (
         <div
             onClick={props.onClick}
-            style={{ textAlign: 'left', width: '100%', borderRadius: 16, marginTop: 8, backgroundColor: themeColor.get({noproxy: true})[50], paddingLeft: 16, paddingRight: 16, paddingTop: 8, paddingBottom: 8, display: 'flex' }}>
+            style={{ textAlign: 'left', width: 'calc(100% - 32px)', borderRadius: 16, marginTop: 8, backgroundColor: themeColor.get({noproxy: true})[50], paddingLeft: 16, paddingRight: 16, paddingTop: 8, paddingBottom: 8, display: 'flex' }}>
             <SigmaAvatar style={{ width: 40, height: 40 }}>
                 {props.room.title.substring(0, 1)}
             </SigmaAvatar>
