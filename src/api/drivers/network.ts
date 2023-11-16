@@ -6,7 +6,7 @@ import { api } from '../..';
 class NetworkDriver {
 
     socket: Socket;
-    updateListeners: { [id: string]: (update: any) => void } = {}
+    updateListeners: { [id: string]: { [id: string]: (update: any) => void } } = {}
 
     constructor() {
         this.socket = io(config.GATEWAY_ADDRESS)
@@ -18,13 +18,15 @@ class NetworkDriver {
 
     listenToUpdate() {
         this.socket.on('update', (update: any) => {
+            console.log(update)
             let callback = this.updateListeners[update.type]
-            callback && callback(update)
+            callback && callback[update.packet.tag] && callback[update.packet.tag](update)
         })
     }
 
-    addUpdateListener(key: string, callback: (update: any) => void) {
-        this.updateListeners[key] = callback
+    addUpdateListener(key: string, callback: (update: any) => void, tag: string) {
+        if (!this.updateListeners[key]) this.updateListeners[key] = {}
+        this.updateListeners[key][tag] = callback
     }
 
     request(path: string, body: any): Promise<void> {

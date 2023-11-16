@@ -1,7 +1,6 @@
 import MwcDriver from "applet-mwc"
 import { useEffect, useRef } from "react"
 import { Applet, Controls } from "applet-vm"
-import Native from "../../../resources/functions/native"
 
 let hostLoaded: { [id: string]: boolean } = {}
 
@@ -9,20 +8,18 @@ const unloadAllHosts = () => {
     hostLoaded = {}
 }
 
-const Host = (props: { appletKey: string, code: string, index: number }) => {
+const Host = (props: { appletKey: string, code: string, index: number, entry: string, onClick?: () => void }) => {
     const hostContainerrId = `AppletHost:${props.appletKey}`
     const appletRef = useRef(new Applet(props.appletKey))
     const rootRef = useRef(null)
     useEffect(() => {
-        //if (!hostLoaded[props.appletKey]) {
-            hostLoaded[props.appletKey] = true
-            appletRef.current.fill(props.code)
-            let root = document.getElementById(hostContainerrId)
-            if (root !== null) {
-                let driver = new MwcDriver(appletRef.current, root)
-                driver.start('Test', Controls)
-            }
-        //}
+        hostLoaded[props.appletKey] = true
+        appletRef.current.fill(props.code)
+        let root = document.getElementById(hostContainerrId)
+        if (root !== null) {
+            let driver = new MwcDriver(appletRef.current, root)
+            driver.start(props.entry, Controls)
+        }
         setTimeout(() => {
             if (rootRef.current !== null) {
                 let root = rootRef.current as HTMLElement
@@ -30,7 +27,7 @@ const Host = (props: { appletKey: string, code: string, index: number }) => {
                 root.style.opacity = '1'
             }
         }, (props.index + 1) * 75);
-    }, [])
+    }, [props.code])
     return (
         <div
             ref={rootRef}
@@ -43,6 +40,7 @@ const Host = (props: { appletKey: string, code: string, index: number }) => {
                 opacity: 0,
                 transition: 'transform .35s'
             }}
+            onClick={props.onClick}
         />
     )
 }

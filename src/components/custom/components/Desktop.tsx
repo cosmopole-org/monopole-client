@@ -3,8 +3,8 @@ import * as RGL from "react-grid-layout";
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
 import AppletHost from "./AppletHost";
-import { useEffect, useRef, useState } from "react";
-import { CircularProgress } from "@mui/material";
+import { useState } from "react";
+import { openAppletSheet } from "./AppletSheet";
 
 const ResponsiveReactGridLayout = RGL.WidthProvider(RGL.Responsive);
 
@@ -12,6 +12,7 @@ let desktops: { [id: string]: DesktopData } = {}
 
 class DesktopData {
     key: string
+    appletKeysStore: { [id: string]: boolean } = {}
     layouts: RGL.Layouts = { lg: [], md: [], sm: [], xs: [], xxs: [] }
     jsxContent: { [id: string]: string } = {}
     layoutCnangeFromUICallback?: (layouts: RGL.Layouts, updates: Array<any>) => void
@@ -21,14 +22,20 @@ class DesktopData {
         this.key = Math.random().toString()
         desktops[this.key] = this
     }
-    fill(layouts: RGL.Layouts, jsxContent: { [id: string]: string }) {
-        this.jsxContent = jsxContent
+    appletExists(id: string) {
+        return this.appletKeysStore[id] !== undefined
+    }
+    fill(layouts: RGL.Layouts) {
         this.layouts = layouts
+        this.layouts.lg.forEach((w: any) => {
+            this.appletKeysStore[w.i] = true;
+        })
     }
     destroy() {
         delete desktops[this.key]
     }
-    addWidget(widget: { id: string, jsxCode: string, gridData: { w: number, h: number }, options?: { silent: boolean } }) {
+    addWidget(widget: { id: string, jsxCode: string, gridData: { w: number, h: number } }, options?: { silent: boolean }) {
+        this.appletKeysStore[widget.id] = true;
         (['lg', 'md', 'sm', 'xs', 'xxs']).forEach((sizeKey: string) => {
             let y = this.layouts[sizeKey].length > 0 ?
                 Math.max(...this.layouts[sizeKey].filter(item => {
@@ -38,10 +45,15 @@ class DesktopData {
             this.layouts[sizeKey].push({ ...widget.gridData, x: 0, y, i: widget.id })
         })
         this.jsxContent[widget.id] = widget.jsxCode
-        this.layoutCnangeFromCodeCallback && this.layoutCnangeFromCodeCallback(this.layouts)
+        !options?.silent && this.layoutCnangeFromCodeCallback && this.layoutCnangeFromCodeCallback(this.layouts)
+        this.layoutCnangeFromCodeInternallCallback && this.layoutCnangeFromCodeInternallCallback(this.layouts)
+    }
+    updateWidget(workerId: string, jsxCode: string) {
+        this.jsxContent[workerId] = jsxCode
         this.layoutCnangeFromCodeInternallCallback && this.layoutCnangeFromCodeInternallCallback(this.layouts)
     }
     removeWidget(id: string) {
+        delete this.appletKeysStore[id];
         delete this.jsxContent[id];
         (['lg', 'md', 'sm', 'xs', 'xxs']).forEach((sizeKey: string) => {
             this.layouts[sizeKey] = this.layouts[sizeKey].filter(w => w.i !== id)
@@ -64,11 +76,10 @@ class DesktopData {
     }
 }
 
-const Host = (props: { desktopKey: string, editMode: boolean, style: any, showDesktop: boolean }) => {
+const Host = (props: { desktopKey: string, editMode: boolean, style: any, showDesktop: boolean, onWidgetClick: (workerId: string) => void }) => {
     const [trigger, setTrigger] = useState(false)
     let desktop = desktops[props.desktopKey]
     desktop.onLayoutChangeByCodeInternally((_: RGL.Layouts) => setTrigger(!trigger))
-    console.log(desktop.layouts)
     return (
         <ResponsiveReactGridLayout
             className="layout"
@@ -108,7 +119,17 @@ const Host = (props: { desktopKey: string, editMode: boolean, style: any, showDe
                 desktop.layouts['lg'].map(item => item.i).map((key, index) => {
                     return (
                         <div key={key} style={{ overflow: 'hidden', borderRadius: 4 }} data-grid={desktop.layouts['xxs'][index]}>
-                            <AppletHost.Host appletKey={key} code={desktop.jsxContent[key]} index={index} />
+                            <AppletHost.Host
+                                appletKey={key}
+                                onClick={() => props.onWidgetClick(key)}
+                                entry={desktop.jsxContent[key] ? 'Test' : 'Dummy'}
+                                code={
+                                    desktop.jsxContent[key] ?
+                                        desktop.jsxContent[key] :
+                                        'class Dummy { constructor() {} onMount() {} render() { return "" } }'
+                                }
+                                index={index}
+                            />
                         </div>
                     )
                 })

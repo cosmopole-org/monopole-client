@@ -36,10 +36,12 @@ class WorkerService {
         this.storage = storage
         this.network = network
         this.memory = memory
+    }
 
+    onMachinePacketDeliver(tag: string, callback: (data: any) => void) {
         this.network.addUpdateListener('worker/onResponse', (data: any) => {
-            
-        })
+            callback(data.packet)
+        }, tag)
     }
 
     async create(data: { towerId: string, roomId: string, machineId: string, secret: any }): Promise<void> {
@@ -60,10 +62,16 @@ class WorkerService {
 
     async use(data: { towerId: string, roomId: string, workerId: string, packet: any }) {
         return this.network.request('worker/use', { towerId: data.towerId, roomId: data.roomId, workerId: data.workerId, packet: data.packet })
-    }
+    }    
 
     async deliver(data: { towerId: string, roomId: string, workerId: string, packet: any, humanId: string }) {
-        return this.network.request('worker/deliver', { towerId: data.towerId, roomId: data.roomId, workerId: data.workerId, packet: data.packet })
+        return this.network.request('worker/deliver', {
+            towerId: data.towerId,
+            roomId: data.roomId,
+            workerId: data.workerId,
+            humanId: data.humanId,
+            packet: data.packet
+        })
     }
 }
 
