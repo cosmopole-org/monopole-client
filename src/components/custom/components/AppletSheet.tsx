@@ -15,7 +15,7 @@ const AppletSheet = () => {
             setCode(data.code)
         })
         setShown(true)
-        api.services.worker.use({ towerId: room.towerId, roomId: room.id, workerId, packet: { command: 'get/applet' } })
+        api.services.worker.use({ towerId: room.towerId, roomId: room.id, workerId, packet: { tag: 'get/applet' } })
     }
     return (
         <React.Fragment>
@@ -25,11 +25,11 @@ const AppletSheet = () => {
                         borderRadius: '24px 24px 0px 0px',
                         minHeight: window.innerHeight * 80 / 100 + 'px',
                         height: window.innerHeight * 80 / 100 + 'px',
-                        backgroundColor: themeColor.get({ noproxy: true })[100]
+                        backgroundColor: themeColor.get({ noproxy: true })[50]
                     }
                 }}
             >
-                <Card style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', width: 100, height: 6, borderRadius: 3, background: themeColor.get({ noproxy: true })[50], top: 12 }} />
+                <Card style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', width: 100, height: 6, borderRadius: 3, background: themeColor.get({ noproxy: true })[100], top: 12 }} />
                 <div style={{ width: '100%', height: 32 }} />
                 <AppletHost.Host
                     appletKey='appletsheet'

@@ -21,7 +21,12 @@ const Inventions = (props: { show: boolean }) => {
             >
                 {
                     (Object.values(machines) as Array<IMachine>).filter((m: IMachine) => m.secret).map((machine: IMachine) => (
-                        <MachineTag2 key={`invention-${machine.id}`} machine={machine} />
+                        <MachineTag2
+                            showDev
+                            caption="View"
+                            key={`invention-${machine.id}`}
+                            machine={machine}
+                            onClick={() => SigmaRouter.navigate('profile', { initialData: { machine } })} />
                     ))
                 }
             </div>

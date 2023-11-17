@@ -11,16 +11,22 @@ import RoomControl from '../../custom/components/RoomControl';
 import Desk, { addWidgetToSDesktop, desktopEditMode } from '../../tabs/Desk';
 import Files from '../../tabs/Files';
 import { SigmaTab, SigmaTabs } from '../../custom/elements/SigmaTabs';
-import { api } from '../../..';
 import IRoom from '../../../api/models/room';
+import MachineBox from '../../custom/components/MachineBox';
 
 const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
   const [activeTab, setActiveTab] = useState('desktop')
   const [showRoomControl, setShowRoomControl] = useState(false)
+  const [showMachineBox, setShowMachineBox] = useState(false)
   const wallpaperContainerRef = useRef(null)
   const close = () => {
     SigmaRouter.back()
   }
+  useEffect(() => {
+    return () => {
+      desktopEditMode.set(false)
+    }
+  }, [])
   useEffect(() => {
     if (props.isOnTop) {
       switchLeftControl && switchLeftControl(LeftControlTypes.BACK, close)
@@ -71,8 +77,14 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
         shown={showRoomControl}
         toggleEditMode={(v) => desktopEditMode.set(v)}
         openToolbox={() => {
-          addWidgetToSDesktop(props.room)
+          setShowRoomControl(false)
+          setShowMachineBox(true)
         }}
+      />
+      <MachineBox
+        createWorker={(machineId: string) => addWidgetToSDesktop(props.room, machineId)}
+        onClose={() => setShowMachineBox(false)}
+        shown={showMachineBox}
       />
     </SliderPage>
   )

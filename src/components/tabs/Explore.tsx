@@ -26,8 +26,8 @@ const Explore = (props: { isOnTop: boolean, show: boolean }) => {
     const [machines, setMachines] = useState(cachedMachines)
     const search = useCallback((text: string) => {
         Promise.all([
-            api.services.tower.search({ query: text, offset: 0, count: 15 }),
-            api.services.machine.search({ query: text, offset: 0, count: 15 })
+            api.services.tower.search({ query: text }),
+            api.services.machine.search({ query: text })
         ])
         .then(([body, body2]) => {
             cachedTowers = body.towers

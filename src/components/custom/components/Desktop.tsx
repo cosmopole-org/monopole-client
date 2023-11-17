@@ -5,6 +5,9 @@ import 'react-resizable/css/styles.css'
 import AppletHost from "./AppletHost";
 import { useState } from "react";
 import { openAppletSheet } from "./AppletSheet";
+import SigmaFab from "../elements/SigmaFab";
+import { Delete } from "@mui/icons-material";
+import { api } from "../../..";
 
 const ResponsiveReactGridLayout = RGL.WidthProvider(RGL.Responsive);
 
@@ -76,7 +79,7 @@ class DesktopData {
     }
 }
 
-const Host = (props: { desktopKey: string, editMode: boolean, style: any, showDesktop: boolean, onWidgetClick: (workerId: string) => void }) => {
+const Host = (props: { desktopKey: string, editMode: boolean, style: any, showDesktop: boolean, onWidgetClick: (workerId: string) => void, onWidgetRemove: (workerId: string) => void }) => {
     const [trigger, setTrigger] = useState(false)
     let desktop = desktops[props.desktopKey]
     desktop.onLayoutChangeByCodeInternally((_: RGL.Layouts) => setTrigger(!trigger))
@@ -91,6 +94,7 @@ const Host = (props: { desktopKey: string, editMode: boolean, style: any, showDe
             layouts={structuredClone(desktop.layouts)}
             isDraggable={props.editMode}
             isResizable={props.editMode}
+            draggableCancel=".cancelSelectorName" 
             onLayoutChange={(currentLayout: RGL.Layout[], layouts: RGL.Layouts) => {
                 let updates: Array<any> = []
                 const oldLayouts = desktop.layouts
@@ -130,11 +134,21 @@ const Host = (props: { desktopKey: string, editMode: boolean, style: any, showDe
                                 }
                                 index={index}
                             />
+                            {
+                                props.editMode ? (
+                                    <SigmaFab
+                                        style={{ transform: 'translate(8px, -68px)' }}
+                                        onClick={() => props.onWidgetRemove(key)}
+                                        className="cancelSelectorName">
+                                        <Delete />
+                                    </SigmaFab>
+                                ) : null
+                            }
                         </div>
                     )
                 })
             }
-        </ResponsiveReactGridLayout>
+        </ResponsiveReactGridLayout >
     )
 }
 

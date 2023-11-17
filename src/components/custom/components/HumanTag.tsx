@@ -4,7 +4,7 @@ import { SigmaRouter, themeColor } from "../../../App"
 import SigmaAvatar from "../elements/SigmaAvatar"
 import SigmaFab from "../elements/SigmaFab"
 
-const MachineTag2 = (props: { onClick?: () => void, machine: any, caption: string, showDev?: boolean }) => {
+const HumanTag = (props: { onClick?: () => void, human: any }) => {
     return (
         <div
             style={{
@@ -12,39 +12,23 @@ const MachineTag2 = (props: { onClick?: () => void, machine: any, caption: strin
             }}>
             <Card elevation={0} style={{
                 position: 'absolute', left: 8, top: 40, width: 'calc(100% - 16px)', height: 'calc(100% - 40px)',
-                backgroundColor: themeColor.get({ noproxy: true })[props.showDev ? 50 : 100], borderRadius: 24
+                backgroundColor: themeColor.get({ noproxy: true })[100], borderRadius: 24
             }}>
                 <Typography variant={'body1'} style={{ marginTop: 56, width: '100%', textAlign: 'center' }}>
-                    {props.machine.name}
+                    {props.human.firstName}
                 </Typography>
                 <Box style={{ marginTop: 16, width: '100%', textAlign: 'center' }}>
                     <Button style={{ borderRadius: 24, width: 'calc(100% - 16px)' }} variant="contained"
                         onClick={props.onClick}>
-                        {props.caption}
+                        View
                     </Button>
                 </Box>
             </Card>
             <SigmaAvatar style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', top: 16, width: 64, height: 64 }}>
-                <SmartToy />
+                {props.human.firstName.substring(0, 1) + (props.human.lastName ? props.human.lastName.substring(0, 1) : '')}
             </SigmaAvatar>
-            {
-                props.machine.secret && props.showDev ?
-                    (
-                        <SigmaFab
-                            size={'small'}
-                            style={{ position: 'absolute', left: '50%', transform: 'translateX(+40px)', top: 28 }}
-                            onClick={() => {
-                                navigator.clipboard.writeText(props.machine.secret.token);
-                                alert('machine token copied to clipboard.')
-                            }}
-                        >
-                            <Code />
-                        </SigmaFab>
-                    ) :
-                    null
-            }
         </div>
     )
 }
 
-export default MachineTag2
+export default HumanTag

@@ -19,13 +19,16 @@ import { Add, People } from '@mui/icons-material';
 import RoomMoreMenu from '../../custom/components/RoomMoreMenu';
 import { api } from '../../..';
 import { useHookstate } from '@hookstate/core';
+import HumanBox from '../../custom/components/HumanBox';
 
 const Tower = (props: { id: string, isOnTop: boolean, tower: any }) => {
     const containerRef = useRef(null)
     const headerRef = useRef(null)
+    const [showMembers, setShowMembers] = useState(false);
     const [pointedRoom, setPointedRoom] = useState();
-    const spaces = useHookstate(api.memory.known.spaces)
-    let tower = spaces.get({ noproxy: true })[props.tower.id]
+    const spaces = useHookstate(api.memory.known.spaces).get({ noproxy: true })
+    const mySpaces = useHookstate(api.memory.spaces).get({ noproxy: true })
+    let tower = spaces[props.tower.id]
     if (!tower) {
         api.services.tower.readById({ towerId: props.tower.id })
     }
@@ -103,15 +106,35 @@ const Tower = (props: { id: string, isOnTop: boolean, tower: any }) => {
             }}>
                 <Add />
             </SigmaFab>
-            <SigmaFab size={'medium'} style={{ position: 'absolute', right: 16 + 56 + 16, bottom: 16, borderRadius: 16 }} onClick={() => {
-                
+            <SigmaFab size={'medium'} style={{ position: 'absolute', right: 16 + 4, bottom: 16 + 56 + 16, borderRadius: 16 }} onClick={() => {
+                setShowMembers(true)
             }}>
                 <People />
             </SigmaFab>
+            {
+                tower && mySpaces[tower.id] ?
+                    null : (
+                        <SigmaFab variant={'extended'} size={'medium'} style={{ position: 'absolute', right: 16 + 56 + 16, bottom: 16 + 4, borderRadius: 16 }} onClick={() => {
+                            api.services.tower.join({ towerId: props.tower.id })
+                        }}>
+                            <People style={{ marginRight: 8 }} />
+                            Join
+                        </SigmaFab>
+                    )
+            }
             <RoomMoreMenu
                 room={pointedRoom}
                 onClose={() => setPointedRoom(undefined)}
                 shown={pointedRoom !== undefined}
+            />
+            <HumanBox
+                tower={props.tower}
+                onClose={() => setShowMembers(false)}
+                shown={showMembers}
+                onMemberView={(human: any) => {
+                    setShowMembers(false)
+                    SigmaRouter.navigate('profile', { initialData: { human } });
+                }}
             />
         </SliderPage >
     )

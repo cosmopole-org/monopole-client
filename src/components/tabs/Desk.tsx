@@ -54,14 +54,13 @@ export let desktopEditMode = hookstate(false)
 
 let desktop: any = undefined
 
-export const addWidgetToSDesktop = (room: any) => {
-    const sampleMachineId = Object.keys(api.memory.known.machines.get({ noproxy: true }))[0]
+export const addWidgetToSDesktop = (room: any, machineId: string) => {
     let workersMax = 0
     if (cachedWorkers.length > 0) {
         workersMax = Math.max(...cachedWorkers.map(w => w.secret.grid.xxs.y + w.secret.grid.xxs.h)) + 1
     }
     api.services.worker.create({
-        towerId: room.towerId, roomId: room.id, machineId: sampleMachineId,
+        towerId: room.towerId, roomId: room.id, machineId: machineId,
         secret: {
             grid: {
                 lg: { x: 0, y: workersMax, w: 2, h: 6 },
@@ -132,6 +131,14 @@ const Desk = (props: { show: boolean, room: any }) => {
                     desktopKey={desktop.key}
                     onWidgetClick={(workerId: string) => {
                         openAppletSheet(props.room, workerId)
+                    }}
+                    onWidgetRemove={(workerId: string) => {
+                        if (window.confirm('do you to delete this widget ?')) {
+                            api.services.worker.remove({ towerId: props.room.towerId, roomId: props.room.id, workerId }).then((body: any) => {
+                                cachedWorkers = cachedWorkers.filter(w => w.id !== workerId)
+                                desktop.removeWidget(workerId)
+                            })
+                        }
                     }}
                 />
                 <div style={{ width: '100%', height: '100%', position: 'relative' }}>

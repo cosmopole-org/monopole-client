@@ -1,6 +1,7 @@
 import { State } from "@hookstate/core"
 import { DatabaseDriver, NetworkDriver } from "../drivers"
 import memoryUtils from "../utils/memory"
+import IRoom from "../models/room"
 
 class RoomService {
 
@@ -48,7 +49,7 @@ class RoomService {
         })
     }
 
-    async search(data: { towerId: string, query: string, offset?: number, count?: number }): Promise<void> {
+    async search(data: { towerId: string, query: string, offset?: number, count?: number }): Promise<any> {
         return this.network.request('room/search', { towerId: data.towerId, query: data.query, offset: data.offset, count: data.count })
     }
 

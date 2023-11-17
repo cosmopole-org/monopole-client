@@ -1,6 +1,7 @@
 import { State } from "@hookstate/core"
 import { DatabaseDriver, NetworkDriver } from "../drivers"
 import memoryUtils from "../utils/memory"
+import { api } from "../.."
 
 class TowerService {
 
@@ -69,7 +70,15 @@ class TowerService {
     }
 
     async join(data: { towerId: string }): Promise<void> {
-        return this.network.request('tower/join', { towerId: data.towerId })
+        return this.network.request('tower/join', { towerId: data.towerId }).then(async (body: any) => {
+            let tower = this.memory.known.spaces.get({ noproxy: true })[data.towerId]
+            await this.storage.factories.tower?.create(tower)
+            let { rooms } = await api.services.room.search({ towerId: data.towerId, query: '' })
+            await this.storage.factories.room?.createBatch(rooms)
+            let newSpaces = memoryUtils.spaces.prepareSpaces([tower], rooms, { ...this.memory.spaces.get({ noproxy: true }) })
+            this.memory.spaces.set(newSpaces)
+            return body
+        })
     }
 
     async readById(data: { towerId: string }): Promise<void> {
@@ -78,6 +87,10 @@ class TowerService {
             this.memory.known.spaces.set(memoryUtils.spaces.prepareSpaces([tower], rooms, { ...this.memory.known.spaces.get({ noproxy: true }) }))
             return body
         })
+    }
+
+    async readMembers(data: { towerId: string }): Promise<any> {
+        return this.network.request('tower/readMembers', { towerId: data.towerId })
     }
 }
 
