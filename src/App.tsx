@@ -32,22 +32,63 @@ const useForceUpdate = () => {
 
 let forceUpdate = () => { };
 
+export const fixedNightColor = {
+    '500': '#292e39',
+    '400': '#292e39',
+    '200': '#2e3440',
+    '100': '#3b4252',
+    '50': '#434c5e',
+    'plain': '#4c566a',
+    'activeText': '#ffffff',
+    'passiveText': '#dddddd'
+}
+
 let tempThemeColorName = localStorage.getItem('themeColor')
 if (tempThemeColorName === null) {
     tempThemeColorName = 'blue'
     localStorage.setItem('themeColor', tempThemeColorName)
 }
 export let themeColorName = hookstate(tempThemeColorName)
-export let themeColor = hookstate((colors as { [id: string]: any })[tempThemeColorName])
+export let themeColor = hookstate(tempThemeColorName === 'night' ? fixedNightColor : (colors as { [id: string]: any })[tempThemeColorName])
+export let themeBasedTextColor = hookstate('#333')
 export let themeColorSecGroup = hookstate(colors.blue)
+const headerImageAddresses = {
+    light: 'https://i.pinimg.com/564x/c2/fc/8b/c2fc8b9c90dd6cdfd10cc8a0bd09fcd2.jpg',
+    dark: 'https://i.pinimg.com/564x/47/17/86/47178626549fe6895a69f65fbb877054.jpg'
+}
+export let headerImageAddress = hookstate(tempThemeColorName === 'night' ? headerImageAddresses.dark : headerImageAddresses.light)
 let theme = createTheme({
+    components: {
+        MuiTab: {
+            styleOverrides: {
+                root: {
+                    '&.Mui-selected': {
+                        color: tempThemeColorName === 'night' ? fixedNightColor['activeText'] : '#333'
+                    }
+                },
+            },
+        },
+        MuiMenu: {
+            styleOverrides: {
+                list: {
+                    '&[role="menu"]': {
+                        backgroundColor: tempThemeColorName === 'night' ? fixedNightColor['plain'] : '#fff'
+                    },
+                },
+            },
+        }
+    },
     palette: {
+        mode: tempThemeColorName === 'night' ? 'dark' : 'light',
         primary: {
             main: themeColor.get({ noproxy: true })[500],
         },
         secondary: {
             main: colors.purple[500],
         },
+        background: {
+            paper: tempThemeColorName === 'night' ? fixedNightColor['plain'] : '#fff'
+        }
     },
 });
 export let reconstructMaterialPalette = (name: string, color: any) => {
@@ -56,17 +97,43 @@ export let reconstructMaterialPalette = (name: string, color: any) => {
     metaThemeColor?.setAttribute("content", color[50]);
     themeColorName.set(name)
     theme = createTheme({
+        components: {
+            MuiTab: {
+                styleOverrides: {
+                    root: {
+                        '&.Mui-selected': {
+                            color: name === 'night' ? fixedNightColor['activeText'] : '#333'
+                        }
+                    },
+                },
+            },
+            MuiMenu: {
+                styleOverrides: {
+                    list: {
+                        '&[role="menu"]': {
+                            backgroundColor: name === 'night' ? fixedNightColor['plain'] : '#fff'
+                        },
+                    },
+                },
+            }
+        },
         palette: {
+            mode: name === 'night' ? 'dark' : 'light',
             primary: {
                 main: color[500],
             },
             secondary: {
                 main: colors.purple[500],
             },
+            background: {
+                paper: name === 'night' ? fixedNightColor['plain'] : '#fff'
+            }
         },
     });
     switchColor && switchColor(color[500], StatusBar.StatusThemes.DARK)
     themeColor.set(color)
+    themeBasedTextColor.set(name === 'night' ? '#fff' : '#333')
+    headerImageAddress.set(name === 'night' ? headerImageAddresses.dark : headerImageAddresses.light)
     forceUpdate()
 }
 
@@ -156,7 +223,7 @@ function App() {
     })
     return (
         <ThemeProvider theme={theme}>
-            <div style={{ width: '100%', height: '100vh', overflow: 'hidden' }}>
+            <div style={{ width: '100%', height: '100vh', overflow: 'hidden', backgroundColor: themeColor.get({ noproxy: true })['plain'] }}>
                 {result}
                 <AppletSheet />
                 <StatusBar.Component />

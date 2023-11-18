@@ -15,7 +15,6 @@ const SigmaTextField = styled((props: SigmaTextFieldProps) => (
         {...props}
         style={{
             ...props.style,
-            backgroundColor: '#fff',
             borderRadius: 16
         }}
         inputProps={{
@@ -25,6 +24,7 @@ const SigmaTextField = styled((props: SigmaTextFieldProps) => (
         }}
     />
 ))(({ theme }) => ({
+    backgroundColor: theme.palette.background.paper,
     textTransform: 'none',
     fontWeight: theme.typography.fontWeightRegular,
     fontSize: theme.typography.pxToRem(15),

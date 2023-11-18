@@ -23,7 +23,7 @@ const SigmaTabs = styled((props: SigmaTabsProps) => (
     '& .MuiTabs-indicatorSpan': {
         maxWidth: 40,
         width: '100%',
-        backgroundColor: theme.palette.primary.main,
+        backgroundColor: theme.palette.action.active,
     },
 }));
 
@@ -39,13 +39,6 @@ let SigmaTab = styled((props: SigmaTabProps) => (
     fontWeight: theme.typography.fontWeightRegular,
     fontSize: theme.typography.pxToRem(15),
     marginRight: theme.spacing(1),
-    color: '#666',
-    '&.Mui-selected': {
-        color: theme.palette.primary.main,
-    },
-    '&.Mui-focusVisible': {
-        backgroundColor: theme.palette.primary.main,
-    }
 }))
 
 export {

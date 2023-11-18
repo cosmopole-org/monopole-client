@@ -8,7 +8,7 @@ import { api } from "../.."
 import { useHookstate } from "@hookstate/core"
 import { Fab } from "@mui/material"
 import { Add } from "@mui/icons-material"
-import { SigmaRouter } from "../../App"
+import { SigmaRouter, headerImageAddress, themeColor, themeColorName } from "../../App"
 import SigmaFab from "../custom/elements/SigmaFab"
 import SearchBar from "../custom/components/SearchBar"
 
@@ -44,7 +44,9 @@ const Home = (props: { isOnTop: boolean, show: boolean }) => {
             }
         },
         savedSCrollTop,
-        { paddingTop: 200 + statusbarHeight() },
+        {
+            paddingTop: 200 + statusbarHeight()
+        },
         80,
         false,
         props.show,
@@ -63,8 +65,8 @@ const Home = (props: { isOnTop: boolean, show: boolean }) => {
         }
     }, [props.show, props.isOnTop])
     return (
-        <div ref={containerRef} style={{ backgroundColor: '#fff', overflowY: 'auto', position: 'relative', width: '100%', height: 'calc(100% - 64px)', zIndex: 2 }}>
-            <img ref={headerRef} style={{ opacity: 1, width: '100%', height: 266, position: 'sticky', top: 0, transition: 'opacity .5s' }} src={'https://i.pinimg.com/564x/c2/fc/8b/c2fc8b9c90dd6cdfd10cc8a0bd09fcd2.jpg'} alt={'header'} />
+        <div ref={containerRef} style={{ backgroundColor: themeColor.get({ noproxy: true })['plain'], overflowY: 'auto', position: 'relative', width: '100%', height: 'calc(100% - 64px)', zIndex: 2 }}>
+            <img ref={headerRef} style={{ opacity: 1, width: '100%', height: 266, position: 'sticky', top: 0, transition: 'opacity .5s' }} src={headerImageAddress.get({ noproxy: true })} alt={'header'} />
             <PulseBar.Component />
             <TowersList.Component />
             <SearchBar containerRef={SearchBarHandler.searchContainerRef} placeHolder={'Search Towers...'} onSearch={(text: string) => setSearchText(text)} />

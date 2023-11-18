@@ -3,7 +3,7 @@ import './index.css';
 import { LeftControlTypes, RightControlTypes, StatusThemes, switchColor, switchLeftControl, switchRightControl, switchTitle } from '../../sections/StatusBar';
 import { Card, Typography } from '@mui/material';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { SigmaRouter, themeColor } from '../../../App';
+import { SigmaRouter, headerImageAddress, themeColor } from '../../../App';
 import SliderPage from '../../layouts/SliderPage';
 import Timeline from '@mui/lab/Timeline';
 import TimelineItem from '@mui/lab/TimelineItem';
@@ -60,7 +60,7 @@ const Tower = (props: { id: string, isOnTop: boolean, tower: any }) => {
                         }
                     }
                 }}>
-                <img ref={headerRef} style={{ opacity: 1, width: '100%', height: 266, position: 'sticky', top: 0, transition: 'opacity .5s' }} src={'https://i.pinimg.com/564x/c2/fc/8b/c2fc8b9c90dd6cdfd10cc8a0bd09fcd2.jpg'} alt={'header'} />
+                <img ref={headerRef} style={{ opacity: 1, width: '100%', height: 266, position: 'sticky', top: 0, transition: 'opacity .5s' }} src={headerImageAddress.get({ noproxy: true })} alt={'header'} />
                 <Timeline
                     style={{
                         minHeight: 'calc(100% - 248px)', width: 'calc(100% - 32px)', background: themeColor.get({ noproxy: true })[50],
@@ -81,7 +81,7 @@ const Tower = (props: { id: string, isOnTop: boolean, tower: any }) => {
                             <Typography style={{ width: '100%', textAlign: 'left' }}>
                                 Floor 1
                             </Typography>
-                            <Card elevation={2} style={{ padding: 16, marginTop: 16, borderRadius: 24 }}>
+                            <Card elevation={2} style={{ padding: 16, marginTop: 16, borderRadius: 24, backgroundColor: themeColor.get({ noproxy: true })['plain'] }}>
                                 {
                                     Object.values(rooms).map((room: any) => {
                                         return (

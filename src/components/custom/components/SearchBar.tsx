@@ -1,12 +1,13 @@
 import { FilterList, Search } from "@mui/icons-material"
 import { statusbarHeight } from "../../sections/StatusBar"
-import { IconButton, InputBase } from "@mui/material"
+import { IconButton, InputBase, Paper } from "@mui/material"
 import { useRef, useState } from "react"
+import { themeColor } from "../../../App"
 
 const SearchBar = (props: { containerRef: any, placeHolder: string, onSearch?: (text: string) => void }) => {
     const [searchText, setSearchText] = useState('')
     return (
-        <div
+        <Paper
             ref={props.containerRef}
             style={{
                 width: 'calc(100% - 32px)',
@@ -14,7 +15,7 @@ const SearchBar = (props: { containerRef: any, placeHolder: string, onSearch?: (
                 position: 'absolute',
                 left: 16,
                 top: 16 + statusbarHeight() + 8,
-                backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                backgroundColor: themeColor.get({noproxy: true})['plain'],
                 backdropFilter: 'blur(10px)',
                 borderRadius: 20,
                 display: 'flex',
@@ -46,7 +47,7 @@ const SearchBar = (props: { containerRef: any, placeHolder: string, onSearch?: (
             <IconButton>
                 <FilterList />
             </IconButton>
-        </div>
+        </Paper>
     )
 }
 

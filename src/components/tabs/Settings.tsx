@@ -4,13 +4,19 @@ import * as colors from '@mui/material/colors'
 import { ArrowForward, DarkMode, Edit, SmartToy } from "@mui/icons-material"
 import SigmaSwitch from "../custom/elements/SigmaSwitch"
 import { api } from "../.."
-import { SigmaRouter, reconstructMaterialPalette, themeColor, themeColorName } from "../../App"
+import { SigmaRouter, fixedNightColor, reconstructMaterialPalette, themeColor, themeColorName } from "../../App"
 import SigmaAvatar from "../custom/elements/SigmaAvatar"
 
 const Settings = (props: { isOnTop: boolean, show: boolean }) => {
     const containerRef = useRef(null)
     const handleChange = (event: SelectChangeEvent) => {
-        reconstructMaterialPalette(event.target.value, (colors as { [id: string]: any })[event.target.value.toString()])
+        let colorFamily = {}
+        if (event.target.value === 'night') {
+            colorFamily = fixedNightColor
+        } else {
+            colorFamily = {...(colors as { [id: string]: any })[event.target.value.toString()], plain: '#fff', activeText: '#333', passiveText: '#666' }
+        }
+        reconstructMaterialPalette(event.target.value, colorFamily)
     };
     let me = api.memory.humans.get({ noproxy: true })[api.memory.myHumanId.get({ noproxy: true })]
     return (
@@ -81,6 +87,7 @@ const Settings = (props: { isOnTop: boolean, show: boolean }) => {
                         backgroundColor: themeColor.get({ noproxy: true })[100]
                     }}
                 >
+                    <MenuItem key={`settings-theme-color-night`} value={'night'}>night</MenuItem>
                     {
                         Object.keys(colors).filter(c => c !== 'common').map(c => (
                             <MenuItem key={`settings-theme-color-${c}`} value={c}>{c}</MenuItem>

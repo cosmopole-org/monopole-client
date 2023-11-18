@@ -9,6 +9,7 @@ import { api } from "../.."
 import ITower from "../../api/models/tower"
 import TowerMoreMenu from "../custom/components/TowerMoreMenu"
 import IMachine from "../../api/models/machine"
+import { themeColor } from "../../App"
 
 let savedSCrollTop = 0,
     cachedSearchBarTop: { value: number, maxValue: number } = {
@@ -29,12 +30,12 @@ const Explore = (props: { isOnTop: boolean, show: boolean }) => {
             api.services.tower.search({ query: text }),
             api.services.machine.search({ query: text })
         ])
-        .then(([body, body2]) => {
-            cachedTowers = body.towers
-            cachedMachines = body2.machines
-            setTowers(body.towers)
-            setMachines(body2.machines)
-        }).catch(ex => console.log(ex))
+            .then(([body, body2]) => {
+                cachedTowers = body.towers
+                cachedMachines = body2.machines
+                setTowers(body.towers)
+                setMachines(body2.machines)
+            }).catch(ex => console.log(ex))
     }, [searchText, setTowers, setMachines])
     useEffect(() => {
         search(searchText)
@@ -51,7 +52,9 @@ const Explore = (props: { isOnTop: boolean, show: boolean }) => {
             }
         },
         savedSCrollTop,
-        { paddingTop: 252 + 28 + statusbarHeight() },
+        {
+            paddingTop: 252 + 28 + statusbarHeight()
+        },
         184 + 28,
         true,
         props.show,

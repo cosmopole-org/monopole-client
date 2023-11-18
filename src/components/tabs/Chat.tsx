@@ -1,7 +1,7 @@
 import { IconButton, InputBase, Paper } from "@mui/material"
 import { InsertEmoticon, Send, Widgets } from "@mui/icons-material"
 import Message from "../sections/messenger/embedded/Message"
-import { themeColor } from "../../App"
+import { themeColor, themeColorName } from "../../App"
 
 const Chat = (props: { show: boolean }) => {
     return (
@@ -40,7 +40,9 @@ const Chat = (props: { show: boolean }) => {
                     <InputBase multiline placeholder="type your message..." style={{
                         flex: 1, height: '100%', borderRadius: 16, paddingLeft: 8, paddingRight: 8,
                         paddingTop: 8, paddingBottom: 6, marginTop: 8, marginBottom: 8,
-                        backgroundColor: themeColor.get({ noproxy: true })[50]
+                        backgroundColor: themeColorName.get({ noproxy: true }) === 'night' ?
+                            themeColor.get({ noproxy: true })['plain'] :
+                            themeColor.get({ noproxy: true })[50]
                     }} />
                     <IconButton><Widgets /></IconButton>
                     <IconButton style={{ marginRight: 8 }}><Send /></IconButton>

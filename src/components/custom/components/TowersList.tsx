@@ -2,6 +2,7 @@ import { Paper } from "@mui/material"
 import { useLayoutEffect, useRef } from "react"
 import TowerCard from "./TowerCard"
 import { statusbarHeight } from "../../sections/StatusBar"
+import { themeColor } from "../../../App"
 
 const TowersList = (props: { towers: Array<any>, hasFocus: boolean, showRating: boolean, bottomSpace: number, overridenStyle: any, defaultSCrollTop?: number, onScroll: (scrollTop: number) => void, towersContainerRef: any, onCollapsibleBarStateChange: (dy: number, v: boolean, collapsibleScrollTop: number) => void, showTowerMoreMenu?: (towerId: string) => void }) => {
     const lastScrollRef = useRef(props.defaultSCrollTop !== undefined ? props.defaultSCrollTop : 0)
@@ -46,7 +47,7 @@ const TowersList = (props: { towers: Array<any>, hasFocus: boolean, showRating: 
                     paddingLeft: 16,
                     paddingRight: 16,
                     paddingTop: 8,
-                    backgroundColor: 'rgba(255, 255, 255, 1)'
+                    backgroundColor: themeColor.get({noproxy: true})['plain']
                 }}
             >
                 {

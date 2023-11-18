@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { Card, Typography } from "@mui/material"
 import { api } from "../.."
-import { themeColor } from "../../App"
+import { headerImageAddress, themeColor } from "../../App"
 import { Timeline, TimelineConnector, TimelineDot, TimelineItem, TimelineSeparator } from "@mui/lab"
 import TimelineOppositeContent, {
     timelineOppositeContentClasses,
@@ -35,7 +35,7 @@ const Inbox = (props: { isOnTop: boolean, show: boolean }) => {
                     }
                 }
             }}>
-            <img ref={headerRef} style={{ opacity: 1, width: '100%', height: 266, position: 'sticky', top: 0, transition: 'opacity .5s' }} src={'https://i.pinimg.com/564x/c2/fc/8b/c2fc8b9c90dd6cdfd10cc8a0bd09fcd2.jpg'} alt={'header'} />
+            <img ref={headerRef} style={{ opacity: 1, width: '100%', height: 266, position: 'sticky', top: 0, transition: 'opacity .5s' }} src={headerImageAddress.get({ noproxy: true })} alt={'header'} />
             <Timeline
                 style={{
                     minHeight: 'calc(100% - 248px)', width: 'calc(100% - 32px)', background: themeColor.get({ noproxy: true })[50],
@@ -57,7 +57,7 @@ const Inbox = (props: { isOnTop: boolean, show: boolean }) => {
                                 }}>
                                     <img src={Notififtaions} alt={'notifications placeholder'} style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
                                 </Card>
-                                <Typography variant="h6" style={{ textAlign: 'center', paddingTop: 216 }}>
+                                <Typography variant="h6" style={{ textAlign: 'center', paddingTop: 216, color: themeColor.get({noproxy: true})['activeText'] }}>
                                     No Notifications
                                 </Typography>
                             </div>
