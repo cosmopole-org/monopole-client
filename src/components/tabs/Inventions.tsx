@@ -1,5 +1,4 @@
 import { Add } from "@mui/icons-material"
-import MachineTag from "../custom/components/MachineTag"
 import MachineTag2 from "../custom/components/MachineTag2"
 import SigmaFab from "../custom/elements/SigmaFab"
 import { SigmaRouter } from "../../App"

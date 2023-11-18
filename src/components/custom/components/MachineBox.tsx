@@ -18,8 +18,8 @@ const MachineBox = (props: { shown: boolean, onClose: () => void, createWorker: 
                 PaperProps={{
                     style: {
                         borderRadius: '24px 24px 0px 0px',
-                        minHeight: window.innerHeight * 45 / 100 + 'px',
-                        height: window.innerHeight * 45 / 100 + 'px',
+                        minHeight: window.innerHeight * 70 / 100 + 'px',
+                        height: window.innerHeight * 70 / 100 + 'px',
                         backgroundColor: themeColor.get({ noproxy: true })[50]
                     }
                 }}
@@ -29,7 +29,7 @@ const MachineBox = (props: { shown: boolean, onClose: () => void, createWorker: 
                 </div>
                 <div style={{
                     width: '100%', height: '100%', overflowY: 'auto', display: 'flex', flexWrap: 'wrap',
-                    textAlign: 'center', justifyContent: 'center', alignItems: 'center'
+                    textAlign: 'center', justifyContent: 'center', alignItems: 'center', alignContent: 'flex-start'
                 }}>
                     {
                         Object.values(myMachines).map((machine: any) => {

@@ -37,7 +37,8 @@ class NetworkDriver {
                 if (body.success) {
                     resolve(body)
                 } else {
-                    reject(body.error)
+                    console.log('error !')
+                    //reject(body.error)
                 }
             })
         })

@@ -14,7 +14,7 @@ const SigmaBottomNavigation = (props: { activeTab: number, items: Array<{ label:
                 value={index}
                 label={<Typography variant={'body2'} style={{ color: props.activeTab === index ? themeColor.get({ noproxy: true })[500] : themeColor.get({ noproxy: true })[400] }}>{item.label}</Typography>}
                 icon={
-                    <div style={{ backgroundColor: props.activeTab === index ? themeColor.get({ noproxy: true })[100] : 'transparent', width: 48, borderRadius: 24 }}>
+                    <div style={{ backgroundColor: props.activeTab === index ? themeColor.get({ noproxy: true })[200] : 'transparent', width: 48, borderRadius: 24 }}>
                         <IconComponent style={{ width: 24, height: 24, fill: props.activeTab === index ? themeColor.get({ noproxy: true })[500] : themeColor.get({ noproxy: true })[400] }} />
                     </div>
                 }
@@ -24,7 +24,7 @@ const SigmaBottomNavigation = (props: { activeTab: number, items: Array<{ label:
     return (
         <BottomNavigation showLabels onChange={(e, newValue) => props.onSwitch(newValue)} value={props.activeTab} component={Paper} elevation={4} style={{
             ...props.style, width: '100%', height: 64, position: 'absolute', bottom: 0, left: 0, borderRadius: 0,
-            backgroundColor: themeColor.get({ noproxy: true })[50], backdropFilter: 'blur(10px)'
+            backgroundColor: themeColor.get({ noproxy: true })[100], backdropFilter: 'blur(10px)'
         }}>
             {children}
         </BottomNavigation>

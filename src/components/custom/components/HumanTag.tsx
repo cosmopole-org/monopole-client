@@ -4,7 +4,7 @@ import { SigmaRouter, themeColor } from "../../../App"
 import SigmaAvatar from "../elements/SigmaAvatar"
 import SigmaFab from "../elements/SigmaFab"
 
-const HumanTag = (props: { onClick?: () => void, human: any }) => {
+const HumanTag = (props: { onClick?: () => void, human: any, caption: string }) => {
     return (
         <div
             style={{
@@ -20,7 +20,7 @@ const HumanTag = (props: { onClick?: () => void, human: any }) => {
                 <Box style={{ marginTop: 16, width: '100%', textAlign: 'center' }}>
                     <Button style={{ borderRadius: 24, width: 'calc(100% - 16px)' }} variant="contained"
                         onClick={props.onClick}>
-                        View
+                        {props.caption}
                     </Button>
                 </Box>
             </Card>

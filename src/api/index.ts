@@ -64,7 +64,7 @@ class Api {
             room: new Services.RoomService(this.storage, this.network, this.memory),
             machine: new Services.MachineService(this.storage, this.network, this.memory),
             worker: new Services.WorkerService(this.storage, this.network, this.memory),
-            invite: new Services.InviteService(this.network)
+            invite: new Services.InviteService(this.storage, this.network, this.memory)
         }
     }
 }

@@ -3,10 +3,11 @@ import SigmaBadgeButton from "../elements/SigmaBadgeButton"
 import { MoreVert } from "@mui/icons-material"
 import { SigmaRouter, themeColor } from "../../../App"
 import SigmaAvatar from "../elements/SigmaAvatar"
+import { api } from "../../.."
 
 const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void, showRating?: boolean }) => {
     return (
-        <Card elevation={0} style={{ ...props.style, position: 'relative', width: 'calc(100% - 32px)', padding: 16, height: 176, backgroundColor: themeColor.get({noproxy: true})[50], borderRadius: 24 }}>
+        <Card elevation={0} style={{ ...props.style, position: 'relative', width: 'calc(100% - 32px)', padding: 16, height: 176, backgroundColor: themeColor.get({ noproxy: true })[50], borderRadius: 24 }}>
             <SigmaAvatar style={{ width: 48, height: 48 }}>
                 {props.tower.title.substring(0, 1)}
             </SigmaAvatar>
@@ -32,7 +33,14 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
             <div style={{ display: 'flex', marginTop: 16 }}>
                 <SigmaBadgeButton caption='View tower' onClick={() => SigmaRouter.navigate('tower', { initialData: { tower: props.tower } })} />
                 <SigmaBadgeButton style={{ marginLeft: 8 }} caption='Open main room' onClick={() => {
-                    //SigmaRouter.navigate('room');
+                    if (props.showRating) {
+                        api.services.room.search({ towerId: props.tower.id, query: '', offset: 0, count: 1 }).then((body: any) => {
+                            let room = body.rooms[0]
+                            SigmaRouter.navigate('room', { initialData: { room } });
+                        })
+                    } else {
+                        SigmaRouter.navigate('room', { initialData: { room: Object.values(api.memory.spaces.get({ noproxy: true })[props.tower.id].rooms)[0] } });
+                    }
                 }} />
             </div>
         </Card>

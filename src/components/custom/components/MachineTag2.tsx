@@ -1,6 +1,6 @@
-import { Code, CopyAll, SmartToy } from "@mui/icons-material"
+import { Code, SmartToy } from "@mui/icons-material"
 import { Box, Button, Card, Typography } from "@mui/material"
-import { SigmaRouter, themeColor } from "../../../App"
+import { themeColor } from "../../../App"
 import SigmaAvatar from "../elements/SigmaAvatar"
 import SigmaFab from "../elements/SigmaFab"
 
@@ -12,7 +12,7 @@ const MachineTag2 = (props: { onClick?: () => void, machine: any, caption: strin
             }}>
             <Card elevation={0} style={{
                 position: 'absolute', left: 8, top: 40, width: 'calc(100% - 16px)', height: 'calc(100% - 40px)',
-                backgroundColor: themeColor.get({ noproxy: true })[props.showDev ? 50 : 100], borderRadius: 24
+                backgroundColor: themeColor.get({ noproxy: true })[props.showDev ? 100 : 100], borderRadius: 24
             }}>
                 <Typography variant={'body1'} style={{ marginTop: 56, width: '100%', textAlign: 'center' }}>
                     {props.machine.name}

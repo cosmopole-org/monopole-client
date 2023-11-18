@@ -4,11 +4,12 @@ import FileCard from "../custom/components/FileCard"
 import FolderCard from "../custom/components/FolderCard"
 import SigmaFab from "../custom/elements/SigmaFab"
 import FilesAddressBar from "../custom/components/FilesAddressBar"
+import { themeColor } from "../../App"
 
 const Files = (props: { show: boolean }) => {
     return (
         <div
-            style={{ width: '100%', height: 'calc(100% - 32px - 16px)', position: 'absolute', left: props.show ? 0 : '-100%', paddingTop: 32 + 16 }}
+            style={{ backgroundColor: themeColor.get({ noproxy: true })[100], width: '100%', height: 'calc(100% - 32px - 16px)', position: 'absolute', left: props.show ? 0 : '-100%', paddingTop: 32 + 16 }}
         >
             <div
                 style={{ width: 'calv(100% - 32px)', height: '100%', paddingTop: 64, position: 'relative', overflowY: 'auto', display: 'flex', flexWrap: 'wrap', alignContent: 'flex-start' }}

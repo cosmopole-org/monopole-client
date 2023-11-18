@@ -1,7 +1,7 @@
 
 import './index.css';
 import SigmaBottomNavigation from '../../custom/elements/SigmaBottomNavigation';
-import { Explore as ExploreIcon, Home as HomeIcon } from '@mui/icons-material';
+import { Explore as ExploreIcon, Home as HomeIcon, Inbox as InboxIcon} from '@mui/icons-material';
 import SliderPage from '../../layouts/SliderPage';
 import Home from '../../tabs/Home';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -9,10 +9,10 @@ import Explore from '../../tabs/Explore';
 import Settings from '../../tabs/Settings';
 import { LeftControlTypes, RightControlTypes, StatusThemes, switchColor, switchLeftControl, switchRightControl, switchTitle } from '../../sections/StatusBar';
 import { Route, Routes, useNavigate } from 'react-router-dom';
-import { Avatar } from '@mui/material';
 import { SigmaRouter, themeColor } from '../../../App';
 import { api } from '../../..';
 import SigmaAvatar from '../../custom/elements/SigmaAvatar';
+import Inbox from '../../tabs/Inbox';
 
 const Main = (props: { id: string, isOnTop: boolean }) => {
     const navigate = useNavigate()
@@ -21,7 +21,8 @@ const Main = (props: { id: string, isOnTop: boolean }) => {
     const updateTitle = useCallback((index: number) => {
         if (index === 0) switchTitle && switchTitle('Explore')
         if (index === 1) switchTitle && switchTitle('Home')
-        if (index === 2) switchTitle && switchTitle('Settings')
+        if (index === 2) switchTitle && switchTitle('Inbox')
+        if (index === 3) switchTitle && switchTitle('Settings')
     }, [value])
     const handleChangeIndex = useCallback((index: number) => {
         if (contentRef.current !== null) {
@@ -31,7 +32,7 @@ const Main = (props: { id: string, isOnTop: boolean }) => {
             content.style.opacity = '0'
             content.style.transform = 'translateY(100px)'
             setTimeout(() => {
-                navigate(['/explore', '/main', '/settings'][index])
+                navigate(['/explore', '/main', '/inbox', '/settings'][index])
                 updateTitle(index)
                 setTimeout(() => {
                     content.style.transition = 'transform .35s, opacity .35s'
@@ -63,7 +64,8 @@ const Main = (props: { id: string, isOnTop: boolean }) => {
                     <Routes>
                         <Route path='/explore' Component={() => <Explore show={value === 0} isOnTop={props.isOnTop} />} />
                         <Route path='/main' Component={() => <Home show={value === 1} isOnTop={props.isOnTop} />} />
-                        <Route path='/settings' Component={() => <Settings show={value === 2} isOnTop={props.isOnTop} />} />
+                        <Route path='/inbox' Component={() => <Inbox show={value === 2} isOnTop={props.isOnTop} />} />
+                        <Route path='/settings' Component={() => <Settings show={value === 3} isOnTop={props.isOnTop} />} />
                     </Routes>
                 </div>
                 <SigmaBottomNavigation
@@ -72,6 +74,7 @@ const Main = (props: { id: string, isOnTop: boolean }) => {
                     items={[
                         { label: 'Explore', icon: ExploreIcon },
                         { label: 'Home', icon: HomeIcon },
+                        { label: 'Inbox', icon: InboxIcon },
                         { label: 'Settings', icon: () => <SigmaAvatar style={{ height: 32, width: 32, marginLeft: 8}}>K</SigmaAvatar> }
                     ]}
                 />

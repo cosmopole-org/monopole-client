@@ -60,7 +60,7 @@ const Tower = (props: { id: string, isOnTop: boolean, tower: any }) => {
                         }
                     }
                 }}>
-                <img ref={headerRef} style={{ opacity: 1, width: '100%', height: 266, position: 'sticky', top: 0, transition: 'opacity .5s' }} src={'https://i.pinimg.com/564x/f3/a8/1f/f3a81f2336f46356da3d848cf4bb32e8.jpg'} alt={'header'} />
+                <img ref={headerRef} style={{ opacity: 1, width: '100%', height: 266, position: 'sticky', top: 0, transition: 'opacity .5s' }} src={'https://i.pinimg.com/564x/c2/fc/8b/c2fc8b9c90dd6cdfd10cc8a0bd09fcd2.jpg'} alt={'header'} />
                 <Timeline
                     style={{
                         minHeight: 'calc(100% - 248px)', width: 'calc(100% - 32px)', background: themeColor.get({ noproxy: true })[50],

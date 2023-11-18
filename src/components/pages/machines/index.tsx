@@ -19,13 +19,13 @@ const Machines = (props: { id: string, isOnTop: boolean }) => {
       switchLeftControl && switchLeftControl(LeftControlTypes.BACK, close)
       switchRightControl && switchRightControl(RightControlTypes.NONE)
       switchTitle && switchTitle('Machines')
-      switchColor && switchColor(themeColor.get({noproxy: true})[500], StatusThemes.DARK)
+      switchColor && switchColor(themeColor.get({ noproxy: true })[500], StatusThemes.DARK)
     }
   }, [props.isOnTop])
   return (
     <SliderPage id={props.id}>
       <div style={{
-        backgroundColor: '#fff', position: 'relative', width: '100%', height: '100%', zIndex: 2, transition: 'opacity .25s',
+        backgroundColor: themeColor.get({ noproxy: true })[50], position: 'relative', width: '100%', height: '100%', zIndex: 2, transition: 'opacity .25s',
       }}>
         <div style={{ width: '100%', height: `calc(100% - ${statusbarHeight() + 16}px)`, paddingTop: statusbarHeight() + 16 }}>
           <Inventions show={activeTab === 'inventions'} />
@@ -33,7 +33,7 @@ const Machines = (props: { id: string, isOnTop: boolean }) => {
         </div>
         <Paper
           style={{
-            borderRadius: 0, width: '100%', height: 'auto', paddingTop: statusbarHeight() + 16, position: 'absolute', left: 0, top: 0, backgroundColor: themeColor.get({noproxy: true})[50]
+            borderRadius: 0, width: '100%', height: 'auto', paddingTop: statusbarHeight() + 16, position: 'absolute', left: 0, top: 0, backgroundColor: themeColor.get({ noproxy: true })[50]
           }}
         >
           <SigmaTabs

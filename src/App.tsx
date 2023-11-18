@@ -23,6 +23,7 @@ import Machines from './components/pages/machines';
 import CreateMachine from './components/forms/createMachine';
 import { hookstate } from '@hookstate/core';
 import { switchColor } from './components/sections/StatusBar';
+import TowerPicker from './components/pages/TowerPicker';
 
 const useForceUpdate = () => {
     const [value, setValue] = useState(0); // integer state
@@ -83,6 +84,7 @@ let pages: { [id: string]: any } = {
     'tower': Tower,
     'profile': Profile,
     'machines': Machines,
+    'towerPicker': TowerPicker,
     // forms
     'createTower': CreateTower,
     'createRoom': CreateRoom,

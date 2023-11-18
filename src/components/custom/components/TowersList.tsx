@@ -18,7 +18,7 @@ const TowersList = (props: { towers: Array<any>, hasFocus: boolean, showRating: 
             ref={props.towersContainerRef}
             style={{
                 ...props.overridenStyle,
-                width: '100%', height: `calc(100% - ${148 + statusbarHeight()}px)`,
+                width: '100%', height: `calc(100% - ${200 + statusbarHeight()}px)`,
                 position: 'absolute',
                 left: 0,
                 top: 0,

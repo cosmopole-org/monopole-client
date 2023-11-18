@@ -23,6 +23,7 @@ const Home = (props: { isOnTop: boolean, show: boolean }) => {
     const allSpaces = useHookstate(api.memory.spaces).get({ noproxy: true })
     const [searchText, setSearchText] = useState('')
     const containerRef = useRef(null)
+    const headerRef = useRef(null)
     const spaces = Object.values(allSpaces).filter(tower => tower.title.includes(searchText))
     let TowersList = useTowersList(
         (dy: number, v: boolean, collapsibleScrollTop: number) => {
@@ -33,10 +34,17 @@ const Home = (props: { isOnTop: boolean, show: boolean }) => {
         (scrollTop: number) => {
             if (props.show) {
                 savedSCrollTop = scrollTop
+                if (headerRef.current !== null) {
+                    if (scrollTop > 64) {
+                        (headerRef.current as HTMLElement).style.opacity = '0'
+                    } else {
+                        (headerRef.current as HTMLElement).style.opacity = '1'
+                    }
+                }
             }
         },
         savedSCrollTop,
-        { paddingTop: 148 + statusbarHeight() },
+        { paddingTop: 200 + statusbarHeight() },
         80,
         false,
         props.show,
@@ -55,7 +63,8 @@ const Home = (props: { isOnTop: boolean, show: boolean }) => {
         }
     }, [props.show, props.isOnTop])
     return (
-        <div ref={containerRef} style={{ position: 'relative', width: '100%', height: 'calc(100% - 64px)' }}>
+        <div ref={containerRef} style={{ backgroundColor: '#fff', overflowY: 'auto', position: 'relative', width: '100%', height: 'calc(100% - 64px)', zIndex: 2 }}>
+            <img ref={headerRef} style={{ opacity: 1, width: '100%', height: 266, position: 'sticky', top: 0, transition: 'opacity .5s' }} src={'https://i.pinimg.com/564x/c2/fc/8b/c2fc8b9c90dd6cdfd10cc8a0bd09fcd2.jpg'} alt={'header'} />
             <PulseBar.Component />
             <TowersList.Component />
             <SearchBar containerRef={SearchBarHandler.searchContainerRef} placeHolder={'Search Towers...'} onSearch={(text: string) => setSearchText(text)} />
