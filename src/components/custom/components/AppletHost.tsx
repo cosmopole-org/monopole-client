@@ -1,6 +1,7 @@
 import MwcDriver from "applet-mwc"
 import { useEffect, useRef } from "react"
 import { Applet, Controls } from "applet-vm"
+import Native from "./Native"
 
 let hostLoaded: { [id: string]: boolean } = {}
 
@@ -15,10 +16,11 @@ const Host = (props: { appletKey: string, code: string, index: number, entry: st
     useEffect(() => {
         hostLoaded[props.appletKey] = true
         appletRef.current.fill(props.code)
+        appletRef.current.setContextBuilder((mod) => new Native(mod, Controls))
         let root = document.getElementById(hostContainerrId)
         if (root !== null) {
             let driver = new MwcDriver(appletRef.current, root)
-            driver.start(props.entry, Controls)
+            driver.start(props.entry)
         }
         setTimeout(() => {
             if (rootRef.current !== null) {

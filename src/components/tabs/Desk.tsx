@@ -5,6 +5,7 @@ import useDesk from "../hooks/useDesk";
 import { api } from "../..";
 import { hookstate, useHookstate } from "@hookstate/core";
 import { openAppletSheet } from "../custom/components/AppletSheet";
+import { themeColor } from "../../App";
 
 let cachedWorkers: Array<any> = []
 
@@ -72,7 +73,7 @@ export const addWidgetToSDesktop = (room: any, machineId: string) => {
         }
     }).then((body: any) => {
         cachedWorkers.push(body.worker)
-        api.services.worker.use({ towerId: room.towerId, roomId: room.id, workerId: body.worker.id, packet: { tag: 'get/widget' } })
+        api.services.worker.use({ towerId: room.towerId, roomId: room.id, workerId: body.worker.id, packet: { tag: 'get/widget', colors: themeColor.get({ noproxy: true }) } })
     }).catch(ex => {
         console.log(ex)
     })
@@ -106,7 +107,7 @@ const Desk = (props: { show: boolean, room: any }) => {
             cachedWorkers = body.workers
             desktop.fill(buildLayoutOfWorkers())
             cachedWorkers.forEach(worker => {
-                api.services.worker.use({ towerId: props.room.towerId, roomId: props.room.id, workerId: worker.id, packet: { tag: 'get/widget' } })
+                api.services.worker.use({ towerId: props.room.towerId, roomId: props.room.id, workerId: worker.id, packet: { tag: 'get/widget', colors: themeColor.get({ noproxy: true }) } })
             })
         })
         setTimeout(() => {

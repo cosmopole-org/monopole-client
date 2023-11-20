@@ -52,6 +52,8 @@ export let themeColorName = hookstate(tempThemeColorName)
 export let themeColor = hookstate(tempThemeColorName === 'night' ? fixedNightColor : (colors as { [id: string]: any })[tempThemeColorName])
 export let themeBasedTextColor = hookstate('#333')
 export let themeColorSecGroup = hookstate(colors.blue)
+var metaThemeColor = document.querySelector("meta[name=theme-color]");
+metaThemeColor?.setAttribute("content", tempThemeColorName === 'night' ? fixedNightColor[50] : (colors as { [id: string]: any })[tempThemeColorName][50]);
 const headerImageAddresses = {
     light: 'https://i.pinimg.com/564x/c2/fc/8b/c2fc8b9c90dd6cdfd10cc8a0bd09fcd2.jpg',
     dark: 'https://i.pinimg.com/564x/47/17/86/47178626549fe6895a69f65fbb877054.jpg'

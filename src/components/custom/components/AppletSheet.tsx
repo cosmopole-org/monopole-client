@@ -15,7 +15,7 @@ const AppletSheet = () => {
             setCode(data.code)
         })
         setShown(true)
-        api.services.worker.use({ towerId: room.towerId, roomId: room.id, workerId, packet: { tag: 'get/applet' } })
+        api.services.worker.use({ towerId: room.towerId, roomId: room.id, workerId, packet: { tag: 'get/applet', colors: themeColor.get({ noproxy: true }) } })
     }
     return (
         <React.Fragment>
