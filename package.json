@@ -15,7 +15,7 @@
     "@types/react": "^18.2.33",
     "@types/react-dom": "^18.2.14",
     "applet-mwc": "^0.2.2",
-    "applet-vm": "^0.2.6",
+    "applet-vm": "^0.2.7",
     "css-doodle": "^0.37.3",
     "lovefield": "^2.1.12",
     "react": "^17.0.0 || ^18.0.0",
