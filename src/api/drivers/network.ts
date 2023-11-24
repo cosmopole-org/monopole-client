@@ -20,16 +20,24 @@ class NetworkDriver {
         this.socket.on('update', (update: any) => {
             console.log(update)
             let callback = this.updateListeners[update.type]
-            callback && callback[update.packet.tag] && callback[update.packet.tag](update)
+            if (callback) {
+                if (update.packet?.tag) {
+                    callback[update.packet.tag] && callback[update.packet.tag](update)
+                } else {
+                    Object.values(callback).map(subCallback => {
+                        subCallback(update)
+                    })
+                }
+            }
         })
     }
 
     addUpdateListener(key: string, callback: (update: any) => void, tag: string) {
         if (!this.updateListeners[key]) this.updateListeners[key] = {}
-        this.updateListeners[key][tag] = callback
+        this.updateListeners[key][tag !== undefined ? tag : Math.random()] = callback
     }
 
-    request(path: string, body: any): Promise<void> {
+    request(path: string, body: any): Promise<any> {
         console.log('requesting', path, body)
         return new Promise((resolve, reject) => {
             this.socket.emit(path, body, Math.random(), (body: any) => {

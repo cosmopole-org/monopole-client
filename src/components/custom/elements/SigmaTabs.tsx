@@ -6,6 +6,7 @@ interface SigmaTabsProps {
     children?: ReactNode | Array<ReactNode>;
     value: string;
     onChange: (event: React.SyntheticEvent, newValue: string) => void;
+    style?: any
 }
 
 const SigmaTabs = styled((props: SigmaTabsProps) => (

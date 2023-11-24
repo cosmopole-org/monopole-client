@@ -5,6 +5,8 @@ import RoomService from "./room.service"
 import InviteService from "./invite.service"
 import MachineService from "./machine.service"
 import WorkerService from "./worker.service"
+import MessengerService from "./messenger.service"
+import FileService from "./file.service"
 
 export {
     HumanService,
@@ -12,5 +14,7 @@ export {
     RoomService,
     InviteService,
     MachineService,
-    WorkerService
+    WorkerService,
+    MessengerService,
+    FileService
 }

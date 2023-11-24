@@ -51,9 +51,9 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
             ]
         }
         <div style={{ width: '100%', height: `calc(100% - ${statusbarHeight() + 16}px)`, paddingTop: statusbarHeight() + 16 }}>
-          <Chat show={activeTab === 'chat'} />
+          <Chat show={activeTab === 'chat'} room={props.room} />
           <Desk show={activeTab === 'desktop'} room={props.room} />
-          <Files show={activeTab === 'files'} />
+          <Files show={activeTab === 'files'} room={props.room} />
         </div>
         <Paper
           style={{
@@ -65,6 +65,7 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
               setActiveTab(newValue)
             }}
             value={activeTab}
+            style={{ position: 'relative', zIndex: 2 }}
           >
             <SigmaTab icon={<><Dashboard /><Typography variant={'body2'} style={{ marginLeft: 4, marginTop: 2 }}>Desktop</Typography></>} value={'desktop'} />
             <SigmaTab icon={<><Message /><Typography variant={'body2'} style={{ marginLeft: 4, marginTop: 2 }}>Chat</Typography></>} value={'chat'} />

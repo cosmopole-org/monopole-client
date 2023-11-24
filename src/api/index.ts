@@ -24,8 +24,9 @@ class Api {
         room: Services.RoomService,
         invite: Services.InviteService,
         machine: Services.MachineService,
-        worker: Services.WorkerService
-
+        worker: Services.WorkerService,
+        messenger: Services.MessengerService
+        file: Services.FileService
     }
     memory: {
         myHumanId: State<any>,
@@ -64,7 +65,9 @@ class Api {
             room: new Services.RoomService(this.storage, this.network, this.memory),
             machine: new Services.MachineService(this.storage, this.network, this.memory),
             worker: new Services.WorkerService(this.storage, this.network, this.memory),
-            invite: new Services.InviteService(this.storage, this.network, this.memory)
+            invite: new Services.InviteService(this.storage, this.network, this.memory),
+            messenger: new Services.MessengerService(this.storage, this.network, this.memory),
+            file: new Services.FileService(this.storage, this.network, this.memory)
         }
     }
 }
