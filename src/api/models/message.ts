@@ -10,7 +10,8 @@ interface IMessage {
         docId?: string,
         stickerId?: string,
     },
-    meta: any
+    meta: any,
+    isDummy?: boolean
 }
 
 export default IMessage

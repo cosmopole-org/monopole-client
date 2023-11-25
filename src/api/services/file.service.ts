@@ -1,11 +1,12 @@
 import { State } from "@hookstate/core"
-import { DatabaseDriver, NetworkDriver } from "../drivers"
+import { CacheDriver, DatabaseDriver, NetworkDriver } from "../drivers"
 import IMessage from "../models/message"
 
 class FileService {
 
     storage: DatabaseDriver
     network: NetworkDriver
+    cache: CacheDriver
     memory: {
         myHumanId: State<any>,
         spaces: State<any>,
@@ -21,6 +22,7 @@ class FileService {
     constructor(
         storage: DatabaseDriver,
         network: NetworkDriver,
+        cache: CacheDriver,
         memory: {
             myHumanId: State<any>,
             spaces: State<any>,
@@ -36,6 +38,53 @@ class FileService {
         this.storage = storage
         this.network = network
         this.memory = memory
+        this.cache = cache
+
+        this.network.socket.on('onPreviewReceived', async body => {
+            let { docId, data, first } = body
+            if (first) {
+                this.cache.put(docId, new Blob([data], { type: this.transferringFileTypes[docId] }))
+            } else {
+                let previous = this.cache.get(docId)
+                if (previous) {
+                    this.cache.put(docId, new Blob([previous, data], { type: this.transferringFileTypes[docId] }))
+                } else {
+                    this.cache.put(docId, new Blob([data], { type: this.transferringFileTypes[docId] }))
+                }
+            }
+            let callbacks = this.fileTransferListeners[docId]
+            if (callbacks) {
+                Object.values(callbacks).forEach(callback => {
+                    callback({ data: this.cache.get(docId) })
+                })
+            }
+        })
+        this.network.socket.on('onDocumentRecevied', body => {
+            let { docId, data, first } = body
+            if (first) {
+                this.cache.put(docId + '-original', new Blob([data], { type: this.transferringFileTypes[docId] }))
+            } else {
+                let previous = this.cache.get(docId + '-original')
+                if (previous) {
+                    this.cache.put(docId + '-original', new Blob([previous, data], { type: this.transferringFileTypes[docId] }))
+                } else {
+                    this.cache.put(docId + '-original', new Blob([data], { type: this.transferringFileTypes[docId] }))
+                }
+            }
+            let callbacks = this.fileTransferListeners[docId + '-original']
+            if (callbacks) {
+                Object.values(callbacks).forEach(callback => {
+                    callback({ data: this.cache.get(docId + '-original') })
+                })
+            }
+        })
+    }
+
+    transferringFileTypes: { [id: string]: string } = {}
+    fileTransferListeners: { [id: string]: { [id: string]: (body: { data: Blob }) => void } } = {}
+    listenToFileTransfer(tag: string, docId: string, callback: (body: { data: Blob }) => void) {
+        if (!this.fileTransferListeners[docId]) this.fileTransferListeners[docId] = {}
+        this.fileTransferListeners[docId][tag] = callback
     }
 
     async create(data: { towerId: string, roomId: string, parentFolderId: string, title: string }): Promise<IMessage> {
@@ -43,7 +92,7 @@ class FileService {
     }
 
     async updateFolder(data: { towerId: string, roomId: string, folderId: string, folder: { title: string } }): Promise<any> {
-        return this.network.request('file/updateFolder', { towerId: data.towerId, roomId: data.roomId, folderId: data.folderId, folder: data.folder})
+        return this.network.request('file/updateFolder', { towerId: data.towerId, roomId: data.roomId, folderId: data.folderId, folder: data.folder })
     }
 
     async getFolder(data: { towerId: string, roomId: string, folderId: string }): Promise<any> {
@@ -67,7 +116,18 @@ class FileService {
     }
 
     async prevDown(data: { towerId: string, roomId: string, documentId: string }): Promise<any> {
-        return this.network.request('file/prevDown', { towerId: data.towerId, roomId: data.roomId, documentId: data.documentId })
+        this.transferringFileTypes[data.documentId] = 'image/jpg'
+        let cached = this.cache.get(data.documentId)
+        if (cached) {
+            let callbacks = this.fileTransferListeners[data.documentId]
+            if (callbacks) {
+                Object.values(callbacks).forEach(callback => {
+                    callback({ data: this.cache.get(data.documentId) })
+                })
+            }
+        } else {
+            return this.network.request('file/prevDown', { towerId: data.towerId, roomId: data.roomId, documentId: data.documentId })
+        }
     }
 
     async docDown(data: { towerId: string, roomId: string, documentId: string }): Promise<any> {

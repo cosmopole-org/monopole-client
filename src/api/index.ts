@@ -1,6 +1,6 @@
 
 import { State, hookstate } from "@hookstate/core";
-import { DatabaseDriver, NetworkDriver } from "./drivers";
+import { CacheDriver, DatabaseDriver, NetworkDriver } from "./drivers";
 import * as Services from "./services";
 import memoryUtils from "./utils/memory";
 import ITower from "./models/tower";
@@ -18,6 +18,7 @@ class Api {
 
     storage: DatabaseDriver
     network: NetworkDriver
+    cache: CacheDriver
     services: {
         human: Services.HumanService,
         tower: Services.TowerService,
@@ -33,6 +34,7 @@ class Api {
         spaces: State<{ [id: string]: ITower }>,
         humans: State<{ [id: string]: IHuman }>,
         machines: State<any>,
+        messages: { [id: string]: any },
         known: {
             spaces: State<any>,
             humans: State<any>,
@@ -42,15 +44,18 @@ class Api {
 
     constructor(storage: DatabaseDriver) {
         this.storage = storage
+        this.cache = new CacheDriver()
         let myHumanId: string | undefined = undefined
         let spaces: { [id: string]: ITower } = {}
         let humans: { [id: string]: IHuman } = {}
         let machines: { [id: string]: IHuman } = {}
+        let messages: { [id: string]: any } = {}
         this.memory = {
             myHumanId: hookstate(myHumanId),
             spaces: hookstate(spaces),
             humans: hookstate(humans),
             machines: hookstate(machines),
+            messages: messages,
             known: {
                 spaces: hookstate(spaces),
                 humans: hookstate(humans),
@@ -67,7 +72,7 @@ class Api {
             worker: new Services.WorkerService(this.storage, this.network, this.memory),
             invite: new Services.InviteService(this.storage, this.network, this.memory),
             messenger: new Services.MessengerService(this.storage, this.network, this.memory),
-            file: new Services.FileService(this.storage, this.network, this.memory)
+            file: new Services.FileService(this.storage, this.network, this.cache, this.memory)
         }
     }
 }

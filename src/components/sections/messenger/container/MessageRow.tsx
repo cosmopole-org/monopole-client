@@ -5,10 +5,11 @@ import {
 import SigmaAvatar from "../../../custom/elements/SigmaAvatar";
 import IMessage from "../../../../api/models/message";
 
-const MessageRow = (props: { message: IMessage, side: string, children: any, lastOfSection?: boolean, firstOfSection?: boolean }) => {
+const MessageRow = (props: { message: IMessage, side: string, children: any, lastOfSection?: boolean, firstOfSection?: boolean, onMessageSelect: (message: IMessage) => void }) => {
     return (
         <Fade in={true}>
             <div
+                onClick={() => props.onMessageSelect(props.message)}
                 style={{
                     height: `calc(100% - 16px - ${props.message.meta?.value2 ? props.message.meta.value2 : 0}px)`,
                     width: 'auto',
@@ -35,7 +36,8 @@ const MessageRow = (props: { message: IMessage, side: string, children: any, las
                 {props.children}
                 {
                     (props.side === 'right') ? (
-                        <div style={{ marginTop: 'auto', marginBottom: 0, width: props.lastOfSection ? 0 : 18, height: 16 }}>
+                        <div style={{ marginTop: 'auto', marginBottom: 0, minWidth: props.lastOfSection ? 0 : 16,
+                        width: props.lastOfSection ? 0 : 16, height: 16 }}>
 
                         </div>
                     ) : null

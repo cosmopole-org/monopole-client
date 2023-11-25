@@ -7,7 +7,7 @@ import { History } from "@mui/icons-material";
 
 export let shouldShowAnim = () => true;
 
-const Messages = (props: { room: IRoom, messages: Array<IMessage> }) => {
+const Messages = (props: { room: IRoom, messages: Array<IMessage>, onMessageSelect: (message: IMessage) => void }) => {
 
     const holderRef = useRef(null);
     const visibleItems = useRef({});
@@ -23,6 +23,7 @@ const Messages = (props: { room: IRoom, messages: Array<IMessage> }) => {
                 firstVisibleItemIndex={firstVisibleItemIndex.current}
                 dayViewer={dayViewer}
                 room={props.room}
+                onMessageSelect={props.onMessageSelect}
             />
             <div style={{ width: '100%', height: 56 }} />
             <Paper

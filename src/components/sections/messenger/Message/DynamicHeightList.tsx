@@ -1,56 +1,36 @@
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { List, CellMeasurer, CellMeasurerCache, AutoSizer } from 'react-virtualized';
 import IRoom from "../../../../api/models/room";
 import IMessage from "../../../../api/models/message";
 import Message from "../embedded/Message";
 import { useHookstate } from "@hookstate/core";
 import { api } from "../../../..";
-import $ from 'jquery';
 import { MessageTypes } from "../../../../api/services/messenger.service";
 import utils from "../../../utils";
 
-let canvas = document.createElement('canvas');
-let ctx = canvas.getContext("2d");
-
-/* takes a string and a maxWidth and splits the text into lines */
-// ctx is available in the parent scope. 
-function fragmentText(text: string | undefined, maxWidth: number) {
-    if (text === undefined) return 1;
-    let arr = text.split(' ');
-    let lineCount = 0;
-    let temp = 0;
-    arr.forEach(word => {
-        if (ctx) {
-            let wordWidth = ctx.measureText(word + ' ').width * 1.7;
-            if (wordWidth > maxWidth) {
-                while (wordWidth > maxWidth) {
-                    lineCount++;
-                    wordWidth -= maxWidth;
-                }
-                temp = wordWidth;
-            } else if (temp + wordWidth > maxWidth) {
-                lineCount++;
-                temp = wordWidth;
-            } else {
-                temp += wordWidth;
-            }
-            temp += 20;
-        }
-    });
-    if (temp > 0) lineCount += 1;
-    return lineCount;
+let _cache: any
+export let chatUtils = {
+    clearMessageCache: (index: number) => {
+        _cache.current?.clear(index)
+    },
+    scrollToChatEnd: () => { }
 }
 
-const DynamicHeightList = (props: { room: IRoom, messages: Array<IMessage>, messageCount: number, visibleItems: any, firstVisibleItemIndex: number, dayViewer: any }) => {
+const DynamicHeightList = (props: { room: IRoom, messages: Array<IMessage>, messageCount: number, visibleItems: any, firstVisibleItemIndex: number, dayViewer: any, onMessageSelect: (message: IMessage) => void }) => {
 
     let { messages } = props
     const listRef = useRef(null)
+    const myHumanId = useHookstate(api.memory.myHumanId).get({ noproxy: true })
 
-    useEffect(() => {
+    chatUtils.scrollToChatEnd = () => {
         if (listRef.current) {
             (listRef.current as any).scrollToRow(messages.length)
         }
+    }
+
+    useEffect(() => {
+        chatUtils.scrollToChatEnd()
         messages.forEach((message: IMessage, index: number) => {
             if ((message.type === MessageTypes.TEXT) && (message.data.text !== undefined) && (message.meta?.measuredHeight === undefined)) {
                 utils.sizer.measureTextMessageHeight(message, index, messages)
@@ -58,8 +38,7 @@ const DynamicHeightList = (props: { room: IRoom, messages: Array<IMessage>, mess
         })
     }, [messages])
 
-    const myHumanId = useHookstate(api.memory.myHumanId).get({ noproxy: true })
-    let _cache = useRef(
+    _cache = useRef(
         new CellMeasurerCache({
             fixedWidth: true,
             keyMapper: (index: number) => messages[index]?.id
@@ -93,6 +72,7 @@ const DynamicHeightList = (props: { room: IRoom, messages: Array<IMessage>, mess
                                 messageType={message.type}
                                 firstOfSection={isFirstOfSection}
                                 lastOfSection={isLastOfSection}
+                                onMessageSelect={props.onMessageSelect}
                             />
                         </div>
                     )}
@@ -108,10 +88,13 @@ const DynamicHeightList = (props: { room: IRoom, messages: Array<IMessage>, mess
                     <List
                         ref={element => {
                             if (element !== null) {
+                                let prevValue = listRef.current
                                 listRef.current = element as any;
-                                setTimeout(() => {
-                                    listRef.current && (listRef.current as any).scrollToRow(messages.length);
-                                });
+                                if (prevValue === null) {
+                                    setTimeout(() => {
+                                        listRef.current && (listRef.current as any).scrollToRow(messages.length);
+                                    });
+                                }
                             }
                         }}
                         key={'chat-messages-dynamic-list'}

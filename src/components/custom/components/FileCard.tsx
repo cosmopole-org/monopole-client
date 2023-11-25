@@ -3,26 +3,39 @@ import { Description, MoreVert, Photo, Straighten } from "@mui/icons-material"
 import SigmaChip from "../elements/SigmaChip"
 import { themeColor } from "../../../App"
 import SigmaAvatar from "../elements/SigmaAvatar"
+import Image from "./Image"
+import { useRef } from "react"
+import IRoom from "../../../api/models/room"
+import formatter from "../../utils/formatter"
 
-const FileCard = (props: { style?: any, onMoreClicked?: () => void }) => {
+const FileCard = (props: { style?: any, onMoreClicked?: () => void, doc: any, room: IRoom }) => {
+    const imageKey = useRef(props.doc.id + '-' + Math.random())
     return (
-        <Card elevation={0} style={{ ...props.style, position: 'relative', width: 'calc(100% - 64px)', padding: 16, height: 96, backgroundColor: themeColor.get({noproxy: true})[50], borderRadius: 24 }}>
-            <div style={{width: '100%', height: 'auto', display: 'flex'}}>
-            <SigmaAvatar style={{ width: 48, height: 48 }}>
-                <Photo />
-            </SigmaAvatar>
-            <Typography style={{ marginTop: 12, marginLeft: 8 }}>
-                Sample File
-            </Typography>
-            <IconButton style={{ position: 'absolute', right: 16, top: 24 }} onClick={() => {
-                props.onMoreClicked && props.onMoreClicked()
-            }}>
-                <MoreVert />
-            </IconButton>
+        <Card elevation={0} style={{ ...props.style, position: 'relative', width: 'calc(100% - 64px)', padding: 16, height: 96, backgroundColor: themeColor.get({ noproxy: true })[50], borderRadius: 24 }}>
+            <div style={{ width: '100%', height: 'auto', display: 'flex' }}>
+                <SigmaAvatar style={{ width: 48, height: 48 }}>
+                    <Image
+                        key={imageKey.current}
+                        docId={props.doc.id}
+                        room={props.room} isPreview
+                        style={{
+                            width: '100%',
+                            height: '100%'
+                        }}
+                    />
+                </SigmaAvatar>
+                <Typography style={{ marginTop: 12, marginLeft: 8 }}>
+                    Sample File
+                </Typography>
+                <IconButton style={{ position: 'absolute', right: 16, top: 24 }} onClick={() => {
+                    props.onMoreClicked && props.onMoreClicked()
+                }}>
+                    <MoreVert />
+                </IconButton>
             </div>
             <div style={{ display: 'flex', marginTop: 16 }}>
-                <SigmaChip caption='Image / PNG' icon={<Description />}  />
-                <SigmaChip style={{ marginLeft: 8 }} caption='1 MB' icon={<Straighten />} />
+                <SigmaChip caption={`${props.doc.type} / ${props.doc.metadata.extension}`} icon={<Description />} />
+                <SigmaChip style={{ marginLeft: 8 }} caption={formatter.formatBytes(props.doc.metadata.size)} icon={<Straighten />} />
             </div>
         </Card>
     )

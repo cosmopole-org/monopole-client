@@ -1,3 +1,4 @@
+import { api } from "../.."
 import IMessage from "../../api/models/message"
 
 const measureTextMessageHeight = (message: IMessage, index: number, messages: Array<IMessage>) => {
@@ -10,13 +11,13 @@ const measureTextMessageHeight = (message: IMessage, index: number, messages: Ar
     let messageData = document.getElementById('lab-message-data')
     let messageCard = document.getElementById('lab-message-card')
     if (messageData && messageRow && messageFS && messageCard) {
-        messageRow.style.marginTop = isFirstOfSection ? '16px' : '4px'
+        messageRow.style.marginTop = '16px'
         messageFS.style.width = isLastOfSection ? '0px' : '18px'
         messageCard.className = "bubble" + (isLastOfSection ? (" " + "right") : "")
+        messageCard.style.width = `${message.authorId === api.memory.myHumanId.get({ noproxy: true }) ? 300 : 250}px`
         messageData.innerHTML = message.data.text as string
-        let value1 = messageRow.offsetHeight + Math.floor(messageData.offsetHeight / 24) * 4
-        let value2 = 4 + (isFirstOfSection ? 12 : 0)
-        message.meta = { value1, value2, measuredHeight: value1 + value2 }
+        let value1 = messageRow.offsetHeight + Math.floor(messageData.offsetHeight / 24) * 4 + 12
+        message.meta = { value1, value2: 16, measuredHeight: value1 + 16 }
     }
 }
 
