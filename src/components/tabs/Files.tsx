@@ -13,6 +13,9 @@ import { useHookstate } from "@hookstate/core"
 import { CircularProgress } from "@mui/material"
 import FolderMenu from "../custom/components/FolderMenu"
 import Uploader from "../custom/components/Uploader"
+import FileMenu from "../custom/components/FileMenu"
+
+export let notifyNewFileUploaded = (doc: any) => {}
 
 const Files = (props: { show: boolean, room: IRoom }) => {
     const inputFile = useRef(null)
@@ -21,8 +24,14 @@ const Files = (props: { show: boolean, room: IRoom }) => {
     let [folderData, setFolderData]: [any, (fd: any) => void] = useState(undefined)
     let [loading, setLoading] = useState(false)
     let [pointedFolder, setPointedFolder] = useState(undefined)
+    let [pointedFile, setPointedFile] = useState(undefined)
     let pathStack = useHookstate(defaultPathValue)
     let path: Array<{ title: string, folderId: string }> = [...pathStack.get({ noproxy: true })]
+    notifyNewFileUploaded = (doc: any) => {
+        folderData.subDocIds.push(doc.id)
+        folderData.subDocs.push(doc)
+        setFolderData({ ...folderData })
+    }
     useEffect(() => {
         setLoading(true)
         api.services.file.getFolder({ towerId: props.room.towerId, roomId: props.room.id, folderId }).then((body: any) => {
@@ -35,10 +44,12 @@ const Files = (props: { show: boolean, room: IRoom }) => {
         <div
             style={{ backgroundColor: themeColor.get({ noproxy: true })[100], width: '100%', height: 'calc(100% - 32px - 16px - 56px)', position: 'absolute', left: props.show ? 0 : '-100%', paddingTop: 32 + 16 }}
         >
-            <Uploader folderId={folderId} inputFile={inputFile} room={props.room} onUploaded={(doc: any) => {
-                folderData.subDocIds.push(doc.id)
-                folderData.subDocs.push(doc)
-                setFolderData({ ...folderData })
+            <Uploader folderId={folderId} inputFile={inputFile} room={props.room} onSelect={(file: any) => {
+                api.services.file.upload({ towerId: props.room.towerId, roomId: props.room.id, file, folderId }).then((doc: any) => {
+                    folderData.subDocIds.push(doc.id)
+                    folderData.subDocs.push(doc)
+                    setFolderData({ ...folderData })
+                })
             }} />
             <div
                 style={{ width: '100%', height: 'calc(100% - 56px)', paddingTop: 64, position: 'relative', overflowY: 'auto', display: 'flex', flexWrap: 'wrap', alignContent: 'flex-start' }}
@@ -54,7 +65,13 @@ const Files = (props: { show: boolean, room: IRoom }) => {
                 }
                 {
                     folderData?.subDocs?.map((subDoc: any) => (
-                        <FileCard room={props.room} doc={subDoc} key={`file-${subDoc.id}`} style={{ marginTop: 16, marginLeft: 16, borderRadius: 8, width: 'calc(33% - 20px)' }} />
+                        <FileCard
+                            onMoreClicked={() => setPointedFile(subDoc as any)}
+                            room={props.room}
+                            doc={subDoc}
+                            key={`file-${subDoc.id}`}
+                            style={{ marginTop: 16, marginLeft: 16, borderRadius: 8, width: 'calc(33% - 20px)' }}
+                        />
                     ))
                 }
                 <div style={{ width: '100%', height: 32 }} />
@@ -122,15 +139,46 @@ const Files = (props: { show: boolean, room: IRoom }) => {
                 }}
                 onDelete={() => {
                     let selectedFolder: any = pointedFolder
-                    api.services.file.removeFolder({
+                    if (window.confirm('do you want to delete this folder ?')) {
+                        api.services.file.removeFolder({
+                            towerId: props.room.towerId, roomId: props.room.id,
+                            folderId: (pointedFolder as any).id
+                        }).then((body: any) => {
+                            folderData.subFolders = folderData.subFolders.filter((f: IFolder) => f.id !== selectedFolder.id)
+                            setFolderData({ ...folderData })
+                        })
+                    }
+                }}
+                shown={pointedFolder !== undefined}
+            />
+            <FileMenu
+                onClose={() => setPointedFile(undefined)}
+                onRename={() => {
+                    let selectedFile: any = pointedFile
+                    let oldName = selectedFile.metadata.title
+                    let newName = window.prompt('enter new document name:', oldName)
+                    if (!newName || (newName.length === 0) || (newName === oldName)) return;
+                    api.services.file.updateDoc({
                         towerId: props.room.towerId, roomId: props.room.id,
-                        folderId: (pointedFolder as any).id
+                        documentId: selectedFile.id, document: { title: newName }
                     }).then((body: any) => {
-                        folderData.subFolders = folderData.subFolders.filter((f: IFolder) => f.id !== selectedFolder.id)
+                        selectedFile.metadata.title = newName
                         setFolderData({ ...folderData })
                     })
                 }}
-                shown={pointedFolder !== undefined}
+                onDelete={() => {
+                    let selectedFile: any = pointedFile
+                    if (window.confirm('do you want to delete this document ?')) {
+                        api.services.file.removeDoc({
+                            towerId: props.room.towerId, roomId: props.room.id,
+                            documentId: (selectedFile as any).id
+                        }).then((body: any) => {
+                            folderData.subDocs = folderData.subDocs.filter((f: any) => f.id !== selectedFile.id)
+                            setFolderData({ ...folderData })
+                        })
+                    }
+                }}
+                shown={pointedFile !== undefined}
             />
         </div>
     )

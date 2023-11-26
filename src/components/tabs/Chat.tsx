@@ -2,7 +2,7 @@
 import { api } from "../.."
 import IRoom from "../../api/models/room"
 import IMessage from "../../api/models/message"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { hookstate, useHookstate } from "@hookstate/core"
 import middleUtils from "../../api/utils/middle"
 import Messages from "../sections/messenger/Message/Messages"
@@ -16,8 +16,13 @@ import { chatUtils } from "../sections/messenger/Message/DynamicHeightList"
 import { MessageTypes } from "../../api/services/messenger.service"
 import SigmaFab from "../custom/elements/SigmaFab"
 import { Close } from "@mui/icons-material"
+import Uploader from "../custom/components/Uploader"
+import { notifyNewFileUploaded } from "./Files"
+
+const uploads: { [id: string]: { fn: (data: { doc: any, towerId: string, roomId: string }) => void, roomId: string } } = {}
 
 const Chat = (props: { show: boolean, room: IRoom }) => {
+    const inputFile = useRef(null)
     api.services.messenger.check(props.room.id)
     const [pointedPostMessage, setPointedPostMessage] = useState(undefined)
     const [pointedMessage, setPointedMessage]: [any, (message: any) => void] = useState(undefined)
@@ -85,10 +90,42 @@ const Chat = (props: { show: boolean, room: IRoom }) => {
             })
         }
     }, [setPointedPostMessage, setPointedMessage, pointedPostMessage, msgs, messagesList])
+    const onWidgetsClicked = useCallback(() => {
+        inputFile.current && (inputFile.current as HTMLElement).click();
+    }, [setPointedPostMessage, setPointedMessage, pointedPostMessage, msgs, messagesList])
     return (
         <div
             style={{ width: '100%', height: 'calc(100% - 32px - 16px)', position: 'absolute', left: props.show ? 0 : '-100%', paddingTop: 32 + 16 }}
         >
+            <Uploader folderId={props.room.id} inputFile={inputFile} room={props.room} onSelect={(file: any) => {
+                let key = Math.random().toString().substring(2)
+                let draft = middleUtils.dummy.createDummyMessage(props.room.id, 'doc', { docId: key })
+                msgs.merge([draft])
+                uploads[key] = {
+                    fn: (data: { doc: any, towerId: string, roomId: string }) => {
+                        api.services.messenger.create({
+                            towerId: data.towerId,
+                            roomId: data.roomId,
+                            message: { type: 'doc', data: { docId: data.doc.id } }
+                        }).then((body: any) => {
+                            let { message } = body
+                            draft.id = message.id
+                            draft.time = message.time
+                            draft.data.docId = data.doc.id
+                            draft.isDummy = false
+                            msgs.set([...msgs.get({ noproxy: true })])
+                        })
+                    },
+                    roomId: props.room.id
+                }
+                api.services.file.upload({ towerId: props.room.towerId, roomId: props.room.id, file, folderId: props.room.id }).then((doc: any) => {
+                    notifyNewFileUploaded(doc)
+                    let itemUpload = uploads[key]
+                    if (itemUpload && (itemUpload.roomId === props.room.id)) {
+                        itemUpload.fn({ doc, roomId: props.room.id, towerId: props.room.towerId })
+                    }
+                })
+            }} />
             <div
                 style={{ width: '100%', height: 'calc(100% - 56px)', position: 'relative' }}
             >
@@ -125,7 +162,12 @@ const Chat = (props: { show: boolean, room: IRoom }) => {
                             backgroundColor: themeColor.get({ noproxy: true })[100],
                             display: 'flex', paddingTop: 2
                         }}
-                        pointedMessage={pointedPostMessage} action={action} messages={messagesList} onMessageSubmit={onMessageSubmit} />
+                        pointedMessage={pointedPostMessage}
+                        action={action}
+                        messages={messagesList}
+                        onMessageSubmit={onMessageSubmit}
+                        onWidgetsClicked={onWidgetsClicked}
+                    />
                 </div>
             </div>
             <MessageMenu onClose={() => setPointedMessage(undefined)} shown={pointedMessage !== undefined}

@@ -1,6 +1,7 @@
 import { State } from "@hookstate/core"
 import { CacheDriver, DatabaseDriver, NetworkDriver } from "../drivers"
 import IMessage from "../models/message"
+import { api } from "../.."
 
 class FileService {
 
@@ -111,8 +112,8 @@ class FileService {
         return this.network.request('file/uploadData', { towerId: data.towerId, roomId: data.roomId, uploadToken: data.uploadToken, tempDocId: data.tempDocId, data: data.data })
     }
 
-    async endUpload(data: { towerId: string, roomId: string, tempDocId: string, uploadToken: string, extension: string, fileType: string }): Promise<any> {
-        return this.network.request('file/endUpload', { towerId: data.towerId, roomId: data.roomId, uploadToken: data.uploadToken, tempDocId: data.tempDocId, extension: data.extension, fileType: data.fileType })
+    async endUpload(data: { towerId: string, roomId: string, tempDocId: string, uploadToken: string, extension: string, fileType: string, title: string }): Promise<any> {
+        return this.network.request('file/endUpload', { towerId: data.towerId, roomId: data.roomId, uploadToken: data.uploadToken, tempDocId: data.tempDocId, extension: data.extension, fileType: data.fileType, title: data.title })
     }
 
     async prevDown(data: { towerId: string, roomId: string, documentId: string }): Promise<any> {
@@ -136,6 +137,26 @@ class FileService {
 
     async group(data: { towerId: string, roomId: string }): Promise<any> {
         return this.network.request('file/group', { towerId: data.towerId, roomId: data.roomId })
+    }
+
+    async updateDoc(data: { towerId: string, roomId: string, documentId: string, document: any }): Promise<any> {
+        return this.network.request('file/updateDocument', { towerId: data.towerId, roomId: data.roomId, documentId: data.documentId, document: data.document })
+    }
+
+    async removeDoc(data: { towerId: string, roomId: string, documentId: string }): Promise<any> {
+        return this.network.request('file/removeDocument', { towerId: data.towerId, roomId: data.roomId, documentId: data.documentId })
+    }
+
+    async upload(data: { towerId: string, roomId: string, file: any, folderId: string }): Promise<any> {
+        let mimeType = data.file.type.split('/')
+        let title = data.file.name
+        let fileType = mimeType[0], extension = mimeType[1]
+        let body1 = await api.services.file.startUpload({ towerId: data.towerId, roomId: data.roomId, folderId: data.folderId })
+        let { tempDocId, uploadToken } = body1
+        await api.services.file.uploadData({ towerId: data.towerId, roomId: data.roomId, tempDocId, uploadToken, data: data.file })
+        let body2 = await api.services.file.endUpload({ towerId: data.towerId, roomId: data.roomId, tempDocId, uploadToken, extension, fileType, title })
+        let { document: doc } = body2
+        return doc
     }
 }
 

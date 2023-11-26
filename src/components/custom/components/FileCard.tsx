@@ -16,6 +16,7 @@ const FileCard = (props: { style?: any, onMoreClicked?: () => void, doc: any, ro
                 <SigmaAvatar style={{ width: 48, height: 48 }}>
                     <Image
                         key={imageKey.current}
+                        tag={imageKey.current}
                         docId={props.doc.id}
                         room={props.room} isPreview
                         style={{
@@ -25,7 +26,7 @@ const FileCard = (props: { style?: any, onMoreClicked?: () => void, doc: any, ro
                     />
                 </SigmaAvatar>
                 <Typography style={{ marginTop: 12, marginLeft: 8 }}>
-                    Sample File
+                    {props.doc.metadata.title}
                 </Typography>
                 <IconButton style={{ position: 'absolute', right: 16, top: 24 }} onClick={() => {
                     props.onMoreClicked && props.onMoreClicked()

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import IMessage from "../../api/models/message";
 import { themeColor, themeColorName } from "../../App";
 
-const ChatFooter = (props: { style?: any, messages: Array<IMessage>, onMessageSubmit: (text: string) => void, pointedMessage: any, action: any }) => {
+const ChatFooter = (props: { style?: any, messages: Array<IMessage>, onWidgetsClicked: () => void, onMessageSubmit: (text: string) => void, pointedMessage: any, action: any }) => {
     const [value, setValue] = useState(props.pointedMessage?.type === 'text' ? props.pointedMessage.data.text : '')
     const inputbaseRef = useRef(null)
     useEffect(() => {
@@ -24,7 +24,7 @@ const ChatFooter = (props: { style?: any, messages: Array<IMessage>, onMessageSu
             }} value={value} onChange={e => {
                 setValue(e.target.value)
             }} />
-            <IconButton><Widgets /></IconButton>
+            <IconButton onClick={() => props.onWidgetsClicked()}><Widgets /></IconButton>
             <IconButton disabled={(value.length === 0) || (value === props.pointedMessage?.data?.text)} style={{ marginRight: 8 }}
                 onClick={() => {
                     let text = value

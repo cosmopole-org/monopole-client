@@ -66,6 +66,7 @@ const DynamicHeightList = (props: { room: IRoom, messages: Array<IMessage>, mess
                     {(params: { measure: any }) => (
                         <div style={style} onLoad={params.measure}>
                             <Message
+                                room={props.room}
                                 key={`chat-message-${message.id}`}
                                 message={message}
                                 side={message.authorId === myHumanId ? 'right' : 'left'}
@@ -108,7 +109,9 @@ const DynamicHeightList = (props: { room: IRoom, messages: Array<IMessage>, mess
                                 return 56;
                             }
                             let height = 0;
-                            if (message.type === 'photo') {
+                            if (message.type === 'doc') {
+                                height = 250
+                            } else if (message.type === 'photo') {
                                 height = 212;
                             } else if (message.type === 'video') {
                                 height = 212;
