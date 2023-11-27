@@ -109,14 +109,12 @@ const DynamicHeightList = (props: { room: IRoom, messages: Array<IMessage>, mess
                                 return 56;
                             }
                             let height = 0;
-                            if (message.type === 'doc') {
+                            if (message.type === 'photo') {
                                 height = utils.sizer.measurePhotoMessageHeight(message, params.index, messages)
-                            } else if (message.type === 'photo') {
-                                height = 212;
                             } else if (message.type === 'video') {
-                                height = 212;
+                                height = utils.sizer.measureVideoMessageHeight(message, params.index, messages)
                             } else if (message.type === 'audio') {
-                                height = 64;
+                                height = utils.sizer.measureAudioMessageHeight(message, params.index, messages)
                             } else if (message.type === 'workspace') {
                                 height = 224;
                             } else if (message.type === 'storage') {

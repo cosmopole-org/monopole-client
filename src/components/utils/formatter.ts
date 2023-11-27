@@ -34,7 +34,21 @@ const formatBytes = (bytes: number, decimals = 2) => {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
 }
 
+const hexToRGB = (hex: string) => {
+  let alpha = false,
+    h = hex.slice(hex.startsWith('#') ? 1 : 0);
+  if (h.length === 3) h = [...(h as any)].map(x => x + x).join('');
+  else if (h.length === 8) alpha = true;
+  let h2 = parseInt(h, 16);
+  return {
+    r: (h2 >>> (alpha ? 24 : 16)),
+    g: ((h2 & (alpha ? 0x00ff0000 : 0x00ff00)) >>> (alpha ? 16 : 8)),
+    b: ((h2 & (alpha ? 0x0000ff00 : 0x0000ff)) >>> (alpha ? 8 : 0))
+  }
+};
+
 export default {
   formatDate,
-  formatBytes
+  formatBytes,
+  hexToRGB
 }

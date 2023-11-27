@@ -4,15 +4,16 @@ import {
     Typography
 } from "@mui/material";
 import {
-    DoneAll, History
+    DoneAll, History, PlayArrow
 } from "@mui/icons-material";
 import './bubble.css'
 import { themeColor } from "../../../../App";
 import IMessage from "../../../../api/models/message";
 import Image from "../../../custom/components/Image";
 import IRoom from "../../../../api/models/room";
+import SigmaFab from "../../../custom/elements/SigmaFab";
 
-const PhotoMessage = (props: { room: IRoom, message: IMessage, side?: string, lastOfSection?: boolean, firstOfSection?: boolean, isQuote?: boolean }) => {
+const VideoMessage = (props: { room: IRoom, message: IMessage, side?: string, lastOfSection?: boolean, firstOfSection?: boolean, isQuote?: boolean }) => {
     return (
         <Paper
             style={{
@@ -58,6 +59,9 @@ const PhotoMessage = (props: { room: IRoom, message: IMessage, side?: string, la
                         />
                     ) : null
                 }
+                <SigmaFab size={'large'} onClick={() => {}} style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}>
+                    <PlayArrow />
+                </SigmaFab>
                 <Typography
                     variant={"caption"}
                     style={{
@@ -119,4 +123,4 @@ const PhotoMessage = (props: { room: IRoom, message: IMessage, side?: string, la
     );
 }
 
-export default PhotoMessage;
+export default VideoMessage;

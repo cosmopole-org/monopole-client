@@ -147,16 +147,44 @@ class FileService {
         return this.network.request('file/removeDocument', { towerId: data.towerId, roomId: data.roomId, documentId: data.documentId })
     }
 
+    createChunks(file: any, cSize: number = 250 * 1024) {
+        let startPointer = 0;
+        let endPointer = file.size;
+        let chunks = [];
+        while (startPointer < endPointer) {
+            let newStartPointer = startPointer + cSize;
+            chunks.push(file.slice(startPointer, newStartPointer));
+            startPointer = newStartPointer;
+        }
+        return chunks;
+    }
+
+    async forwardChunkUpload(towerId: string, roomId: string, tempDocId: string, uploadToken: string, chunks: any, pointer: number, finishCallback: () => void) {
+        if (chunks.length === pointer) {
+            finishCallback()
+        } else {
+            await api.services.file.uploadData({ towerId, roomId, tempDocId, uploadToken, data: chunks[pointer] })
+            setTimeout(() => this.forwardChunkUpload(towerId, roomId, tempDocId, uploadToken, chunks, pointer + 1, finishCallback));
+        }
+    }
+
     async upload(data: { towerId: string, roomId: string, file: any, folderId: string }): Promise<any> {
-        let mimeType = data.file.type.split('/')
-        let title = data.file.name
-        let fileType = mimeType[0], extension = mimeType[1]
-        let body1 = await api.services.file.startUpload({ towerId: data.towerId, roomId: data.roomId, folderId: data.folderId })
-        let { tempDocId, uploadToken } = body1
-        await api.services.file.uploadData({ towerId: data.towerId, roomId: data.roomId, tempDocId, uploadToken, data: data.file })
-        let body2 = await api.services.file.endUpload({ towerId: data.towerId, roomId: data.roomId, tempDocId, uploadToken, extension, fileType, title })
-        let { document: doc } = body2
-        return doc
+        return new Promise(async resolve => {
+            let mimeType = data.file.type.split('/')
+            let title = data.file.name
+            let fileType = mimeType[0], extension = mimeType[1]
+            let body1 = await api.services.file.startUpload({ towerId: data.towerId, roomId: data.roomId, folderId: data.folderId })
+            let { tempDocId, uploadToken } = body1
+            let chunks = this.createChunks(data.file)
+            setTimeout(() => this.forwardChunkUpload(data.towerId, data.roomId, tempDocId, uploadToken, chunks, 0, () => {
+                api.services.file
+                    .endUpload({ towerId: data.towerId, roomId: data.roomId, tempDocId, uploadToken, extension, fileType, title })
+                    .then((body2: any) => {
+                        let { document: doc } = body2
+                        resolve(doc)
+                    })
+            }))
+        })
     }
 }
 

@@ -10,7 +10,7 @@ import utils from "../utils"
 import ChatFooter from "../sections/ChatFooter"
 import MessageMenu from "../custom/components/MessageMenu"
 import { Paper } from "@mui/material"
-import { themeColor } from "../../App"
+import { themeColor, themeColorName } from "../../App"
 import Quote from "../sections/messenger/embedded/Quote"
 import { chatUtils } from "../sections/messenger/Message/DynamicHeightList"
 import { MessageTypes } from "../../api/services/messenger.service"
@@ -18,6 +18,7 @@ import SigmaFab from "../custom/elements/SigmaFab"
 import { Close } from "@mui/icons-material"
 import Uploader from "../custom/components/Uploader"
 import { notifyNewFileUploaded } from "./Files"
+import formatter from "../utils/formatter"
 
 const uploads: { [id: string]: { fn: (data: { doc: any, towerId: string, roomId: string }) => void, roomId: string } } = {}
 
@@ -45,6 +46,13 @@ const Chat = (props: { show: boolean, room: IRoom }) => {
                     if (oldMessage) {
                         oldMessage.data.text = message.data.text
                         utils.sizer.measureTextMessageHeight(oldMessage, messagesList.length, messagesList);
+                        chatUtils.clearMessageCache(messagesList.indexOf(oldMessage))
+                        msgs.set([...msgs.get({ noproxy: true })])
+                    }
+                } else if ([MessageTypes.PHOTO, MessageTypes.AUDIO, MessageTypes.VIDEO, MessageTypes.DOCUMENT].includes(message.type)) {
+                    let oldMessage = msgs.get({ noproxy: true }).filter((msg: IMessage) => (msg.id === message.id))[0]
+                    if (oldMessage) {
+                        oldMessage.data.docId = message.data.docId
                         chatUtils.clearMessageCache(messagesList.indexOf(oldMessage))
                         msgs.set([...msgs.get({ noproxy: true })])
                     }
@@ -95,13 +103,33 @@ const Chat = (props: { show: boolean, room: IRoom }) => {
     const onWidgetsClicked = useCallback(() => {
         inputFile.current && (inputFile.current as HTMLElement).click();
     }, [setPointedPostMessage, setPointedMessage, pointedPostMessage, msgs, messagesList])
+    useEffect(() => {
+        let { r, g, b } = formatter.hexToRGB(themeColor.get({noproxy: true})[100]);
+        let textColorUnit = themeColorName.get({noproxy: true}) === 'night' ? 255 : 0;
+        (document.getElementById('emojiPickerStyle') as HTMLStyleElement)?.sheet?.insertRule(`
+            em-emoji-picker {
+                --background-rgb: ${r}, ${g}, ${b};
+                --border-radius: 0px;
+                --rgb-background: ${r}, ${g}, ${b};
+                --rgb-accent: ${textColorUnit}, ${textColorUnit}, ${textColorUnit};
+                --rgb-color: ${textColorUnit}, ${textColorUnit}, ${textColorUnit};
+                --rgb-input: ${textColorUnit}, ${textColorUnit}, ${textColorUnit};
+            }
+        `, 0)
+        return () => {
+            (document.getElementById('emojiPickerStyle') as HTMLStyleElement)?.sheet?.deleteRule(0)
+        }
+    }, [])
     return (
         <div
             style={{ width: '100%', height: 'calc(100% - 32px - 16px)', position: 'absolute', left: props.show ? 0 : '-100%', paddingTop: 32 + 16 }}
         >
             <Uploader folderId={props.room.id} inputFile={inputFile} room={props.room} onSelect={(file: any) => {
                 let key = Math.random().toString().substring(2)
-                let draft = middleUtils.dummy.createDummyMessage(props.room.id, 'doc', { docId: key }, { localUrl: URL.createObjectURL(file) })
+                let mimeType = file.type.split('/')
+                let fileType = mimeType[0]
+                let messageType = fileType === 'image' ? 'photo' : fileType
+                let draft = middleUtils.dummy.createDummyMessage(props.room.id, messageType, { docId: key }, { localUrl: URL.createObjectURL(file) })
                 msgs.merge([draft])
                 setTimeout(chatUtils.scrollToChatEnd)
                 uploads[key] = {
@@ -109,7 +137,7 @@ const Chat = (props: { show: boolean, room: IRoom }) => {
                         api.services.messenger.create({
                             towerId: data.towerId,
                             roomId: data.roomId,
-                            message: { type: 'doc', data: { docId: data.doc.id } }
+                            message: { type: data.doc.type === 'image' ? 'photo' : data.doc.type, data: { docId: data.doc.id } }
                         }).then((body: any) => {
                             let { message } = body
                             draft.id = message.id
@@ -163,7 +191,7 @@ const Chat = (props: { show: boolean, room: IRoom }) => {
                             borderRadius: 0, width: '100%',
                             minHeight: 56, height: 'auto',
                             backgroundColor: themeColor.get({ noproxy: true })[100],
-                            display: 'flex', paddingTop: 2, marginTop: 8
+                            paddingTop: 2, marginTop: 8
                         }}
                         pointedMessage={pointedPostMessage}
                         action={action}

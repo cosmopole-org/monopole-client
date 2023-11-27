@@ -5,7 +5,10 @@ import { none } from "@hookstate/core"
 
 export let MessageTypes = {
     TEXT: "text",
-    DOC: "doc",
+    PHOTO: "photo",
+    AUDIO: "audio",
+    VIDEO: "video",
+    DOCUMENT: "document",
     STICKER: "sticker"
 }
 
