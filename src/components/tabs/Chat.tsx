@@ -3,13 +3,13 @@ import { api } from "../.."
 import IRoom from "../../api/models/room"
 import IMessage from "../../api/models/message"
 import { useCallback, useEffect, useRef, useState } from "react"
-import { hookstate, useHookstate } from "@hookstate/core"
+import { useHookstate } from "@hookstate/core"
 import middleUtils from "../../api/utils/middle"
 import Messages from "../sections/messenger/Message/Messages"
 import utils from "../utils"
 import ChatFooter from "../sections/ChatFooter"
 import MessageMenu from "../custom/components/MessageMenu"
-import { Fab, Paper } from "@mui/material"
+import { Paper } from "@mui/material"
 import { themeColor } from "../../App"
 import Quote from "../sections/messenger/embedded/Quote"
 import { chatUtils } from "../sections/messenger/Message/DynamicHeightList"
@@ -62,6 +62,7 @@ const Chat = (props: { show: boolean, room: IRoom }) => {
             utils.sizer.measureTextMessageHeight(message, messagesList.length, messagesList);
             chatUtils.clearMessageCache(messagesList.indexOf(message))
             msgs.set([...msgs.get({ noproxy: true })])
+            setTimeout(chatUtils.scrollToChatEnd)
             setPointedPostMessage(undefined)
             setPointedMessage(undefined)
             api.services.messenger.update({
@@ -77,6 +78,7 @@ const Chat = (props: { show: boolean, room: IRoom }) => {
             let draft = middleUtils.dummy.createDummyMessage(props.room.id, 'text', { text })
             utils.sizer.measureTextMessageHeight(draft, messagesList.length, messagesList)
             msgs.merge([draft])
+            setTimeout(chatUtils.scrollToChatEnd)
             api.services.messenger.create({
                 towerId: props.room.towerId,
                 roomId: props.room.id,
@@ -99,8 +101,9 @@ const Chat = (props: { show: boolean, room: IRoom }) => {
         >
             <Uploader folderId={props.room.id} inputFile={inputFile} room={props.room} onSelect={(file: any) => {
                 let key = Math.random().toString().substring(2)
-                let draft = middleUtils.dummy.createDummyMessage(props.room.id, 'doc', { docId: key })
+                let draft = middleUtils.dummy.createDummyMessage(props.room.id, 'doc', { docId: key }, { localUrl: URL.createObjectURL(file) })
                 msgs.merge([draft])
+                setTimeout(chatUtils.scrollToChatEnd)
                 uploads[key] = {
                     fn: (data: { doc: any, towerId: string, roomId: string }) => {
                         api.services.messenger.create({
@@ -142,12 +145,12 @@ const Chat = (props: { show: boolean, room: IRoom }) => {
                     {
                         pointedPostMessage !== undefined ? (
                             <Paper style={{
-                                width: '100%', height: 56, borderRadius: 0, position: 'relative',
+                                width: '100%', height: 48, borderRadius: 0, position: 'relative',
                                 backgroundColor: themeColor.get({ noproxy: true })[50]
                             }}>
                                 <Quote messageType={(pointedPostMessage as IMessage).type} message={pointedPostMessage} />
                                 <SigmaFab variant={'extended'} size={'small'} onClick={() => { setPointedPostMessage(undefined) }} style={{
-                                    position: 'absolute', right: 12, top: 12
+                                    position: 'absolute', right: 12, bottom: 4
                                 }}>
                                     Cancel
                                     <Close />
@@ -160,7 +163,7 @@ const Chat = (props: { show: boolean, room: IRoom }) => {
                             borderRadius: 0, width: '100%',
                             minHeight: 56, height: 'auto',
                             backgroundColor: themeColor.get({ noproxy: true })[100],
-                            display: 'flex', paddingTop: 2
+                            display: 'flex', paddingTop: 2, marginTop: 8
                         }}
                         pointedMessage={pointedPostMessage}
                         action={action}

@@ -1,6 +1,6 @@
 import { api } from "../../.."
 
-const createDummyMessage = (roomId: string, type: string, data: any) => {
+const createDummyMessage = (roomId: string, type: string, data: any, meta?: any) => {
     return {
         type,
         id: Math.random().toString().substring(2),
@@ -9,7 +9,7 @@ const createDummyMessage = (roomId: string, type: string, data: any) => {
         isDummy: true,
         authorId: api.memory.myHumanId.get({ noproxy: true }),
         roomId: roomId,
-        meta: {}
+        meta: meta ? meta : {}
     }
 }
 

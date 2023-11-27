@@ -23,9 +23,11 @@ const TextMessage = (props: { message: IMessage, side?: string, lastOfSection?: 
                         `24px ${props.firstOfSection ? 24 : 8}px 8px 24px`,
                 padding: 8,
                 paddingTop: props.isQuote ? 0 : 8,
-                background: (props.side === 'right' || props.isQuote) ?
-                    `linear-gradient(135deg, ${themeColor.get({ noproxy: true })[500]}, ${themeColor.get({ noproxy: true })[200]}) border-box` :
-                    themeColor.get({ noproxy: true })['plain'],
+                background: props.isQuote ?
+                    themeColor.get({ noproxy: true })[200] :
+                    (props.side === 'right' || props.isQuote) ?
+                        `linear-gradient(135deg, ${themeColor.get({ noproxy: true })[500]}, ${themeColor.get({ noproxy: true })[200]}) border-box` :
+                        themeColor.get({ noproxy: true })['plain'],
                 marginLeft: props.side === 'left' ? 0 : 'auto',
                 marginRight: props.side === 'left' ? 'auto' : 0
             }}
@@ -57,8 +59,8 @@ const TextMessage = (props: { message: IMessage, side?: string, lastOfSection?: 
                         null :
                         (
                             <div style={{
-                                width: 72, position: 'absolute', bottom: 0, right: 0, display: "flex",
-                                paddingLeft: 8, paddingRight: 8,
+                                width: 'auto', position: 'absolute', bottom: 0, right: 0, display: "flex",
+                                paddingLeft: 0, paddingRight: 0,
                                 borderRadius: "16px 16px 0px 16px"
                             }}>
                                 <Typography

@@ -17,7 +17,7 @@ const MessageRow = (props: { message: IMessage, side: string, children: any, las
                     position: "relative",
                     marginLeft: props.side === 'left' ? 8 : 'auto',
                     marginRight: props.side === 'left' ? 'auto' : 8,
-                    marginTop: props.firstOfSection ? 12 : 0,
+                    marginTop: 12,
                     transform: `translateY(${props.lastOfSection ? 16 : 0}px)`,
                     display: 'flex'
                 }}

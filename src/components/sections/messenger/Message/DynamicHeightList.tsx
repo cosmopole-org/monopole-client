@@ -110,7 +110,7 @@ const DynamicHeightList = (props: { room: IRoom, messages: Array<IMessage>, mess
                             }
                             let height = 0;
                             if (message.type === 'doc') {
-                                height = 250
+                                height = utils.sizer.measurePhotoMessageHeight(message, params.index, messages)
                             } else if (message.type === 'photo') {
                                 height = 212;
                             } else if (message.type === 'video') {

@@ -16,40 +16,39 @@ const PhotoMessage = (props: { room: IRoom, message: IMessage, side?: string, la
     return (
         <Paper
             style={{
-                height: 250,
-                width: 250,
-                minWidth: 250,
+                height: 234,
+                width: 234,
+                minWidth: 220,
                 borderRadius: props.isQuote ? 0 :
                     props.side === 'left' ?
                         `${props.firstOfSection ? 24 : 8}px 24px 24px 8px` :
                         `24px ${props.firstOfSection ? 24 : 8}px 8px 24px`,
-                padding: 8,
-                paddingTop: props.isQuote ? 0 : 8,
                 background: (props.side === 'right' || props.isQuote) ?
                     `linear-gradient(135deg, ${themeColor.get({ noproxy: true })[500]}, ${themeColor.get({ noproxy: true })[200]}) border-box` :
                     themeColor.get({ noproxy: true })['plain'],
                 marginLeft: props.side === 'left' ? 0 : 'auto',
-                marginRight: props.side === 'left' ? 'auto' : 0
+                marginRight: props.side === 'left' ? 'auto' : 0,
+                position: 'relative',
+                padding: 4
             }}
             elevation={0}
             className={props.isQuote ? '' : (props.side === 'right' ? "bubble" : "bubble2") + (props.lastOfSection ? (" " + props.side) : "")}
         >
             <div style={{ width: 'auto', height: '100%', position: 'relative' }}>
-                <Typography
-                    variant={"caption"}
-                    style={{
-                        textAlign: "left", fontWeight: 'bold', borderRadius: 8, marginTop: 0, height: 'auto',
-                        background: 'transparent', color: props.side === 'left' ? themeColor.get({ noproxy: true })['activeText'] : '#fff'
-                    }}
-                >
-                    Keyhan
-                </Typography>
                 {
                     props.message.data.docId ? (
                         <Image
+                        localUrl={props.message.isDummy ? props.message.meta.localUrl : undefined}
                             style={{
                                 height: '100%',
-                                width: '100%'
+                                width: '100%',
+                                borderRadius: props.isQuote ? 0 :
+                                    props.side === 'left' ?
+                                        `${props.firstOfSection ? 24 : 8}px 24px 24px 8px` :
+                                        `24px ${props.firstOfSection ? 24 : 8}px 8px 24px`,
+                                position: 'absolute',
+                                left: 0,
+                                top: 0
                             }}
                             docId={props.message.data.docId}
                             room={props.room}
@@ -59,14 +58,32 @@ const PhotoMessage = (props: { room: IRoom, message: IMessage, side?: string, la
                         />
                     ) : null
                 }
+                <Typography
+                    variant={"caption"}
+                    style={{
+                        borderRadius: props.isQuote ? 0 :
+                        props.side === 'left' ?
+                            `${props.firstOfSection ? 24 : 8}px 24px 24px 8px` :
+                            `24px ${props.firstOfSection ? 24 : 8}px 8px 8px`,
+                            paddingLeft: 8, paddingRight: 8, paddingBottom: 2, paddingTop: 8,
+                        textAlign: "left", fontWeight: 'bold', marginTop: 0, height: 'auto', position: 'absolute', left: 0, top: 0,
+                        backgroundColor: 'rgba(0, 0, 0, 0.5)', color: props.side === 'left' ? themeColor.get({ noproxy: true })['activeText'] : '#fff'
+                    }}
+                >
+                    Keyhan
+                </Typography>
                 {
                     props.isQuote ?
                         null :
                         (
                             <div style={{
-                                width: 72, position: 'absolute', bottom: 0, right: 0, display: "flex",
-                                paddingLeft: 8, paddingRight: 8,
-                                borderRadius: "16px 16px 0px 16px"
+                                width: 'auto', position: 'absolute', bottom: 0, right: 0, display: "flex",
+                                paddingLeft: 8, paddingRight: 8, paddingBottom: 2, paddingTop: 4,
+                                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                                borderRadius: props.isQuote ? 0 :
+                                    props.side === 'left' ?
+                                        `${props.firstOfSection ? 24 : 8}px 24px 24px 8px` :
+                                        `24px ${props.firstOfSection ? 24 : 8}px 8px 8px`,
                             }}>
                                 <Typography
                                     style={{ textAlign: "right", flex: 1, fontSize: 12, color: props.side === 'left' ? themeColor.get({ noproxy: true })['activeText'] : '#fff' }}
