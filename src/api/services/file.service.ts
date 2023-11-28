@@ -41,6 +41,25 @@ class FileService {
         this.memory = memory
         this.cache = cache
 
+        this.network.socket.on('onWaveformReceived', async body => {
+            let { docId, data, first } = body
+            if (first) {
+                this.cache.put(docId + '-waveform', new Blob([data], { type: this.transferringFileTypes[docId] }))
+            } else {
+                let previous = this.cache.get(docId + '-waveform')
+                if (previous) {
+                    this.cache.put(docId + '-waveform', new Blob([previous, data], { type: this.transferringFileTypes[docId] }))
+                } else {
+                    this.cache.put(docId + '-waveform', new Blob([data], { type: this.transferringFileTypes[docId] }))
+                }
+            }
+            let callbacks = this.fileTransferListeners[docId + '-waveform']
+            if (callbacks) {
+                Object.values(callbacks).forEach(callback => {
+                    callback({ data: this.cache.get(docId + '-waveform') })
+                })
+            }
+        })
         this.network.socket.on('onPreviewReceived', async body => {
             let { docId, data, first } = body
             if (first) {
@@ -131,6 +150,21 @@ class FileService {
         }
     }
 
+    async waveDown(data: { towerId: string, roomId: string, documentId: string }): Promise<any> {
+        this.transferringFileTypes[data.documentId] = 'application/json'
+        let cached = this.cache.get(data.documentId + '-waveform')
+        if (cached) {
+            let callbacks = this.fileTransferListeners[data.documentId + '-waveform']
+            if (callbacks) {
+                Object.values(callbacks).forEach(callback => {
+                    callback({ data: this.cache.get(data.documentId + '-waveform') })
+                })
+            }
+        } else {
+            return this.network.request('file/waveDown', { towerId: data.towerId, roomId: data.roomId, documentId: data.documentId })
+        }
+    }
+
     async docDown(data: { towerId: string, roomId: string, documentId: string }): Promise<any> {
         return this.network.request('file/docDown', { towerId: data.towerId, roomId: data.roomId, documentId: data.documentId })
     }
@@ -185,6 +219,10 @@ class FileService {
                     })
             }))
         })
+    }
+
+    async getDocuemnt(data: { towerId: string, roomId: string, documentId: string }): Promise<any> {
+        return this.network.request('file/getDocument', { towerId: data.towerId, roomId: data.roomId, documentId: data.documentId })
     }
 }
 

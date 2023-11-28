@@ -11,12 +11,13 @@ import { themeColor } from "../../../../App";
 import IMessage from "../../../../api/models/message";
 import Image from "../../../custom/components/Image";
 import IRoom from "../../../../api/models/room";
+import Waveform from "../../../custom/components/AudioWave/Waveform";
 
 const AudioMessage = (props: { room: IRoom, message: IMessage, side?: string, lastOfSection?: boolean, firstOfSection?: boolean, isQuote?: boolean }) => {
     return (
         <Paper
             style={{
-                height: 72,
+                height: 76,
                 width: 200,
                 minWidth: 200,
                 borderRadius: props.isQuote ? 0 :
@@ -28,7 +29,6 @@ const AudioMessage = (props: { room: IRoom, message: IMessage, side?: string, la
                     themeColor.get({ noproxy: true })['plain'],
                 marginLeft: props.side === 'left' ? 0 : 'auto',
                 marginRight: props.side === 'left' ? 'auto' : 0,
-                marginTop: 8,
                 position: 'relative',
                 padding: 4
             }}
@@ -53,6 +53,17 @@ const AudioMessage = (props: { room: IRoom, message: IMessage, side?: string, la
                             tag={`${props.room.id}-${props.message.id}`}
                             isPreview
                             key={`message-doc-cover-${props.message.id}`}
+                        />
+                    ) : null
+                }
+                {
+                    (props.message.data.docId && !props.message.isDummy) ? (
+                        <Waveform
+                            style={{ width: 128, position: 'absolute', left: 60, top: 8 }}
+                            docId={props.message.data.docId}
+                            tag={`${props.room.id}-${props.message.id}-waveform`}
+                            room={props.room}
+                            isPreview={true}
                         />
                     ) : null
                 }
@@ -81,7 +92,7 @@ const AudioMessage = (props: { room: IRoom, message: IMessage, side?: string, la
                                 borderRadius: props.isQuote ? 0 :
                                     props.side === 'left' ?
                                         `${props.firstOfSection ? 24 : 8}px 24px 24px 8px` :
-                                        `24px ${props.firstOfSection ? 24 : 8}px 8px 8px`,
+                                        `24px 8px 8px 8px`,
                             }}>
                                 <Typography
                                     style={{ textAlign: "right", flex: 1, fontSize: 12, color: props.side === 'left' ? themeColor.get({ noproxy: true })['activeText'] : '#fff' }}

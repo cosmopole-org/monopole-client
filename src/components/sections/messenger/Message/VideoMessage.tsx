@@ -17,8 +17,8 @@ const VideoMessage = (props: { room: IRoom, message: IMessage, side?: string, la
     return (
         <Paper
             style={{
-                height: 234,
-                width: 234,
+                height: 236,
+                width: 220,
                 minWidth: 220,
                 borderRadius: props.isQuote ? 0 :
                     props.side === 'left' ?
