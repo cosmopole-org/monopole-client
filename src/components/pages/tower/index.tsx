@@ -20,8 +20,9 @@ import RoomMoreMenu from '../../custom/components/RoomMoreMenu';
 import { api } from '../../..';
 import { useHookstate } from '@hookstate/core';
 import HumanBox from '../../custom/components/HumanBox';
+import ITower from '../../../api/models/tower';
 
-const Tower = (props: { id: string, isOnTop: boolean, tower: any }) => {
+const Tower = (props: { id: string, isOnTop: boolean, tower: ITower }) => {
     const containerRef = useRef(null)
     const headerRef = useRef(null)
     const [showMembers, setShowMembers] = useState(false);
@@ -40,7 +41,7 @@ const Tower = (props: { id: string, isOnTop: boolean, tower: any }) => {
         if (props.isOnTop) {
             switchLeftControl && switchLeftControl(LeftControlTypes.BACK, close)
             switchRightControl && switchRightControl(RightControlTypes.SETTINGS)
-            switchTitle && switchTitle('Sample Tower')
+            switchTitle && switchTitle(props.tower.title)
             switchColor && switchColor(themeColor.get({ noproxy: true })[500], StatusThemes.DARK)
         }
     }, [props.isOnTop])

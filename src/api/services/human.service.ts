@@ -14,13 +14,14 @@ class HumanService {
         known: {
             spaces: State<any>,
             humans: State<any>,
-            machines: State<any>,        
+            machines: State<any>,
         }
     }
     network: NetworkDriver
 
     private _cCode: string | undefined
     private _token: string | undefined
+    public get token() { return this._token }
     private updateToken(token: string) {
         this._token = token
         localStorage.setItem('token', token)
@@ -41,7 +42,7 @@ class HumanService {
             known: {
                 spaces: State<any>,
                 humans: State<any>,
-                machines: State<any>,        
+                machines: State<any>,
             }
         }
     ) {

@@ -10,7 +10,8 @@ const FolderCard = (props: { style?: any, onMoreClicked?: () => void, folder: IF
             <SigmaAvatar style={{ width: 48, height: 48 }}>
                 <Folder />                
             </SigmaAvatar>
-            <Typography style={{ marginTop: 16 }}>
+            <Typography style={{ maxWidth: 'calc(100% - 16px)', marginTop: 16, wordWrap: 'break-word', textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap', overflow: 'hidden' }}>
                 {props.folder.title}
             </Typography>
             <IconButton style={{ position: 'absolute', right: 16, top: 24 }} onClick={e => {

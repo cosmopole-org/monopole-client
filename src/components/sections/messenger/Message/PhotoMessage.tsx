@@ -7,7 +7,7 @@ import {
     DoneAll, History
 } from "@mui/icons-material";
 import './bubble.css'
-import { themeColor } from "../../../../App";
+import { SigmaRouter, themeColor } from "../../../../App";
 import IMessage from "../../../../api/models/message";
 import Image from "../../../custom/components/Image";
 import IRoom from "../../../../api/models/room";
@@ -15,6 +15,10 @@ import IRoom from "../../../../api/models/room";
 const PhotoMessage = (props: { room: IRoom, message: IMessage, side?: string, lastOfSection?: boolean, firstOfSection?: boolean, isQuote?: boolean }) => {
     return (
         <Paper
+            onClick={e => {
+                e.stopPropagation()
+                SigmaRouter.navigate('gallery', { initialData: { docId: props.message.data.docId, room: props.room } })
+            }}
             style={{
                 height: 236,
                 width: 220,

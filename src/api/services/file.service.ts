@@ -44,13 +44,13 @@ class FileService {
         this.network.socket.on('onWaveformReceived', async body => {
             let { docId, data, first } = body
             if (first) {
-                this.cache.put(docId + '-waveform', new Blob([data], { type: this.transferringFileTypes[docId] }))
+                this.cache.put(docId + '-waveform', new Blob([data], { type: this.transferringFileTypes[docId + '-waveform'] }))
             } else {
                 let previous = this.cache.get(docId + '-waveform')
                 if (previous) {
-                    this.cache.put(docId + '-waveform', new Blob([previous, data], { type: this.transferringFileTypes[docId] }))
+                    this.cache.put(docId + '-waveform', new Blob([previous, data], { type: this.transferringFileTypes[docId + '-waveform'] }))
                 } else {
-                    this.cache.put(docId + '-waveform', new Blob([data], { type: this.transferringFileTypes[docId] }))
+                    this.cache.put(docId + '-waveform', new Blob([data], { type: this.transferringFileTypes[docId + '-waveform'] }))
                 }
             }
             let callbacks = this.fileTransferListeners[docId + '-waveform']
@@ -63,48 +63,62 @@ class FileService {
         this.network.socket.on('onPreviewReceived', async body => {
             let { docId, data, first } = body
             if (first) {
-                this.cache.put(docId, new Blob([data], { type: this.transferringFileTypes[docId] }))
+                this.cache.put(docId + '-preview', new Blob([data], { type: this.transferringFileTypes[docId + '-preview'] }))
             } else {
-                let previous = this.cache.get(docId)
+                let previous = this.cache.get(docId + '-preview')
                 if (previous) {
-                    this.cache.put(docId, new Blob([previous, data], { type: this.transferringFileTypes[docId] }))
+                    this.cache.put(docId + '-preview', new Blob([previous, data], { type: this.transferringFileTypes[docId + '-preview'] }))
                 } else {
-                    this.cache.put(docId, new Blob([data], { type: this.transferringFileTypes[docId] }))
+                    this.cache.put(docId + '-preview', new Blob([data], { type: this.transferringFileTypes[docId + '-preview'] }))
                 }
             }
-            let callbacks = this.fileTransferListeners[docId]
+            let callbacks = this.fileTransferListeners[docId + '-preview']
             if (callbacks) {
                 Object.values(callbacks).forEach(callback => {
-                    callback({ data: this.cache.get(docId) })
+                    callback({ data: this.cache.get(docId + '-preview') })
                 })
             }
         })
-        this.network.socket.on('onDocumentRecevied', body => {
+        this.network.socket.on('onDocumentReceived', body => {
             let { docId, data, first } = body
             if (first) {
-                this.cache.put(docId + '-original', new Blob([data], { type: this.transferringFileTypes[docId] }))
+                this.cache.put(docId + '-original', new Blob([data], { type: this.transferringFileTypes[docId + '-original'] }))
             } else {
                 let previous = this.cache.get(docId + '-original')
                 if (previous) {
-                    this.cache.put(docId + '-original', new Blob([previous, data], { type: this.transferringFileTypes[docId] }))
+                    this.cache.put(docId + '-original', new Blob([previous, data], { type: this.transferringFileTypes[docId + '-original'] }))
                 } else {
-                    this.cache.put(docId + '-original', new Blob([data], { type: this.transferringFileTypes[docId] }))
+                    this.cache.put(docId + '-original', new Blob([data], { type: this.transferringFileTypes[docId + '-original'] }))
                 }
             }
             let callbacks = this.fileTransferListeners[docId + '-original']
             if (callbacks) {
                 Object.values(callbacks).forEach(callback => {
-                    callback({ data: this.cache.get(docId + '-original') })
+                    callback({ data: this.cache.get(docId + '-original'), newChunk: data })
                 })
             }
         })
     }
 
     transferringFileTypes: { [id: string]: string } = {}
-    fileTransferListeners: { [id: string]: { [id: string]: (body: { data: Blob }) => void } } = {}
-    listenToFileTransfer(tag: string, docId: string, callback: (body: { data: Blob }) => void) {
+    fileTransferListeners: { [id: string]: { [id: string]: (body: { data: Blob, newChunk?: any }) => void } } = {}
+    listenToFileTransfer(tag: string, docId: string, callback: (body: { data: Blob, newChunk?: any }) => void) {
         if (!this.fileTransferListeners[docId]) this.fileTransferListeners[docId] = {}
         this.fileTransferListeners[docId][tag] = callback
+    }
+
+    async download(data: { towerId: string, roomId: string, documentId: string }): Promise<any> {
+        if (api.services.human.token) {
+            return fetch(`https://monopole.iran.liara.run/file/download?documentid=${data.documentId}`, {
+                method: 'GET',
+                headers: {
+                    Accept: 'video/*',
+                    towerId: data.towerId,
+                    roomId: data.roomId,
+                    token: api.services.human.token
+                }
+            })
+        }
     }
 
     async create(data: { towerId: string, roomId: string, parentFolderId: string, title: string }): Promise<IMessage> {
@@ -136,13 +150,13 @@ class FileService {
     }
 
     async prevDown(data: { towerId: string, roomId: string, documentId: string }): Promise<any> {
-        this.transferringFileTypes[data.documentId] = 'image/jpg'
-        let cached = this.cache.get(data.documentId)
+        this.transferringFileTypes[data.documentId + '-preview'] = 'image/jpg'
+        let cached = this.cache.get(data.documentId + '-preview')
         if (cached) {
-            let callbacks = this.fileTransferListeners[data.documentId]
+            let callbacks = this.fileTransferListeners[data.documentId + '-preview']
             if (callbacks) {
                 Object.values(callbacks).forEach(callback => {
-                    callback({ data: this.cache.get(data.documentId) })
+                    callback({ data: this.cache.get(data.documentId + '-preview') })
                 })
             }
         } else {
@@ -151,7 +165,7 @@ class FileService {
     }
 
     async waveDown(data: { towerId: string, roomId: string, documentId: string }): Promise<any> {
-        this.transferringFileTypes[data.documentId] = 'application/json'
+        this.transferringFileTypes[data.documentId + '-waveform'] = 'application/json'
         let cached = this.cache.get(data.documentId + '-waveform')
         if (cached) {
             let callbacks = this.fileTransferListeners[data.documentId + '-waveform']
@@ -165,8 +179,19 @@ class FileService {
         }
     }
 
-    async docDown(data: { towerId: string, roomId: string, documentId: string }): Promise<any> {
-        return this.network.request('file/docDown', { towerId: data.towerId, roomId: data.roomId, documentId: data.documentId })
+    async docDown(data: { towerId: string, roomId: string, documentId: string, useRest?: boolean }): Promise<any> {
+        this.transferringFileTypes[data.documentId + '-original'] = 'image/jpg'
+        let cached = this.cache.get(data.documentId + '-original')
+        if (cached) {
+            let callbacks = this.fileTransferListeners[data.documentId + '-original']
+            if (callbacks) {
+                Object.values(callbacks).forEach(callback => {
+                    callback({ data: this.cache.get(data.documentId + '-original'), newChunk: this.cache.get(data.documentId + '-original') })
+                })
+            }
+        } else {
+            return this.network.request('file/docDown', { towerId: data.towerId, roomId: data.roomId, documentId: data.documentId, transferType: data.useRest ? 'rest' : 'websocket' })
+        }
     }
 
     async group(data: { towerId: string, roomId: string }): Promise<any> {

@@ -24,6 +24,8 @@ import CreateMachine from './components/forms/createMachine';
 import { hookstate } from '@hookstate/core';
 import { switchColor } from './components/sections/StatusBar';
 import TowerPicker from './components/pages/TowerPicker';
+import Gallery from './components/pages/gallery';
+import VideoPlayer from './components/pages/videoPlayer';
 
 const useForceUpdate = () => {
     const [value, setValue] = useState(0); // integer state
@@ -154,6 +156,8 @@ let pages: { [id: string]: any } = {
     'profile': Profile,
     'machines': Machines,
     'towerPicker': TowerPicker,
+    'gallery': Gallery,
+    'videoPlayer': VideoPlayer,
     // forms
     'createTower': CreateTower,
     'createRoom': CreateRoom,

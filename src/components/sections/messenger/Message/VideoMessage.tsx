@@ -7,7 +7,7 @@ import {
     DoneAll, History, PlayArrow
 } from "@mui/icons-material";
 import './bubble.css'
-import { themeColor } from "../../../../App";
+import { SigmaRouter, themeColor } from "../../../../App";
 import IMessage from "../../../../api/models/message";
 import Image from "../../../custom/components/Image";
 import IRoom from "../../../../api/models/room";
@@ -59,7 +59,10 @@ const VideoMessage = (props: { room: IRoom, message: IMessage, side?: string, la
                         />
                     ) : null
                 }
-                <SigmaFab size={'large'} onClick={() => {}} style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}>
+                <SigmaFab size={'large'} onClick={(e: any) => {
+                    e.stopPropagation()
+                    SigmaRouter.navigate('videoPlayer', { initialData: { docId: props.message.data.docId, room: props.room } })
+                }} style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}>
                     <PlayArrow />
                 </SigmaFab>
                 <Typography

@@ -25,7 +25,8 @@ const FileCard = (props: { style?: any, onMoreClicked?: () => void, doc: any, ro
                         }}
                     />
                 </SigmaAvatar>
-                <Typography style={{ marginTop: 12, marginLeft: 8 }}>
+                <Typography style={{ maxWidth: 'calc(100% - 100px)', marginTop: 12, marginLeft: 8, wordWrap: 'break-word', textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap', overflow: 'hidden' }}>
                     {props.doc.metadata.title}
                 </Typography>
                 <IconButton style={{ position: 'absolute', right: 16, top: 24 }} onClick={() => {

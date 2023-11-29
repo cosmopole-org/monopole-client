@@ -64,7 +64,7 @@ const DynamicHeightList = (props: { room: IRoom, messages: Array<IMessage>, mess
                     rowIndex={index}
                     parent={parent}>
                     {(params: { measure: any }) => (
-                        <div style={style} onLoad={params.measure}>
+                        <div style={style} onLoad={params.measure} onClick={() => props.onMessageSelect(message)}>
                             <Message
                                 room={props.room}
                                 key={`chat-message-${message.id}`}
@@ -73,7 +73,6 @@ const DynamicHeightList = (props: { room: IRoom, messages: Array<IMessage>, mess
                                 messageType={message.type}
                                 firstOfSection={isFirstOfSection}
                                 lastOfSection={isLastOfSection}
-                                onMessageSelect={props.onMessageSelect}
                             />
                         </div>
                     )}
