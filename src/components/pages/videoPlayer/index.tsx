@@ -8,6 +8,7 @@ import { api } from '../../..';
 import SliderPage from '../../layouts/SliderPage';
 import { LeftControlTypes, RightControlTypes, StatusThemes, switchColor, switchLeftControl, switchRightControl, switchTitle } from '../../sections/StatusBar';
 import dashjs from 'dashjs';
+import config from '../../../config';
 
 const format = (seconds: any) => {
   if (isNaN(seconds)) {
@@ -131,7 +132,7 @@ function VideoPlayer(props: { docId: string, room: IRoom, isOnTop: boolean, id: 
   React.useEffect(() => {
     var video,
       player: dashjs.MediaPlayerClass,
-      url = `http://localhost:3001/file/download?documentid=${props.docId}&videoModuleType=manifest`;
+      url = `${config.GATEWAY_ADDRESS}/file/download?documentid=${props.docId}&videoModuleType=manifest`;
     video = document.getElementById("video-player") as HTMLVideoElement;
     player = dashjs.MediaPlayer().create();
     player.extend("RequestModifier", function () {
@@ -147,7 +148,7 @@ function VideoPlayer(props: { docId: string, room: IRoom, isOnTop: boolean, id: 
           if (url.endsWith('.webm')) {
             moduleType = url.substring(url.lastIndexOf('-') + 1, url.length - 5)
           }
-          return `http://localhost:3001/file/download?documentid=${props.docId}&videoModuleType=${moduleType}`
+          return `${config.GATEWAY_ADDRESS}/file/download?documentid=${props.docId}&videoModuleType=${moduleType}`
         }
       };
     }, true);
