@@ -8,10 +8,12 @@ import { useRef } from "react"
 import IRoom from "../../../api/models/room"
 import formatter from "../../utils/formatter"
 
-const FileCard = (props: { style?: any, onMoreClicked?: () => void, doc: any, room: IRoom }) => {
+const FileCard = (props: { style?: any, onSelect: () => void, onMoreClicked?: () => void, doc: any, room: IRoom }) => {
     const imageKey = useRef(props.doc.id + '-' + Math.random())
     return (
-        <Card elevation={0} style={{ ...props.style, position: 'relative', width: 'calc(100% - 64px)', padding: 16, height: 96, backgroundColor: themeColor.get({ noproxy: true })[50], borderRadius: 24 }}>
+        <Card elevation={0} style={{ ...props.style, position: 'relative', width: 'calc(100% - 64px)', padding: 16, height: 96, backgroundColor: themeColor.get({ noproxy: true })[50], borderRadius: 24 }}
+            onClick={() => props.onSelect()}
+        >
             <div style={{ width: '100%', height: 'auto', display: 'flex' }}>
                 <SigmaAvatar style={{ width: 48, height: 48 }}>
                     <Image
@@ -25,11 +27,14 @@ const FileCard = (props: { style?: any, onMoreClicked?: () => void, doc: any, ro
                         }}
                     />
                 </SigmaAvatar>
-                <Typography style={{ maxWidth: 'calc(100% - 100px)', marginTop: 12, marginLeft: 8, wordWrap: 'break-word', textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap', overflow: 'hidden' }}>
+                <Typography style={{
+                    maxWidth: 'calc(100% - 100px)', marginTop: 12, marginLeft: 8, wordWrap: 'break-word', textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap', overflow: 'hidden'
+                }}>
                     {props.doc.metadata.title}
                 </Typography>
-                <IconButton style={{ position: 'absolute', right: 16, top: 24 }} onClick={() => {
+                <IconButton style={{ position: 'absolute', right: 16, top: 24 }} onClick={e => {
+                    e.stopPropagation();
                     props.onMoreClicked && props.onMoreClicked()
                 }}>
                     <MoreVert />

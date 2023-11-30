@@ -1,5 +1,6 @@
 
 import {
+    CircularProgress,
     Paper,
     Typography
 } from "@mui/material";
@@ -12,8 +13,11 @@ import IMessage from "../../../../api/models/message";
 import Image from "../../../custom/components/Image";
 import IRoom from "../../../../api/models/room";
 import SigmaFab from "../../../custom/elements/SigmaFab";
+import { api } from "../../../..";
+import { useHookstate } from "@hookstate/core";
 
 const VideoMessage = (props: { room: IRoom, message: IMessage, side?: string, lastOfSection?: boolean, firstOfSection?: boolean, isQuote?: boolean }) => {
+    let progress = useHookstate(api.services.file.transferProgress)?.get({ noproxy: true })[props.message.meta?.tag]
     return (
         <Paper
             style={{
@@ -39,7 +43,7 @@ const VideoMessage = (props: { room: IRoom, message: IMessage, side?: string, la
                 {
                     props.message.data.docId ? (
                         <Image
-                            localUrl={props.message.isDummy ? props.message.meta.localUrl : undefined}
+                            local={props.message.isDummy ? props.message.meta.local : undefined}
                             style={{
                                 height: '100%',
                                 width: '100%',
@@ -59,12 +63,21 @@ const VideoMessage = (props: { room: IRoom, message: IMessage, side?: string, la
                         />
                     ) : null
                 }
-                <SigmaFab size={'large'} onClick={(e: any) => {
-                    e.stopPropagation()
-                    SigmaRouter.navigate('videoPlayer', { initialData: { docId: props.message.data.docId, room: props.room } })
-                }} style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}>
-                    <PlayArrow />
-                </SigmaFab>
+                {
+                    props.message.isDummy ?
+                        progress === 100 ? (
+                            <CircularProgress value={progress} variant={"indeterminate"} style={{ width: 48, height: 48, position: 'absolute', left: 'calc(50% - 24px)', top: 'calc(50% - 24px)', transform: 'translate(-50%, -50%)' }} />
+                        ) : (
+                            <CircularProgress value={progress} variant={"determinate"} style={{ width: 48, height: 48, position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }} />
+                        ) : (
+                            <SigmaFab size={'large'} onClick={(e: any) => {
+                                e.stopPropagation()
+                                SigmaRouter.navigate('videoPlayer', { initialData: { docId: props.message.data.docId, room: props.room } })
+                            }} style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}>
+                                <PlayArrow />
+                            </SigmaFab>
+                        )
+                }
                 <Typography
                     variant={"caption"}
                     style={{

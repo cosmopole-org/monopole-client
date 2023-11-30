@@ -1,5 +1,6 @@
 
 import {
+    CircularProgress,
     Paper,
     Typography
 } from "@mui/material";
@@ -11,8 +12,11 @@ import { SigmaRouter, themeColor } from "../../../../App";
 import IMessage from "../../../../api/models/message";
 import Image from "../../../custom/components/Image";
 import IRoom from "../../../../api/models/room";
+import { useHookstate } from "@hookstate/core";
+import { api } from "../../../..";
 
 const PhotoMessage = (props: { room: IRoom, message: IMessage, side?: string, lastOfSection?: boolean, firstOfSection?: boolean, isQuote?: boolean }) => {
+    let progress = useHookstate(api.services.file.transferProgress)?.get({ noproxy: true })[props.message.meta?.tag]
     return (
         <Paper
             onClick={e => {
@@ -42,7 +46,7 @@ const PhotoMessage = (props: { room: IRoom, message: IMessage, side?: string, la
                 {
                     props.message.data.docId ? (
                         <Image
-                            localUrl={props.message.isDummy ? props.message.meta.localUrl : undefined}
+                            local={props.message.isDummy ? props.message.meta.local : undefined}
                             style={{
                                 height: '100%',
                                 width: '100%',
@@ -61,6 +65,15 @@ const PhotoMessage = (props: { room: IRoom, message: IMessage, side?: string, la
                             key={`message-doc-photo-${props.message.id}`}
                         />
                     ) : null
+                }
+                {
+                    props.message.isDummy ?
+                        progress === 100 ? (
+                            <CircularProgress value={progress} variant={"indeterminate"} style={{ width: 48, height: 48, position: 'absolute', left: 'calc(50% - 24px)', top: 'calc(50% - 24px)', transform: 'translate(-50%, -50%)' }} />
+                        ) : (
+                            <CircularProgress value={progress} variant={"determinate"} style={{ width: 48, height: 48, position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }} />
+                        ) :
+                        null
                 }
                 <Typography
                     variant={"caption"}

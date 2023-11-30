@@ -39,7 +39,7 @@ const AudioMessage = (props: { room: IRoom, message: IMessage, side?: string, la
                 {
                     props.message.data.docId ? (
                         <Image
-                            localUrl={props.message.isDummy ? props.message.meta.localUrl : undefined}
+                            local={props.message.isDummy ? props.message.meta.local : undefined}
                             style={{
                                 height: 48,
                                 width: 48,

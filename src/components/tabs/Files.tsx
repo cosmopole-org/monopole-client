@@ -4,7 +4,7 @@ import FileCard from "../custom/components/FileCard"
 import FolderCard from "../custom/components/FolderCard"
 import SigmaFab from "../custom/elements/SigmaFab"
 import FilesAddressBar from "../custom/components/FilesAddressBar"
-import { themeColor, themeColorName } from "../../App"
+import { SigmaRouter, themeColor, themeColorName } from "../../App"
 import { useEffect, useRef, useState } from "react"
 import { api } from "../.."
 import IRoom from "../../api/models/room"
@@ -15,7 +15,7 @@ import FolderMenu from "../custom/components/FolderMenu"
 import Uploader from "../custom/components/Uploader"
 import FileMenu from "../custom/components/FileMenu"
 
-export let notifyNewFileUploaded = (doc: any) => {}
+export let notifyNewFileUploaded = (doc: any) => { }
 
 const Files = (props: { show: boolean, room: IRoom }) => {
     const inputFile = useRef(null)
@@ -66,6 +66,15 @@ const Files = (props: { show: boolean, room: IRoom }) => {
                 {
                     folderData?.subDocs?.map((subDoc: any) => (
                         <FileCard
+                            onSelect={() => {
+                                if (subDoc.type === 'audio') {
+                                    SigmaRouter.navigate('audioPlayer', { initialData: { doc: subDoc } })
+                                } else if (subDoc.type === 'image') {
+                                    SigmaRouter.navigate('gallery', { initialData: { docId: subDoc.id, room: props.room } })
+                                } else if (subDoc.type === 'video') {
+                                    SigmaRouter.navigate('videoPlayer', { initialData: { docId: subDoc.id, room: props.room } })
+                                }
+                            }}
                             onMoreClicked={() => setPointedFile(subDoc as any)}
                             room={props.room}
                             doc={subDoc}

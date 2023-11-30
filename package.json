@@ -16,11 +16,14 @@
     "@types/node": "^16.18.59",
     "@types/react": "^18.2.33",
     "@types/react-dom": "^18.2.14",
+    "@videojs/http-streaming": "^3.7.0",
     "applet-mwc": "^0.2.2",
     "applet-vm": "^0.2.7",
     "buffer": "^6.0.3",
+    "dashjs": "^4.7.2",
     "emoji-mart": "^5.5.2",
     "lovefield": "^2.1.12",
+    "mp4box": "^0.5.2",
     "react": "^17.0.0 || ^18.0.0",
     "react-dom": "^17.0.0 || ^18.0.0",
     "react-grid-layout": "^1.4.2",
@@ -30,6 +33,7 @@
     "react-virtualized": "^9.22.5",
     "react-virtualized-auto-sizer": "^1.0.7",
     "react-voice-visualizer": "^1.8.1",
+    "sass": "^1.69.5",
     "socket.io-client": "^4.7.2",
     "tsup": "^7.2.0",
     "typescript": "^4.9.5",
@@ -64,6 +68,7 @@
     "@types/lovefield": "^2.1.7",
     "@types/react-grid-layout": "^1.3.4",
     "@types/react-virtualized": "^9.21.28",
+    "video.js": "^8.6.1",
     "webpack-cli": "^5.1.4"
   }
 }

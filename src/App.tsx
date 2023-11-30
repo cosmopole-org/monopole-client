@@ -26,6 +26,7 @@ import { switchColor } from './components/sections/StatusBar';
 import TowerPicker from './components/pages/TowerPicker';
 import Gallery from './components/pages/gallery';
 import VideoPlayer from './components/pages/videoPlayer';
+import AudioPlayer from './components/pages/audioPlayer';
 
 const useForceUpdate = () => {
     const [value, setValue] = useState(0); // integer state
@@ -158,6 +159,7 @@ let pages: { [id: string]: any } = {
     'towerPicker': TowerPicker,
     'gallery': Gallery,
     'videoPlayer': VideoPlayer,
+    'audioPlayer': AudioPlayer,
     // forms
     'createTower': CreateTower,
     'createRoom': CreateRoom,

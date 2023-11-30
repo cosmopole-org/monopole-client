@@ -7,6 +7,7 @@ import { SigmaRouter, themeColor } from '../../../App';
 import { api } from '../../..';
 import SliderPage from '../../layouts/SliderPage';
 import { LeftControlTypes, RightControlTypes, StatusThemes, switchColor, switchLeftControl, switchRightControl, switchTitle } from '../../sections/StatusBar';
+import dashjs from 'dashjs';
 
 const format = (seconds: any) => {
   if (isNaN(seconds)) {
@@ -24,7 +25,6 @@ const format = (seconds: any) => {
     return `${mm}:${ss}`
   }
 };
-var streamingStarted = false;
 
 function VideoPlayer(props: { docId: string, room: IRoom, isOnTop: boolean, id: string }) {
   let { docId } = props
@@ -37,27 +37,6 @@ function VideoPlayer(props: { docId: string, room: IRoom, isOnTop: boolean, id: 
     seeking: false,
   });
   const playerRef = useRef(null);
-  const [source, setSource] = useState('')
-
-  React.useEffect(() => {
-    if (api.services.human.token) {
-      api.services.file.download({
-        towerId: props.room.towerId,
-        roomId: props.room.id,
-        documentId: props.docId
-      }).then(async response => {
-        let myUrl = (window.URL || window.webkitURL).createObjectURL(await response.blob());
-        setSource(myUrl)
-      })
-    }
-  }, [])
-
-  React.useEffect(() => {
-    if (playerRef.current && source.length > 0) {
-      setPlayerState({ ...playerstate, playing: true })
-    }
-  }, [source])
-
   const close = React.useCallback(() => {
     SigmaRouter.back()
   }, [])
@@ -74,65 +53,65 @@ function VideoPlayer(props: { docId: string, room: IRoom, isOnTop: boolean, id: 
   const { playing, muted, volume, playerbackRate, played, seeking } = playerstate;
 
   const handlePlayAndPause = () => {
-    setPlayerState({ ...playerstate, playing: !playerstate.playing })
+    //setPlayerState({ ...playerstate, playing: !playerstate.playing })
   }
 
   const handleMuting = () => {
-    setPlayerState({ ...playerstate, muted: !playerstate.muted })
+    //setPlayerState({ ...playerstate, muted: !playerstate.muted })
   }
 
   const handleRewind = () => {
-    if (playerRef.current) {
-      (playerRef.current as any).seekTo((playerRef.current as any).getCurrentTime() - 10)
-    }
+    // if (playerRef.current) {
+    //   (playerRef.current as any).seekTo((playerRef.current as any).getCurrentTime() - 10)
+    // }
   }
 
   const handleFastForward = () => {
-    if (playerRef.current) {
-      (playerRef.current as any).seekTo((playerRef.current as any).getCurrentTime() + 30)
-    }
+    // if (playerRef.current) {
+    //   (playerRef.current as any).seekTo((playerRef.current as any).getCurrentTime() + 30)
+    // }
   }
 
   const handleVolumeChange = (e: any, newValue: number) => {
-    setPlayerState({ ...playerstate, volume: Math.floor(newValue / 100), muted: newValue === 0 ? true : false, });
+    //setPlayerState({ ...playerstate, volume: Math.floor(newValue / 100), muted: newValue === 0 ? true : false, });
   }
 
   const handleVolumeSeek = (e: any, newValue: number) => {
-    setPlayerState({ ...playerstate, volume: Math.floor(newValue / 100), muted: newValue === 0 ? true : false, });
+    //setPlayerState({ ...playerstate, volume: Math.floor(newValue / 100), muted: newValue === 0 ? true : false, });
   }
 
   const handlePlayerRate = (rate: any) => {
-    setPlayerState({ ...playerstate, playerbackRate: rate });
+    //setPlayerState({ ...playerstate, playerbackRate: rate });
   }
 
   const handlePlayerProgress = (state: any) => {
-    console.log('onProgress', state);
-    if (!playerstate.seeking) {
-      setPlayerState({ ...playerstate, ...state });
-    }
-    console.log('afterProgress', state);
+    // console.log('onProgress', state);
+    // if (!playerstate.seeking) {
+    //   setPlayerState({ ...playerstate, ...state });
+    // }
+    // console.log('afterProgress', state);
   }
 
   const handlePlayerSeek = (e: any, newValue: number) => {
-    setPlayerState({ ...playerstate, played: Math.floor(newValue / 100) });
-    if (playerRef.current) {
-      (playerRef.current as any).seekTo(Math.floor(newValue / 100));
-    }
+    // setPlayerState({ ...playerstate, played: Math.floor(newValue / 100) });
+    // if (playerRef.current) {
+    //   (playerRef.current as any).seekTo(Math.floor(newValue / 100));
+    // }
   }
 
   const handlePlayerMouseSeekDown = (e: any) => {
-    setPlayerState({ ...playerstate, seeking: true });
+    //setPlayerState({ ...playerstate, seeking: true });
   }
 
   const handlePlayerMouseSeekUp = (e: any, newValue: number) => {
-    setPlayerState({ ...playerstate, seeking: false });
-    if (playerRef.current) {
-      (playerRef.current as any).seekTo(Math.floor(newValue / 100));
-    }
+    // setPlayerState({ ...playerstate, seeking: false });
+    // if (playerRef.current) {
+    //   (playerRef.current as any).seekTo(Math.floor(newValue / 100));
+    // }
   }
 
-  const currentPlayerTime = playerRef.current ? (playerRef.current as any).getCurrentTime() : '00:00';
-  const movieDuration = playerRef.current ? (playerRef.current as any).getDuration() : '00:00';
+  const currentPlayerTime = playerRef.current ? (playerRef.current as any).currentTime : '00:00';
+  const movieDuration = playerRef.current ? (playerRef.current as any).duration : '00:00';
   const playedTime = format(currentPlayerTime);
   const fullMovieTime = format(movieDuration);
 
@@ -149,57 +128,40 @@ function VideoPlayer(props: { docId: string, room: IRoom, isOnTop: boolean, id: 
     }
   }, []);
 
+  React.useEffect(() => {
+    var video,
+      player: dashjs.MediaPlayerClass,
+      url = `http://localhost:3001/file/download?documentid=${props.docId}&videoModuleType=manifest`;
+    video = document.getElementById("video-player") as HTMLVideoElement;
+    player = dashjs.MediaPlayer().create();
+    player.extend("RequestModifier", function () {
+      return {
+        modifyRequestHeader: function (xhr: any, urlHolder: { url: string }) {
+          xhr.setRequestHeader('token', api.services.human.token)
+          xhr.setRequestHeader('towerid', props.room.towerId)
+          xhr.setRequestHeader('roomid', props.room.id)
+          return xhr;
+        },
+        modifyRequestURL: function (url: string) {
+          let moduleType = 'manifest';
+          if (url.endsWith('.webm')) {
+            moduleType = url.substring(url.lastIndexOf('-') + 1, url.length - 5)
+          }
+          return `http://localhost:3001/file/download?documentid=${props.docId}&videoModuleType=${moduleType}`
+        }
+      };
+    }, true);
+    if (video) player.initialize(video, url, true);
+    return () => {
+      player.reset()
+    }
+  }, [])
+
   return (
     <SliderPage id={props.id}>
-      {
-        source.length > 0 ? (
-          <ReactPlayer
-            url={source}
-            playing={playing}
-            width={'100%'}
-            height={'100%'}
-            ref={playerRef}
-            volume={volume}
-            onProgress={handlePlayerProgress}
-            onEnded={() => setPlayerState({ ...playerstate, playing: false })}
-            onPlay={() => setPlayerState({ ...playerstate, playing: true })}
-            onPause={() => setPlayerState({ ...playerstate, playing: false })}
-            muted={muted}
-            style={{
-              width: '100%',
-              height: '100%',
-              position: 'absolute',
-              left: 0,
-              top: 0
-            }}
-          />
-        ) : null
-      }
-      <ControlIcons
-        key={volume.toString()}
-        playandpause={handlePlayAndPause}
-        playing={playing}
-        rewind={handleRewind}
-        fastForward={handleFastForward}
-        muting={handleMuting}
-        muted={muted}
-        volumeChange={handleVolumeChange}
-        volumeSeek={handleVolumeSeek}
-        volume={volume}
-        playerbackRate={playerbackRate}
-        playRate={handlePlayerRate}
-        fullScreenMode={() => { }}
-        played={played}
-        onSeek={handlePlayerSeek}
-        onSeekMouseUp={handlePlayerMouseSeekUp}
-        onSeekMouseDown={handlePlayerMouseSeekDown}
-        playedTime={playedTime}
-        fullMovieTime={fullMovieTime}
-        closePlayer={() => {
-          setPlayerState({ ...playerstate, playing: false });
-          close()
-        }}
-      />
+      <div style={{ width: '100%', height: '100%', backgroundColor: themeColor.get({ noproxy: true })[50] }}>
+        <video id={'video-player'} className="video-js" controls preload="auto" style={{ width: '100%', height: 'auto', position: 'absolute', top: '50%', transform: 'translateY(-50%)' }} />
+      </div>
     </SliderPage>
   );
 }

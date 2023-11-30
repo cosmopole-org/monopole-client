@@ -23,21 +23,6 @@ window.addEventListener('error', e => {
   }
 });
 
-if ('serviceWorker' in navigator) {
-  // Register a service worker hosted at the root of the
-  // site using the default scope.
-  navigator.serviceWorker.register(`${process.env.PUBLIC_URL}/service-worker.js`).then(
-    registration => {
-      console.log('Service worker registration succeeded:', registration);
-    },
-    /*catch*/ error => {
-      console.error(`Service worker registration failed: ${error}`);
-    }
-  );
-} else {
-  console.error('Service workers are not supported.');
-}
-
 let api: Api;
 
 Api.initilize().then((instance: Api) => {

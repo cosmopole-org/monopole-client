@@ -1,4 +1,4 @@
-import { State } from "@hookstate/core"
+import { State, hookstate } from "@hookstate/core"
 import { CacheDriver, DatabaseDriver, NetworkDriver } from "../drivers"
 import IMessage from "../models/message"
 import { api } from "../.."
@@ -100,6 +100,7 @@ class FileService {
         })
     }
 
+    public transferProgress = hookstate<{ [id: string]: number }>({})
     transferringFileTypes: { [id: string]: string } = {}
     fileTransferListeners: { [id: string]: { [id: string]: (body: { data: Blob, newChunk?: any }) => void } } = {}
     listenToFileTransfer(tag: string, docId: string, callback: (body: { data: Blob, newChunk?: any }) => void) {
@@ -107,9 +108,22 @@ class FileService {
         this.fileTransferListeners[docId][tag] = callback
     }
 
-    async download(data: { towerId: string, roomId: string, documentId: string }): Promise<any> {
+    readChunks(reader: any) {
+        return {
+            async*[Symbol.asyncIterator]() {
+                let readResult = await reader.read();
+                while (!readResult.done) {
+                    yield readResult.value;
+                    readResult = await reader.read();
+                }
+            },
+        };
+    }
+
+    async download(data: { towerId: string, roomId: string, documentId: string, onChunk: (chunk: any) => void, onResult: (data: Array<any>) => void }): Promise<any> {
         if (api.services.human.token) {
-            return fetch(`https://monopole.iran.liara.run/file/download?documentid=${data.documentId}`, {
+            let result: Array<any> = []
+            return fetch(`http://localhost:3001/file/download?documentid=${data.documentId}`, {
                 method: 'GET',
                 headers: {
                     Accept: 'video/*',
@@ -117,6 +131,13 @@ class FileService {
                     roomId: data.roomId,
                     token: api.services.human.token
                 }
+            }).then(async response => {
+                const reader = response.body?.getReader();
+                for await (const chunk of this.readChunks(reader)) {
+                    result.push(chunk)
+                    data.onChunk(chunk)
+                }
+                data.onResult(result)
             })
         }
     }
@@ -218,16 +239,17 @@ class FileService {
         return chunks;
     }
 
-    async forwardChunkUpload(towerId: string, roomId: string, tempDocId: string, uploadToken: string, chunks: any, pointer: number, finishCallback: () => void) {
+    async forwardChunkUpload(towerId: string, roomId: string, tempDocId: string, uploadToken: string, chunks: any, pointer: number, finishCallback: () => void, progressCallback: (percent: number) => void) {
+        progressCallback(pointer * 100 / chunks.length)
         if (chunks.length === pointer) {
             finishCallback()
         } else {
             await api.services.file.uploadData({ towerId, roomId, tempDocId, uploadToken, data: chunks[pointer] })
-            setTimeout(() => this.forwardChunkUpload(towerId, roomId, tempDocId, uploadToken, chunks, pointer + 1, finishCallback));
+            setTimeout(() => this.forwardChunkUpload(towerId, roomId, tempDocId, uploadToken, chunks, pointer + 1, finishCallback, progressCallback));
         }
     }
 
-    async upload(data: { towerId: string, roomId: string, file: any, folderId: string }): Promise<any> {
+    async upload(data: { towerId: string, roomId: string, file: any, folderId: string, tag?: string }): Promise<any> {
         return new Promise(async resolve => {
             let mimeType = data.file.type.split('/')
             let title = data.file.name
@@ -235,6 +257,7 @@ class FileService {
             let body1 = await api.services.file.startUpload({ towerId: data.towerId, roomId: data.roomId, folderId: data.folderId })
             let { tempDocId, uploadToken } = body1
             let chunks = this.createChunks(data.file)
+            if (data.tag) this.transferProgress[data.tag].set(1)
             setTimeout(() => this.forwardChunkUpload(data.towerId, data.roomId, tempDocId, uploadToken, chunks, 0, () => {
                 api.services.file
                     .endUpload({ towerId: data.towerId, roomId: data.roomId, tempDocId, uploadToken, extension, fileType, title })
@@ -242,12 +265,21 @@ class FileService {
                         let { document: doc } = body2
                         resolve(doc)
                     })
+            }, (percent: number) => {
+                if (data.tag) {
+                    this.transferProgress[data.tag].set(percent)
+                }
             }))
         })
     }
 
     async getDocuemnt(data: { towerId: string, roomId: string, documentId: string }): Promise<any> {
-        return this.network.request('file/getDocument', { towerId: data.towerId, roomId: data.roomId, documentId: data.documentId })
+        let cachedDoc = this.cache.get(`doc-${data.documentId}`)
+        if (cachedDoc) return cachedDoc
+        return this.network.request('file/getDocument', { towerId: data.towerId, roomId: data.roomId, documentId: data.documentId }).then((body: any) => {
+            this.cache.put(`doc-${data.documentId}`, body.doc)
+            return body
+        })
     }
 }
 

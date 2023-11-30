@@ -104,8 +104,8 @@ const Chat = (props: { show: boolean, room: IRoom }) => {
         inputFile.current && (inputFile.current as HTMLElement).click();
     }, [setPointedPostMessage, setPointedMessage, pointedPostMessage, msgs, messagesList])
     useEffect(() => {
-        let { r, g, b } = formatter.hexToRGB(themeColor.get({noproxy: true})[100]);
-        let textColorUnit = themeColorName.get({noproxy: true}) === 'night' ? 255 : 0;
+        let { r, g, b } = formatter.hexToRGB(themeColor.get({ noproxy: true })[100]);
+        let textColorUnit = themeColorName.get({ noproxy: true }) === 'night' ? 255 : 0;
         (document.getElementById('emojiPickerStyle') as HTMLStyleElement)?.sheet?.insertRule(`
             em-emoji-picker {
                 --background-rgb: ${r}, ${g}, ${b};
@@ -125,11 +125,11 @@ const Chat = (props: { show: boolean, room: IRoom }) => {
             style={{ width: '100%', height: 'calc(100% - 32px - 16px)', position: 'absolute', left: props.show ? 0 : '-100%', paddingTop: 32 + 16 }}
         >
             <Uploader folderId={props.room.id} inputFile={inputFile} room={props.room} onSelect={(file: any) => {
-                let key = Math.random().toString().substring(2)
+                const key = Math.random().toString().substring(2)
                 let mimeType = file.type.split('/')
                 let fileType = mimeType[0]
                 let messageType = fileType === 'image' ? 'photo' : fileType
-                let draft = middleUtils.dummy.createDummyMessage(props.room.id, messageType, { docId: key }, { localUrl: URL.createObjectURL(file) })
+                let draft = middleUtils.dummy.createDummyMessage(props.room.id, messageType, { docId: key }, { local: file, tag: key })
                 msgs.merge([draft])
                 setTimeout(chatUtils.scrollToChatEnd)
                 uploads[key] = {
@@ -149,7 +149,7 @@ const Chat = (props: { show: boolean, room: IRoom }) => {
                     },
                     roomId: props.room.id
                 }
-                api.services.file.upload({ towerId: props.room.towerId, roomId: props.room.id, file, folderId: props.room.id }).then((doc: any) => {
+                api.services.file.upload({ towerId: props.room.towerId, roomId: props.room.id, file, folderId: props.room.id, tag: key }).then((doc: any) => {
                     notifyNewFileUploaded(doc)
                     let itemUpload = uploads[key]
                     if (itemUpload && (itemUpload.roomId === props.room.id)) {
