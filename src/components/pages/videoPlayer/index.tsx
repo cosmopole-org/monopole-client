@@ -1,7 +1,5 @@
 import * as React from 'react';
 import { useState, useRef } from 'react';
-import ReactPlayer from 'react-player';
-import ControlIcons from './ControlIcons';
 import IRoom from '../../../api/models/room';
 import { SigmaRouter, themeColor } from '../../../App';
 import { api } from '../../..';
@@ -132,7 +130,7 @@ function VideoPlayer(props: { docId: string, room: IRoom, isOnTop: boolean, id: 
   React.useEffect(() => {
     var video,
       player: dashjs.MediaPlayerClass,
-      url = `${config.GATEWAY_ADDRESS}/file/download?documentid=${props.docId}&videoModuleType=manifest`;
+      url = `${config.GATEWAY_ADDRESS}/file/download?documentid=${props.docId}&videomoduletype=manifest`;
     video = document.getElementById("video-player") as HTMLVideoElement;
     player = dashjs.MediaPlayer().create();
     player.extend("RequestModifier", function () {
@@ -144,11 +142,12 @@ function VideoPlayer(props: { docId: string, room: IRoom, isOnTop: boolean, id: 
           return xhr;
         },
         modifyRequestURL: function (url: string) {
+          console.log(url)
           let moduleType = 'manifest';
           if (url.endsWith('.webm')) {
             moduleType = url.substring(url.lastIndexOf('-') + 1, url.length - 5)
           }
-          return `${config.GATEWAY_ADDRESS}/file/download?documentid=${props.docId}&videoModuleType=${moduleType}`
+          return `${config.GATEWAY_ADDRESS}/file/download?documentid=${props.docId}&videomoduletype=${moduleType}`
         }
       };
     }, true);

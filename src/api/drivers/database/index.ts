@@ -11,6 +11,11 @@ class DatabaseDriver {
     private db: lf.Database | undefined;
     private schemaBuilder: lf.schema.Builder | undefined
     private tables: { [id: string]: lf.schema.Table | undefined } = {}
+
+    clearDb() {
+        this.db?.close()
+        indexedDB.deleteDatabase('sigma');
+    }
     
     factories: {
         tower: TowerFactory | undefined,

@@ -70,7 +70,14 @@ const Files = (props: { show: boolean, room: IRoom }) => {
                                 if (subDoc.type === 'audio') {
                                     SigmaRouter.navigate('audioPlayer', { initialData: { doc: subDoc } })
                                 } else if (subDoc.type === 'image') {
-                                    SigmaRouter.navigate('gallery', { initialData: { docId: subDoc.id, room: props.room } })
+                                    SigmaRouter.navigate('gallery', {
+                                        initialData: {
+                                            docId: subDoc.id, room: props.room, otherDocIds:
+                                                folderData.subDocs
+                                                    .filter((doc: any) => doc.type === 'image')
+                                                    .map((doc: any) => doc.id)
+                                        }, overPrevious: true
+                                    })
                                 } else if (subDoc.type === 'video') {
                                     SigmaRouter.navigate('videoPlayer', { initialData: { docId: subDoc.id, room: props.room } })
                                 }

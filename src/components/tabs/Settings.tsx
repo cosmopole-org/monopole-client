@@ -1,7 +1,7 @@
 import { useRef, useState } from "react"
 import { Avatar, Card, FormControl, IconButton, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material"
 import * as colors from '@mui/material/colors'
-import { ArrowForward, DarkMode, Edit, SmartToy } from "@mui/icons-material"
+import { ArrowForward, DarkMode, Edit, Logout, SmartToy } from "@mui/icons-material"
 import SigmaSwitch from "../custom/elements/SigmaSwitch"
 import { api } from "../.."
 import { SigmaRouter, fixedNightColor, reconstructMaterialPalette, themeColor, themeColorName } from "../../App"
@@ -14,7 +14,7 @@ const Settings = (props: { isOnTop: boolean, show: boolean }) => {
         if (event.target.value === 'night') {
             colorFamily = fixedNightColor
         } else {
-            colorFamily = {...(colors as { [id: string]: any })[event.target.value.toString()], plain: '#fff', activeText: '#333', passiveText: '#666' }
+            colorFamily = { ...(colors as { [id: string]: any })[event.target.value.toString()], plain: '#fff', activeText: '#333', passiveText: '#666' }
         }
         reconstructMaterialPalette(event.target.value, colorFamily)
     };
@@ -84,7 +84,8 @@ const Settings = (props: { isOnTop: boolean, show: boolean }) => {
                     onChange={handleChange}
                     style={{
                         borderRadius: 24,
-                        backgroundColor: themeColor.get({ noproxy: true })[100]
+                        backgroundColor: themeColor.get({ noproxy: true })[100],
+                        paddingLeft: 8
                     }}
                 >
                     <MenuItem key={`settings-theme-color-night`} value={'night'}>night</MenuItem>
@@ -95,6 +96,28 @@ const Settings = (props: { isOnTop: boolean, show: boolean }) => {
                     }
                 </Select>
             </FormControl>
+            <Card
+                elevation={0}
+                style={{
+                    paddingLeft: 16, paddingRight: 16, backgroundColor: themeColor.get({ noproxy: true })[100], borderRadius: 24, height: 'auto', display: 'flex',
+                    marginLeft: 16, width: 'calc(100% - 64px)', position: 'relative', marginTop: 16, paddingTop: 8, paddingBottom: 8
+                }}
+                onClick={() => {
+                    if (window.confirm('do you want to sign out ?')) {
+                        api.services.human.signOut()
+                    }
+                }}
+            >
+                <IconButton>
+                    <Logout />
+                </IconButton>
+                <Typography style={{ flex: 1, marginTop: 8 }}>
+                    Sign Out
+                </Typography>
+                <IconButton>
+                    <ArrowForward />
+                </IconButton>
+            </Card>
         </div>
     )
 }

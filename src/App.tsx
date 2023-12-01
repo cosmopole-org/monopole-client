@@ -21,12 +21,13 @@ import UpdateProfile from './components/forms/updateProfile';
 import { AppletSheet } from './components/custom/components/AppletSheet';
 import Machines from './components/pages/machines';
 import CreateMachine from './components/forms/createMachine';
-import { hookstate } from '@hookstate/core';
+import { hookstate, useHookstate } from '@hookstate/core';
 import { switchColor } from './components/sections/StatusBar';
 import TowerPicker from './components/pages/TowerPicker';
 import Gallery from './components/pages/gallery';
 import VideoPlayer from './components/pages/videoPlayer';
 import AudioPlayer from './components/pages/audioPlayer';
+import { resetApi } from '.';
 
 const useForceUpdate = () => {
     const [value, setValue] = useState(0); // integer state
@@ -34,6 +35,7 @@ const useForceUpdate = () => {
 }
 
 let forceUpdate = () => { };
+const currentRoute = hookstate('')
 
 export const fixedNightColor = {
     '500': '#292e39',
@@ -48,7 +50,7 @@ export const fixedNightColor = {
 
 let tempThemeColorName = localStorage.getItem('themeColor')
 if (tempThemeColorName === null) {
-    tempThemeColorName = 'blue'
+    tempThemeColorName = 'night'
     localStorage.setItem('themeColor', tempThemeColorName)
 }
 export let themeColorName = hookstate(tempThemeColorName)
@@ -146,7 +148,6 @@ let lastNaviationType: string | undefined = undefined
 let loaded: boolean = false;
 let historyStack: Array<{ id: string, path: string, initialData?: string }> = [];
 let listeners: { [path: string]: (type: string) => void } = {};
-let refToCurrentRouteStateChanger: ((path: string) => void) | undefined = undefined;
 let pages: { [id: string]: any } = {
     // activities
     'splash': Splash,
@@ -168,6 +169,12 @@ let pages: { [id: string]: any } = {
 }
 
 export let SigmaRouter = {
+    reset: () => {
+        historyStack = []
+        listeners = {}
+        lastNaviationType = undefined
+        SigmaRouter.navigate('splash')
+    },
     registerListener: (path: string, listener: (type: string) => void) => {
         listeners[path] = listener
     },
@@ -180,7 +187,7 @@ export let SigmaRouter = {
         }
         historyStack.push({ id: Math.random().toString(), path, initialData: options?.initialData })
         lastNaviationType = 'navigate'
-        refToCurrentRouteStateChanger && refToCurrentRouteStateChanger(path)
+        currentRoute.set(path)
     },
     back: () => {
         if (historyStack.length > 1) {
@@ -194,7 +201,7 @@ export let SigmaRouter = {
             listeners[historyStack[historyStack.length - 1].id] &&
                 listeners[historyStack[historyStack.length - 1].id]('enter-left')
             setTimeout(() => {
-                refToCurrentRouteStateChanger && refToCurrentRouteStateChanger(historyStack[historyStack.length - 1].id)
+                currentRoute.set(historyStack[historyStack.length - 1].id)
             }, 250);
         }
     },
@@ -209,12 +216,11 @@ export let SigmaRouter = {
 
 function App() {
     forceUpdate = useForceUpdate()
-    const [_, setCurrentRoute] = useState(historyStack[historyStack.length - 1]?.id)
-    refToCurrentRouteStateChanger = setCurrentRoute
+    const cr = useHookstate(currentRoute)
     useEffect(() => {
         if (!loaded) {
             loaded = true
-            SigmaRouter.navigate('splash')
+            SigmaRouter.reset()
         }
     }, [])
     let result: Array<any> = []
@@ -232,12 +238,20 @@ function App() {
     return (
         <ThemeProvider theme={theme}>
             <div style={{ width: '100%', height: '100vh', overflow: 'hidden', backgroundColor: themeColor.get({ noproxy: true })['plain'] }}>
-                {result}
+                {cr.get({ noproxy: true }).length > 0 ? result : null}
                 <AppletSheet />
                 <StatusBar.Component />
             </div>
         </ThemeProvider>
     );
+}
+
+export let AppUtils = {
+    reset: async () => {
+        await resetApi()
+        reconstructMaterialPalette('night', fixedNightColor)
+        SigmaRouter.reset()
+    }
 }
 
 export default App;

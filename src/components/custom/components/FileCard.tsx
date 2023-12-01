@@ -12,8 +12,9 @@ const FileCard = (props: { style?: any, onSelect: () => void, onMoreClicked?: ()
     const imageKey = useRef(props.doc.id + '-' + Math.random())
     return (
         <Card elevation={0} style={{ ...props.style, position: 'relative', width: 'calc(100% - 64px)', padding: 16, height: 96, backgroundColor: themeColor.get({ noproxy: true })[50], borderRadius: 24 }}
-            onClick={() => props.onSelect()}
-        >
+            onClick={() => {
+                props.onSelect()
+            }}>
             <div style={{ width: '100%', height: 'auto', display: 'flex' }}>
                 <SigmaAvatar style={{ width: 48, height: 48 }}>
                     <Image

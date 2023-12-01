@@ -2,6 +2,7 @@ import { State, hookstate } from "@hookstate/core"
 import { CacheDriver, DatabaseDriver, NetworkDriver } from "../drivers"
 import IMessage from "../models/message"
 import { api } from "../.."
+import config from "../../config"
 
 class FileService {
 
@@ -80,21 +81,23 @@ class FileService {
             }
         })
         this.network.socket.on('onDocumentReceived', body => {
-            let { docId, data, first } = body
-            if (first) {
-                this.cache.put(docId + '-original', new Blob([data], { type: this.transferringFileTypes[docId + '-original'] }))
-            } else {
-                let previous = this.cache.get(docId + '-original')
-                if (previous) {
-                    this.cache.put(docId + '-original', new Blob([previous, data], { type: this.transferringFileTypes[docId + '-original'] }))
-                } else {
+            let { docId, data, first, end } = body
+            if (data) {
+                if (first) {
                     this.cache.put(docId + '-original', new Blob([data], { type: this.transferringFileTypes[docId + '-original'] }))
+                } else {
+                    let previous = this.cache.get(docId + '-original')
+                    if (previous) {
+                        this.cache.put(docId + '-original', new Blob([previous, data], { type: this.transferringFileTypes[docId + '-original'] }))
+                    } else {
+                        this.cache.put(docId + '-original', new Blob([data], { type: this.transferringFileTypes[docId + '-original'] }))
+                    }
                 }
             }
             let callbacks = this.fileTransferListeners[docId + '-original']
             if (callbacks) {
                 Object.values(callbacks).forEach(callback => {
-                    callback({ data: this.cache.get(docId + '-original'), newChunk: data })
+                    callback({ data: this.cache.get(docId + '-original'), newChunk: data, end })
                 })
             }
         })
@@ -102,8 +105,8 @@ class FileService {
 
     public transferProgress = hookstate<{ [id: string]: number }>({})
     transferringFileTypes: { [id: string]: string } = {}
-    fileTransferListeners: { [id: string]: { [id: string]: (body: { data: Blob, newChunk?: any }) => void } } = {}
-    listenToFileTransfer(tag: string, docId: string, callback: (body: { data: Blob, newChunk?: any }) => void) {
+    fileTransferListeners: { [id: string]: { [id: string]: (body: { data: Blob, newChunk?: any, end?: boolean }) => void } } = {}
+    listenToFileTransfer(tag: string, docId: string, callback: (body: { data: Blob, newChunk?: any, end?: boolean }) => void) {
         if (!this.fileTransferListeners[docId]) this.fileTransferListeners[docId] = {}
         this.fileTransferListeners[docId][tag] = callback
     }
@@ -123,10 +126,9 @@ class FileService {
     async download(data: { towerId: string, roomId: string, documentId: string, onChunk: (chunk: any) => void, onResult: (data: Array<any>) => void }): Promise<any> {
         if (api.services.human.token) {
             let result: Array<any> = []
-            return fetch(`http://localhost:3001/file/download?documentid=${data.documentId}`, {
+            return fetch(`${config.GATEWAY_ADDRESS}/file/download?documentid=${data.documentId}`, {
                 method: 'GET',
                 headers: {
-                    Accept: 'video/*',
                     towerId: data.towerId,
                     roomId: data.roomId,
                     token: api.services.human.token

@@ -15,13 +15,13 @@ import IRoom from "../../../../api/models/room";
 import { useHookstate } from "@hookstate/core";
 import { api } from "../../../..";
 
-const PhotoMessage = (props: { room: IRoom, message: IMessage, side?: string, lastOfSection?: boolean, firstOfSection?: boolean, isQuote?: boolean }) => {
+const PhotoMessage = (props: { otherDocIds: Array<string | undefined>, room: IRoom, message: IMessage, side?: string, lastOfSection?: boolean, firstOfSection?: boolean, isQuote?: boolean }) => {
     let progress = useHookstate(api.services.file.transferProgress)?.get({ noproxy: true })[props.message.meta?.tag]
     return (
         <Paper
             onClick={e => {
                 e.stopPropagation()
-                SigmaRouter.navigate('gallery', { initialData: { docId: props.message.data.docId, room: props.room } })
+                SigmaRouter.navigate('gallery', { initialData: { docId: props.message.data.docId, room: props.room, otherDocIds: props.otherDocIds }, overPrevious: true })
             }}
             style={{
                 height: 236,

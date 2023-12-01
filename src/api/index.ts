@@ -8,10 +8,21 @@ import IHuman from "./models/human";
 
 class Api {
 
+    private static _instance: Api;
+
+    public key: string = Math.random().toString().substring(2);
+
+    public static async reset(): Promise<Api> {
+        localStorage.clear()
+        Api._instance.storage.clearDb()
+        return Api.initilize()
+    }
+
     public static async initilize(): Promise<Api> {
         return new Promise(resolve => {
             let storage = new DatabaseDriver(() => {
-                resolve(new Api(storage))
+                Api._instance = new Api(storage)
+                resolve(Api._instance)
             })
         })
     }

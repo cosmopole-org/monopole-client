@@ -9,7 +9,9 @@ const prepareSpaces = (towers: Array<any>, rooms: Array<any>, memory: any) => {
         memory[tower.id] = tower
     });
     rooms.forEach((room: any) => {
-        towersDict[room.towerId].rooms[room.id] = room
+        if (towersDict[room.towerId]) {
+            towersDict[room.towerId].rooms[room.id] = room
+        }
     });
     return memory
 }
@@ -44,10 +46,16 @@ const removeRoom = (towerId: string, roomId: string, spaces: any) => {
     return spaces
 }
 
+const removeTower = (towerId: string, spaces: any) => {
+    delete spaces[towerId]
+    return spaces
+}
+
 export {
     prepareSpaces,
     transformTower,
     prepareRoom,
     transformRoom,
-    removeRoom
+    removeRoom,
+    removeTower
 }

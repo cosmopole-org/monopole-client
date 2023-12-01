@@ -65,8 +65,12 @@ class TowerService {
         })
     }
 
-    async remove(data: { towerId: string }): Promise<void> {
-        return this.network.request('tower/remove', { towerId: data.towerId })
+    async remove(data: { towerId: string }): Promise<any> {
+        return this.network.request('tower/remove', { towerId: data.towerId }).then(async (body: any) => {
+            await this.storage.factories.tower?.remove(data.towerId)
+            this.memory.spaces.set(memoryUtils.spaces.removeTower(data.towerId, { ...this.memory.spaces.get({ noproxy: true }) }))
+            return body
+        })
     }
 
     async join(data: { towerId: string }): Promise<void> {

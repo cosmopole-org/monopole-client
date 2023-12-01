@@ -2,6 +2,7 @@
 import { State } from "@hookstate/core"
 import { DatabaseDriver, NetworkDriver } from "../drivers"
 import memoryUtils from "../utils/memory"
+import { AppUtils } from "../../App"
 
 class HumanService {
 
@@ -127,6 +128,13 @@ class HumanService {
                 resolve({ success: false, error: { message: 'token empty.' } })
             })
         }
+    }
+
+    signOut(): void {
+        if (this._token) {
+            this.network.request('human/signOut', {})
+        }
+        AppUtils.reset()
     }
 
     async readById(data: { targetHumanId: string }): Promise<void> {

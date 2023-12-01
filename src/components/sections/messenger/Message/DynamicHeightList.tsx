@@ -73,6 +73,8 @@ const DynamicHeightList = (props: { room: IRoom, messages: Array<IMessage>, mess
                                 messageType={message.type}
                                 firstOfSection={isFirstOfSection}
                                 lastOfSection={isLastOfSection}
+                                messages={props.messages}
+
                             />
                         </div>
                     )}

@@ -25,18 +25,27 @@ window.addEventListener('error', e => {
 
 let api: Api;
 
+const resetApi = async (): Promise<void> => {
+  return new Promise(resolve => {
+    Api.reset().then(instance => {
+      api = instance;
+      resolve()
+    })
+  })
+}
+
 Api.initilize().then((instance: Api) => {
   api = instance
   const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
   );
   root.render(
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+    <BrowserRouter>
+      <App key={api.key} />
+    </BrowserRouter>
   );
 })
-export { api }
+export { api, resetApi }
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
