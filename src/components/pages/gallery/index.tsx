@@ -1,13 +1,13 @@
 
 import './index.css';
 import { LeftControlTypes, RightControlTypes, StatusThemes, switchColor, switchLeftControl, switchRightControl, switchTitle } from '../../sections/StatusBar';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { SigmaRouter, headerImageAddress, themeColor } from '../../../App';
+import { useCallback, useEffect, useRef } from 'react';
+import { SigmaRouter, themeColor } from '../../../App';
 import { hookstate, useHookstate } from '@hookstate/core';
-import Image from '../../custom/components/Image';
 import IRoom from '../../../api/models/room';
 import Viewerjs from 'viewerjs'
 import 'viewerjs/dist/viewer.css'
+import { api } from '../../..';
 
 let giDefault: { [id: string]: string } = {}
 let galleryImages = hookstate(giDefault)
@@ -29,61 +29,61 @@ const Gallery = (props: { id: string, isOnTop: boolean, room: IRoom, docId: stri
     }, [props.isOnTop])
     useEffect(() => {
         if (imageListContainerRef.current) {
+            let size = Math.min(window.innerWidth, window.innerHeight)
             let container = imageListContainerRef.current as HTMLElement
             if (props.otherDocIds) {
                 props.otherDocIds.forEach(docId => {
                     let imageEl = document.createElement('img');
                     imageEl.setAttribute('id', `gallery-item-'${docId}`);
                     container.appendChild(imageEl);
+                    api.services.file.listenToFileTransfer(`gallery-item-${docId}`, docId + '-preview', (body: { data: Blob, newChunk?: any, end?: boolean }) => {
+                        imageEl.setAttribute('src', URL.createObjectURL(body.data))
+                    })
+                    api.services.file.prevDown({ towerId: props.room.towerId, roomId: props.room.id, documentId: docId })
+                });
+            } else {
+                let imageEl = document.createElement('img');
+                imageEl.setAttribute('id', `gallery-item-'${props.docId}`);
+                container.appendChild(imageEl);
+                api.services.file.listenToFileTransfer(`gallery-item-${props.docId}`, props.docId + '-preview', (body: { data: Blob, newChunk?: any, end?: boolean }) => {
+                    imageEl.setAttribute('src', URL.createObjectURL(body.data))
                 })
+                api.services.file.prevDown({ towerId: props.room.towerId, roomId: props.room.id, documentId: props.docId });
             }
             viewer.current = new Viewerjs(container, {
-                hide: () => close()
+                zoomRatio: 3,
+                hide: () => close(),
+                viewed(event) {
+                    viewer.current.zoomTo(2);
+                    let di = props.docId
+                    if (props.otherDocIds) {
+                        di = props.otherDocIds[event.detail.index]
+                    }
+                    api.services.file.download({
+                        downloadType: api.services.file.downloadTypes.DOCUMENT,
+                        towerId: props.room.towerId,
+                        roomId: props.room.id,
+                        documentId: di,
+                        onChunk: (data: any) => { },
+                        onResult: (data: any) => {
+                            let url = URL.createObjectURL(new Blob(data, { type: 'image/jpg' }))
+                            gallery[di].set(url)
+                            event.detail.image.src = url
+                        }
+                    });
+                },
             });
+            if (props.otherDocIds) {
+                (viewer.current as Viewerjs).view(props.otherDocIds.indexOf(props.docId));
+            } else {
+                (viewer.current as Viewerjs).view(0);
+            }
             viewer.current.show()
         }
     }, [])
 
-    const buildImageLoader = (docId: string) => {
-        return (
-            <Image
-                onImageLoad={(url: string) => {
-                    gallery[docId].set(url);
-                    if (imageListContainerRef.current) {
-                        document.getElementById(`gallery-item-'${docId}`)?.setAttribute('src', url);
-                        (viewer.current as Viewerjs).update();
-                        if (props.otherDocIds) {
-                            (viewer.current as Viewerjs).view(props.otherDocIds.indexOf(props.docId));
-                        } else {
-                            (viewer.current as Viewerjs).view(0);
-                        }
-                    }
-                }}
-                docId={docId}
-                room={props.room}
-                tag={`gallery-photo-${docId}`}
-                style={{
-                    display: 'none',
-                    width: Math.min(window.innerWidth, window.innerHeight),
-                    height: Math.min(window.innerWidth, window.innerHeight),
-                    position: 'absolute',
-                    left: '50%',
-                    top: '50%',
-                    transform: 'translate(-50%, -50%)'
-                }}
-            />
-        )
-    }
-
     return (
         <div style={{ width: '100%', height: '100%' }}>
-            {
-                props.otherDocIds ?
-                    props.otherDocIds.map(docId => {
-                        return buildImageLoader(docId)
-                    }) :
-                    buildImageLoader(props.docId)
-            }
             <div ref={imageListContainerRef} />
         </div >
     )

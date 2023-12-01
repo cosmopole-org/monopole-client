@@ -6,6 +6,12 @@ import config from "../../config"
 
 class FileService {
 
+    downloadTypes = {
+        DOCUMENT: 'document',
+        PREVIEW: 'preview',
+        WAVEFORM: 'waveform'
+    }
+
     storage: DatabaseDriver
     network: NetworkDriver
     cache: CacheDriver
@@ -123,14 +129,15 @@ class FileService {
         };
     }
 
-    async download(data: { towerId: string, roomId: string, documentId: string, onChunk: (chunk: any) => void, onResult: (data: Array<any>) => void }): Promise<any> {
+    async download(data: { downloadType: string, towerId: string, roomId: string, documentId: string, onChunk: (chunk: any) => void, onResult: (data: Array<any>) => void }): Promise<any> {
         if (api.services.human.token) {
             let result: Array<any> = []
             return fetch(`${config.GATEWAY_ADDRESS}/file/download?documentid=${data.documentId}`, {
                 method: 'GET',
                 headers: {
-                    towerId: data.towerId,
-                    roomId: data.roomId,
+                    downloadtype: data.downloadType,
+                    towerid: data.towerId,
+                    roomid: data.roomId,
                     token: api.services.human.token
                 }
             }).then(async response => {

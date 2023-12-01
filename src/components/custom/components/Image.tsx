@@ -3,7 +3,7 @@ import { api } from "../../.."
 import IRoom from "../../../api/models/room"
 import { Skeleton } from "@mui/material"
 
-const Image = (props: { tag: string, docId: string, isPreview?: boolean, room: IRoom, style?: any, local?: any, onImageLoad?: (url: string) => void }) => {
+const Image = (props: { downloadType?: string, tag: string, docId: string, isPreview?: boolean, room: IRoom, style?: any, local?: any, onImageLoad?: (url: string) => void }) => {
     const imageRef = useRef(null)
     const url = useRef('')
     const [showLoading, setShowLoading] = useState(false)
@@ -30,6 +30,7 @@ const Image = (props: { tag: string, docId: string, isPreview?: boolean, room: I
             } else {
                 setShowLoading(true)
                 api.services.file.download({
+                    downloadType: props.downloadType ? props.downloadType : api.services.file.downloadTypes.DOCUMENT,
                     towerId: props.room.towerId,
                     roomId: props.room.id,
                     documentId: props.docId,
