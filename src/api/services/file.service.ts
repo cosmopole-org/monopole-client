@@ -129,6 +129,37 @@ class FileService {
         };
     }
 
+    async generateDownloadLink(data: { towerId: string, roomId: string, documentId: string }): Promise<string> {
+        return new Promise(resolve => {
+            this.docDown({ towerId: data.towerId, roomId: data.roomId, documentId: data.documentId, useRest: true }).then((body: any) => {
+                let { downloadToken } = body
+                resolve(`${config.GATEWAY_ADDRESS}/file/flyDown?downloadtoken=${downloadToken}`)
+            })
+        })
+    }
+
+    async flyDown(data: { downloadType: string, towerId: string, roomId: string, documentId: string, onChunk: (chunk: any) => void, onResult: (data: Array<any>) => void }): Promise<any> {
+        if (api.services.human.token) {
+            let result: Array<any> = []
+            return fetch(`${config.GATEWAY_ADDRESS}/file/download?documentid=${data.documentId}`, {
+                method: 'GET',
+                headers: {
+                    downloadtype: data.downloadType,
+                    towerid: data.towerId,
+                    roomid: data.roomId,
+                    token: api.services.human.token
+                }
+            }).then(async response => {
+                const reader = response.body?.getReader();
+                for await (const chunk of this.readChunks(reader)) {
+                    result.push(chunk)
+                    data.onChunk(chunk)
+                }
+                data.onResult(result)
+            })
+        }
+    }
+
     async download(data: { downloadType: string, towerId: string, roomId: string, documentId: string, onChunk: (chunk: any) => void, onResult: (data: Array<any>) => void }): Promise<any> {
         if (api.services.human.token) {
             let result: Array<any> = []

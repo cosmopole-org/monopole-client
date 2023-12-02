@@ -3,10 +3,10 @@ import { useState, useRef } from 'react';
 import IRoom from '../../../api/models/room';
 import { SigmaRouter, themeColor } from '../../../App';
 import { api } from '../../..';
-import SliderPage from '../../layouts/SliderPage';
 import { LeftControlTypes, RightControlTypes, StatusThemes, switchColor, switchLeftControl, switchRightControl, switchTitle } from '../../sections/StatusBar';
-import dashjs from 'dashjs';
 import config from '../../../config';
+import SliderPage from '../../layouts/SliderPage';
+import { url } from 'inspector';
 
 const format = (seconds: any) => {
   if (isNaN(seconds)) {
@@ -127,40 +127,29 @@ function VideoPlayer(props: { docId: string, room: IRoom, isOnTop: boolean, id: 
     }
   }, []);
 
+  const [link, setLink] = useState('')
+
   React.useEffect(() => {
-    var video,
-      player: dashjs.MediaPlayerClass,
-      url = `${config.GATEWAY_ADDRESS}/file/download?documentid=${props.docId}&videomoduletype=manifest`;
-    video = document.getElementById("video-player") as HTMLVideoElement;
-    player = dashjs.MediaPlayer().create();
-    player.extend("RequestModifier", function () {
-      return {
-        modifyRequestHeader: function (xhr: any, urlHolder: { url: string }) {
-          xhr.setRequestHeader('token', api.services.human.token)
-          xhr.setRequestHeader('towerid', props.room.towerId)
-          xhr.setRequestHeader('roomid', props.room.id)
-          return xhr;
-        },
-        modifyRequestURL: function (url: string) {
-          console.log(url)
-          let moduleType = 'manifest';
-          if (url.endsWith('.webm')) {
-            moduleType = url.substring(url.lastIndexOf('-') + 1, url.length - 5)
-          }
-          return `${config.GATEWAY_ADDRESS}/file/download?documentid=${props.docId}&videomoduletype=${moduleType}`
-        }
-      };
-    }, true);
-    if (video) player.initialize(video, url, true);
-    return () => {
-      player.reset()
-    }
+    api.services.file.generateDownloadLink({ towerId: props.room.towerId, roomId: props.room.id, documentId: props.docId }).then((link: string) => {
+      setLink(link)
+    })
   }, [])
 
   return (
     <SliderPage id={props.id}>
       <div style={{ width: '100%', height: '100%', backgroundColor: themeColor.get({ noproxy: true })[50] }}>
-        <video id={'video-player'} className="video-js" controls preload="auto" style={{ width: '100%', height: 'auto', position: 'absolute', top: '50%', transform: 'translateY(-50%)' }} />
+        {
+          link.length > 0 ? (
+            <video
+              autoPlay
+              controls
+              style={{ width: '100%', height: 'auto', position: 'absolute', top: '50%', transform: 'translateY(-50%)' }}
+            >
+              <source src={link} type="video/mp4" />
+            </video>
+          ) :
+            null
+        }
       </div>
     </SliderPage>
   );

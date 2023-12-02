@@ -34,10 +34,16 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
                 <SigmaBadgeButton caption='View tower' onClick={() => SigmaRouter.navigate('tower', { initialData: { tower: props.tower } })} />
                 <SigmaBadgeButton style={{ marginLeft: 8 }} caption='Open main room' onClick={() => {
                     if (props.showRating) {
-                        api.services.room.search({ towerId: props.tower.id, query: '', offset: 0, count: 1 }).then((body: any) => {
-                            let room = body.rooms[0]
+                        let rooms = api.memory.spaces.get({ noproxy: true })[props.tower?.id]?.rooms
+                        if (rooms && rooms[0]) {
+                            let room = api.memory.spaces.get({ noproxy: true })[props.tower.id].rooms[0]
                             SigmaRouter.navigate('room', { initialData: { room } });
-                        })
+                        } else {
+                            api.services.room.search({ towerId: props.tower.id, query: '', offset: 0, count: 1 }).then((body: any) => {
+                                let room = body.rooms[0]
+                                SigmaRouter.navigate('room', { initialData: { room } });
+                            })
+                        }
                     } else {
                         SigmaRouter.navigate('room', { initialData: { room: Object.values(api.memory.spaces.get({ noproxy: true })[props.tower.id].rooms)[0] } });
                     }
