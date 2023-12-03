@@ -20,17 +20,15 @@ import SigmaFab from '../../custom/elements/SigmaFab';
 import utils from '../../utils';
 import { AppletSheet } from '../../custom/components/AppletSheet';
 
-const drawerBleeding = 56;
-
 const Root = styled('div')(({ theme }) => ({
   height: '100%',
-  backgroundColor: themeColor.get({noproxy: true})[50]
+  backgroundColor: themeColor.get({ noproxy: true })[50]
 }));
 
 const Puller = styled(Box)(({ theme }) => ({
   width: 96,
   height: 6,
-  backgroundColor: themeColor.get({noproxy: true})[200],
+  backgroundColor: themeColor.get({ noproxy: true })[200],
   borderRadius: 3,
   position: 'absolute',
   top: 16,
@@ -75,19 +73,8 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
     }
   }, [metaOpen])
   let drawerContent = [
-    <div
-      style={{
-        position: 'absolute',
-        top: -drawerBleeding,
-        visibility: 'visible',
-        right: 0,
-        left: 0,
-      }}
-    >
+    <div style={{ borderRadius: '24px 24px 0px 0px', width: '100%', height: 40, backgroundColor: themeColor.get({ noproxy: true})[50] }}>
       <Puller />
-      <div style={{
-        height: drawerBleeding, backgroundColor: themeColor.get({ noproxy: true })[50], borderRadius: metaOpen ? 0 : '24px 24px 0px 0px',
-      }} />
     </div>,
     <div
       style={{
@@ -146,17 +133,20 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
         {
           utils.screen.isTouchDevice() ? (
             <SwipeableDrawer
+              transitionDuration={500}
               container={containerRef.current}
               open={metaOpen}
               onClose={() => setMetaOpen(false)}
               onOpen={() => setMetaOpen(true)}
               anchor="bottom"
-              swipeAreaWidth={drawerBleeding}
-              disableSwipeToOpen={false}
+              disableSwipeToOpen
+              ModalProps={{
+                keepMounted: true
+              }}
               PaperProps={{
                 style: {
                   borderRadius: '24px 24px 0px 0px',
-                  height: window.innerHeight - 56
+                  height: window.innerHeight - 112
                 }
               }}
             >
@@ -164,6 +154,7 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
             </SwipeableDrawer>
           ) : (
             <Drawer
+              transitionDuration={1000}
               container={containerRef.current}
               open={metaOpen}
               onClose={() => setMetaOpen(false)}
@@ -174,7 +165,7 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
               PaperProps={{
                 style: {
                   borderRadius: '24px 24px 0px 0px',
-                  height: window.innerHeight - 56
+                  height: window.innerHeight - 112
                 }
               }}
             >
@@ -183,7 +174,7 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
           )
         }
       </Root>
-      <SigmaFab style={{ position: 'absolute', right: 16, bottom: 16 + drawerBleeding }} onClick={() => setMetaOpen(true)}>
+      <SigmaFab style={{ position: 'absolute', right: 16, bottom: 16 }} onClick={() => setMetaOpen(true)}>
         <Rocket />
       </SigmaFab>
       <RoomControl
