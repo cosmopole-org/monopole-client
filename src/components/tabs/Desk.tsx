@@ -6,6 +6,7 @@ import { api } from "../..";
 import { hookstate, useHookstate } from "@hookstate/core";
 import { openAppletSheet } from "../custom/components/AppletSheet";
 import { themeColor } from "../../App";
+import AppHostUtils from '../custom/components/AppletHost';
 
 let cachedWorkers: Array<any> = []
 
@@ -114,12 +115,13 @@ const Desk = (props: { show: boolean, room: any }) => {
             setLoadDesktop(true)
         }, 750);
         return () => {
+            AppHostUtils.unloadAllHosts()
             cachedWorkers = []
         }
     }, [])
     return (
         <div
-            style={{ width: '100%', height: 'calc(100% - 32px - 16px)', position: 'absolute', left: props.show ? 0 : '-100%', paddingTop: 32 + 16 }}
+            style={{ width: '100%', height: 'calc(100% - 24px)', position: 'absolute', left: props.show ? 0 : '-100%', paddingTop: 24 }}
         >
             <div
                 ref={desktopWrapperRef}

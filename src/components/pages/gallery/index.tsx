@@ -29,7 +29,6 @@ const Gallery = (props: { id: string, isOnTop: boolean, room: IRoom, docId: stri
     }, [props.isOnTop])
     useEffect(() => {
         if (imageListContainerRef.current) {
-            let size = Math.min(window.innerWidth, window.innerHeight)
             let container = imageListContainerRef.current as HTMLElement
             if (props.otherDocIds) {
                 props.otherDocIds.forEach(docId => {

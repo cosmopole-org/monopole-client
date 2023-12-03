@@ -42,7 +42,7 @@ const Files = (props: { show: boolean, room: IRoom }) => {
     }, [folderId])
     return (
         <div
-            style={{ backgroundColor: themeColor.get({ noproxy: true })[100], width: '100%', height: 'calc(100% - 32px - 16px - 56px)', position: 'absolute', left: props.show ? 0 : '-100%', paddingTop: 32 + 16 }}
+            style={{ backgroundColor: themeColor.get({ noproxy: true })[100], width: '100%', height: 'calc(100% - 32px - 16px)', position: 'absolute', left: props.show ? 0 : '-100%', paddingTop: 32 + 16 }}
         >
             <Uploader folderId={folderId} inputFile={inputFile} room={props.room} onSelect={(file: any) => {
                 api.services.file.upload({ towerId: props.room.towerId, roomId: props.room.id, file, folderId }).then((doc: any) => {
@@ -52,7 +52,7 @@ const Files = (props: { show: boolean, room: IRoom }) => {
                 })
             }} />
             <div
-                style={{ width: '100%', height: 'calc(100% - 56px)', paddingTop: 64, position: 'relative', overflowY: 'auto', display: 'flex', flexWrap: 'wrap', alignContent: 'flex-start' }}
+                style={{ width: '100%', height: '100%', paddingTop: 64, position: 'relative', overflowY: 'auto', display: 'flex', flexWrap: 'wrap', alignContent: 'flex-start' }}
             >
                 {
                     folderData?.subFolders?.map((subFolder: IFolder) => (
@@ -90,7 +90,7 @@ const Files = (props: { show: boolean, room: IRoom }) => {
                         />
                     ))
                 }
-                <div style={{ width: '100%', height: 32 }} />
+                <div style={{ width: '100%', height: 112 }} />
             </div>
             <FilesAddressBar onNavigate={(index: number) => {
                 let newPath = path.slice(0, index + 1)

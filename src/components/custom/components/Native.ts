@@ -1,12 +1,14 @@
 import { INative } from "applet-vm"
 
+export let intervalHolder: { [id: string]: { [id: string]: any } } = {}
+export let timeoutHolder: { [id: string]: { [id: string]: any } } = {}
+
 class Native extends INative {
 
     globalMemory: { [id: string]: any } = {}
     intervals: { [id: string]: any } = {}
     timeouts: { [id: string]: any } = {}
     controls: { [id: string]: any } = {}
-    module: any = undefined
 
     nativeElement = (compType: string, props: { [id: string]: any }, styles: { [id: string]: any }, children: Array<any>) => {
         let control = this.controls[compType]
@@ -30,15 +32,36 @@ class Native extends INative {
         }
     }
     setInterval = (callback: () => void, period: number) => {
-        this.intervals[setInterval(callback, period) + ''] = true
+        let interval = setInterval(callback, period)
+        intervalHolder[this._module.applet._key][interval + ''] = interval
+        this.intervals[interval + ''] = true
+        return interval
     }
-    setTimeout = (callback: () => void, timeout: number) => {
-        this.timeouts[setTimeout(callback, timeout) + ''] = true
+    clearInterval = (interval: any) => {
+        delete intervalHolder[this._module.applet._key][interval + '']
+        delete this.intervals[interval + '']
+    }
+    setTimeout = (callback: () => void, delay: number) => {
+        let timeout = setTimeout(callback, delay)
+        timeoutHolder[this._module.applet._key][timeout + ''] = timeout
+        this.timeouts[timeout + ''] = true
+        return timeout
+    }
+    clearTimeout = (timeout: any) => {
+        delete timeoutHolder[this._module.applet._key][timeout + '']
+        delete this.timeouts[timeout + '']
     }
     Date = window.Date
 
     constructor(module: any, controls: { [id: string]: any }) {
         super(module)
+        if (!intervalHolder[module.applet._key]) {
+            intervalHolder[module.applet._key] = {}
+        }
+        if (!timeoutHolder[module.applet._key]) {
+            timeoutHolder[module.applet._key] = {}
+        }
+
         this.controls = controls
     }
 }

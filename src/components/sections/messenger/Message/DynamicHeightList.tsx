@@ -107,7 +107,7 @@ const DynamicHeightList = (props: { room: IRoom, messages: Array<IMessage>, mess
                         rowHeight={(params: any) => {
                             let message = messages[params.index];
                             if (message === undefined) {
-                                return 56;
+                                return 112;
                             }
                             let height = 0;
                             if (message.type === 'photo') {
@@ -136,6 +136,9 @@ const DynamicHeightList = (props: { room: IRoom, messages: Array<IMessage>, mess
                         rowRenderer={_rowRenderer}
                         width={size.width}
                         height={size.height}
+                        style={{
+                            overflow: 'auto'
+                        }}
                     />
                 )}
             </AutoSizer>

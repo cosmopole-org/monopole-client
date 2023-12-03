@@ -1,4 +1,4 @@
-import { ArrowBack, Dashboard, KeyboardCommandKey, Notifications, Settings } from "@mui/icons-material"
+import { ArrowBack, Close, Dashboard, KeyboardCommandKey, Notifications, Settings } from "@mui/icons-material"
 import { IconButton, Paper, Typography } from "@mui/material"
 import { useState } from "react"
 import { SigmaRouter, themeColor } from "../../App"
@@ -6,7 +6,8 @@ import { SigmaRouter, themeColor } from "../../App"
 const statusbarHeight = () => 40
 const LeftControlTypes = {
     NOTIFICATIONS: 0,
-    BACK: 1
+    BACK: 1,
+    CLOSE: 2
 }
 const RightControlTypes = {
     NONE: 0,
@@ -28,7 +29,7 @@ const StatusBar = () => {
     const [leftControlType, setLeftControlType] = useState(LeftControlTypes.NOTIFICATIONS)
     const [rightControlType, setRightControlType] = useState(RightControlTypes.NONE)
     const [title, setTitle] = useState('')
-    const [color, setColor] = useState(themeColor.get({noproxy: true})[500].toString())
+    const [color, setColor] = useState(themeColor.get({ noproxy: true })[500].toString())
     const [theme, setTheme] = useState(StatusThemes.LIGHT)
     switchLeftControl = (type: number, functionality?: () => void) => {
         setLeftControlType(type)
@@ -74,7 +75,9 @@ const StatusBar = () => {
                                         <Notifications style={{ color: theme === StatusThemes.LIGHT ? '#666' : '#fff' }} /> :
                                         leftControlType === LeftControlTypes.BACK ?
                                             <ArrowBack style={{ color: theme === StatusThemes.LIGHT ? '#666' : '#fff' }} /> :
-                                            null
+                                            leftControlType === LeftControlTypes.CLOSE ?
+                                                <Close style={{ color: theme === StatusThemes.LIGHT ? '#666' : '#fff' }} /> :
+                                                null
                                 }
                             </IconButton>
                         )

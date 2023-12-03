@@ -64,7 +64,7 @@ const SliderPage = (props: { id: string, direction?: string, children: any }) =>
         <div ref={containerRef} style={{
             width: '100%', height: '100%', position: 'absolute', left: 0,
             transform: props.direction === 'up' ? 'translate(0px, 100%)' : 'translateX(50%)',
-            top: 0, opacity: props.direction === 'up' ? 1 : 0,
+            top: 0, opacity: props.direction === 'up' ? 1 : 0, zIndex: 2,
             transition: `transform ${props.direction === 'up' ? '400ms' : '250ms'}, opacity ${props.direction === 'up' ? '400ms' : '250ms'}`
         }}>
             {props.children}

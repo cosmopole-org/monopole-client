@@ -1,11 +1,21 @@
 import MwcDriver from "applet-mwc"
 import { useEffect, useRef } from "react"
 import { Applet, Controls } from "applet-vm"
-import Native from "./Native"
+import Native, { intervalHolder, timeoutHolder } from "./Native"
 
 let hostLoaded: { [id: string]: boolean } = {}
 
 const unloadAllHosts = () => {
+    Object.keys(hostLoaded).forEach(key => {
+        Object.values(intervalHolder[key]).forEach(interval => {
+            clearInterval(interval)
+        })
+        delete intervalHolder[key]
+        Object.values(timeoutHolder[key]).forEach(timeout => {
+            clearTimeout(timeout)
+        })
+        delete timeoutHolder[key]
+    })
     hostLoaded = {}
 }
 

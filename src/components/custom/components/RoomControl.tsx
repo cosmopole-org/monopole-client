@@ -9,6 +9,7 @@ const RoomControl = (props: { toggleEditMode: (v: boolean) => void, openToolbox:
     return (
         <React.Fragment>
             <SwipeableDrawer anchor='bottom' open={props.shown} onOpen={() => { }} onClose={() => props.onClose()}
+                disableSwipeToOpen
                 PaperProps={{
                     style: {
                         borderRadius: '24px 24px 0px 0px'

@@ -55,7 +55,7 @@ if (tempThemeColorName === null) {
 }
 export let themeColorName = hookstate(tempThemeColorName)
 export let themeColor = hookstate(tempThemeColorName === 'night' ? fixedNightColor : (colors as { [id: string]: any })[tempThemeColorName])
-export let themeBasedTextColor = hookstate('#333')
+export let themeBasedTextColor = hookstate(tempThemeColorName === 'night' ? '#fff' : '#333')
 export let themeColorSecGroup = hookstate(colors.blue)
 var metaThemeColor = document.querySelector("meta[name=theme-color]");
 metaThemeColor?.setAttribute("content", tempThemeColorName === 'night' ? fixedNightColor[50] : (colors as { [id: string]: any })[tempThemeColorName][50]);
@@ -239,7 +239,6 @@ function App() {
         <ThemeProvider theme={theme}>
             <div style={{ width: '100%', height: '100vh', overflow: 'hidden', backgroundColor: themeColor.get({ noproxy: true })['plain'] }}>
                 {cr.get({ noproxy: true }).length > 0 ? result : null}
-                <AppletSheet />
                 <StatusBar.Component />
             </div>
         </ThemeProvider>

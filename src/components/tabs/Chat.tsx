@@ -157,49 +157,41 @@ const Chat = (props: { show: boolean, room: IRoom }) => {
                     }
                 })
             }} />
-            <div
-                style={{ width: '100%', height: 'calc(100% - 56px)', position: 'relative' }}
-            >
-                <div
-                    style={{ width: '100%', height: 'calc(100% - 56px)', position: 'relative', overflowY: 'auto' }}
-                >
-                    <Messages room={props.room} messages={messagesList} onMessageSelect={(message: any) => {
-                        setPointedMessage(message)
-                    }} />
-                </div>
-                <div style={{
-                    width: '100%', height: 'auto', position: 'absolute', left: 0, bottom: 0
-                }}>
-                    {
-                        pointedPostMessage !== undefined ? (
-                            <Paper style={{
-                                width: '100%', height: 48, borderRadius: 0, position: 'relative',
-                                backgroundColor: themeColor.get({ noproxy: true })[50]
+            <Messages room={props.room} messages={messagesList} onMessageSelect={(message: any) => {
+                setPointedMessage(message)
+            }} />
+            <div style={{
+                width: '100%', height: 'auto', position: 'absolute', left: 0, bottom: 0
+            }}>
+                {
+                    pointedPostMessage !== undefined ? (
+                        <Paper style={{
+                            width: '100%', height: 48, borderRadius: 0, position: 'relative',
+                            backgroundColor: themeColor.get({ noproxy: true })[50]
+                        }}>
+                            <Quote messageType={(pointedPostMessage as IMessage).type} message={pointedPostMessage} />
+                            <SigmaFab variant={'extended'} size={'small'} onClick={() => { setPointedPostMessage(undefined) }} style={{
+                                position: 'absolute', right: 12, bottom: 4
                             }}>
-                                <Quote messageType={(pointedPostMessage as IMessage).type} message={pointedPostMessage} />
-                                <SigmaFab variant={'extended'} size={'small'} onClick={() => { setPointedPostMessage(undefined) }} style={{
-                                    position: 'absolute', right: 12, bottom: 4
-                                }}>
-                                    Cancel
-                                    <Close />
-                                </SigmaFab>
-                            </Paper>
-                        ) : null
-                    }
-                    <ChatFooter
-                        style={{
-                            borderRadius: 0, width: '100%',
-                            minHeight: 56, height: 'auto',
-                            backgroundColor: themeColor.get({ noproxy: true })[100],
-                            paddingTop: 2, marginTop: 8
-                        }}
-                        pointedMessage={pointedPostMessage}
-                        action={action}
-                        messages={messagesList}
-                        onMessageSubmit={onMessageSubmit}
-                        onWidgetsClicked={onWidgetsClicked}
-                    />
-                </div>
+                                Cancel
+                                <Close />
+                            </SigmaFab>
+                        </Paper>
+                    ) : null
+                }
+                <ChatFooter
+                    style={{
+                        borderRadius: 0, width: '100%',
+                        minHeight: 56, height: 'auto',
+                        backgroundColor: themeColor.get({ noproxy: true })[100],
+                        paddingTop: 2, marginTop: 8
+                    }}
+                    pointedMessage={pointedPostMessage}
+                    action={action}
+                    messages={messagesList}
+                    onMessageSubmit={onMessageSubmit}
+                    onWidgetsClicked={onWidgetsClicked}
+                />
             </div>
             <MessageMenu onClose={() => setPointedMessage(undefined)} shown={pointedMessage !== undefined}
                 onEdit={() => {

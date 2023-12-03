@@ -17,9 +17,13 @@ const AppletSheet = () => {
         setShown(true)
         api.services.worker.use({ towerId: room.towerId, roomId: room.id, workerId, packet: { tag: 'get/applet', colors: themeColor.get({ noproxy: true }) } })
     }
+    React.useEffect(() => {
+        if (!shown) setCode(undefined)
+    }, [shown]);
     return (
         <React.Fragment>
             <SwipeableDrawer anchor='bottom' open={shown} onOpen={() => { }} onClose={() => setShown(false)}
+                disableSwipeToOpen
                 PaperProps={{
                     style: {
                         borderRadius: '24px 24px 0px 0px',
