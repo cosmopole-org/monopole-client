@@ -6,7 +6,7 @@ import { styled } from '@mui/material/styles';
 import { useEffect, useRef, useState } from 'react';
 import { SigmaRouter, themeBasedTextColor, themeColor } from '../../../App';
 import SliderPage from '../../layouts/SliderPage';
-import { Dashboard, Description, History, Message, Rocket } from '@mui/icons-material';
+import { Dashboard, Description, History, Message, People, Rocket } from '@mui/icons-material';
 import Chat from '../../tabs/Chat';
 import RoomControl from '../../custom/components/RoomControl';
 import Desk, { addWidgetToSDesktop, desktopEditMode } from '../../tabs/Desk';
@@ -14,7 +14,6 @@ import Files from '../../tabs/Files';
 import { SigmaTab, SigmaTabs } from '../../custom/elements/SigmaTabs';
 import IRoom from '../../../api/models/room';
 import MachineBox from '../../custom/components/MachineBox';
-import { grey } from '@mui/material/colors';
 import { Global } from '@emotion/react';
 import SigmaFab from '../../custom/elements/SigmaFab';
 import utils from '../../utils';
@@ -73,12 +72,13 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
     }
   }, [metaOpen])
   let drawerContent = [
-    <div style={{ borderRadius: '24px 24px 0px 0px', width: '100%', height: 40, backgroundColor: themeColor.get({ noproxy: true})[50] }}>
+    <div style={{ borderRadius: '24px 24px 0px 0px', width: '100%', height: 80, backgroundColor: themeColor.get({ noproxy: true })[50] }}>
       <Puller />
     </div>,
     <div
       style={{
-        height: '100%'
+        height: '100%',
+        marginTop: -40
       }}
     >
       <div style={{
@@ -87,11 +87,11 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
         {
           activeTab !== 'files' ?
             [
-              <div key={'room-background'} style={{ background: 'url(https://i.pinimg.com/564x/2a/cd/6e/2acd6e46cc2bdc218a9104a69c36868e.jpg)', width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} ref={wallpaperContainerRef} />,
-              <div key={'room-background-overlay'} style={{ opacity: 0.65, backgroundColor: themeColor.get({ noproxy: true })[200], width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} />
+              <div key={'room-background'} style={{ borderRadius: '24px 24px 0px 0px', background: 'url(https://i.pinimg.com/564x/2a/cd/6e/2acd6e46cc2bdc218a9104a69c36868e.jpg)', width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} ref={wallpaperContainerRef} />,
+              <div key={'room-background-overlay'} style={{ borderRadius: '24px 24px 0px 0px', opacity: 0.65, backgroundColor: themeColor.get({ noproxy: true })[200], width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} />
             ] :
             [
-              <div key={'room-background-blank'} style={{ backgroundColor: themeColor.get({ noproxy: true })[100], width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} />
+              <div key={'room-background-blank'} style={{ borderRadius: '24px 24px 0px 0px', backgroundColor: themeColor.get({ noproxy: true })[100], width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} />
             ]
         }
         <div style={{ width: '100%', height: `100%` }}>
@@ -100,7 +100,8 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
         </div>
         <Paper
           style={{
-            width: '100%', height: 'auto', position: 'absolute', left: 0, top: 0, backgroundColor: themeColor.get({ noproxy: true })[50]
+            width: '100%', height: 'auto', position: 'absolute', left: 0, top: 0, backgroundColor: themeColor.get({ noproxy: true })[50],
+            borderRadius: '24px 24px 0px 0px'
           }}
         >
           <SigmaTabs
@@ -174,8 +175,19 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
           )
         }
       </Root>
+      <Paper style={{
+        borderRadius: '24px 24px 0px 0px', width: '100%', height: 48, backgroundColor: themeColor.get({ noproxy: true })[100],
+        position: 'absolute', left: 0, bottom: 0
+      }}>
+        <div style={{ display: 'flex', marginTop: 12 }}>
+          <Message style={{ marginLeft: 16, marginRight: 8 }} />
+          <Typography variant='body2'>
+            Keyhan: Please send me the docs.
+          </Typography>
+        </div>
+      </Paper>
       <SigmaFab style={{ position: 'absolute', right: 16, bottom: 16 }} onClick={() => setMetaOpen(true)}>
-        <Rocket />
+        <People />
       </SigmaFab>
       <RoomControl
         onClose={() => setShowRoomControl(false)}
