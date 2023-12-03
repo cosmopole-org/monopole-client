@@ -23,6 +23,10 @@ class Native extends INative {
             return Object.values(obj)
         }
     }
+    container = {
+        width: window.innerWidth,
+        height: window.innerHeight
+    }
     alert = (str: any) => {
         window.alert(str)
     }

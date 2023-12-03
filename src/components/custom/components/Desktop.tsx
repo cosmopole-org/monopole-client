@@ -86,7 +86,7 @@ const Host = (props: { desktopKey: string, editMode: boolean, style: any, showDe
     return (
         <ResponsiveReactGridLayout
             className="layout"
-            style={{ ...props.style, minWidth: window.innerWidth + 'px', display: props.showDesktop ? 'block' : 'hidden' }}
+            style={{ ...props.style, minWidth: window.innerWidth + 'px', display: props.showDesktop ? 'block' : 'hidden', paddingBottom: 200 }}
             breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
             cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
             rowHeight={30}
@@ -94,7 +94,7 @@ const Host = (props: { desktopKey: string, editMode: boolean, style: any, showDe
             layouts={structuredClone(desktop.layouts)}
             isDraggable={props.editMode}
             isResizable={props.editMode}
-            draggableCancel=".cancelSelectorName" 
+            draggableCancel=".cancelSelectorName"
             onLayoutChange={(currentLayout: RGL.Layout[], layouts: RGL.Layouts) => {
                 let updates: Array<any> = []
                 const oldLayouts = desktop.layouts

@@ -143,11 +143,10 @@ const Desk = (props: { show: boolean, room: any }) => {
                             })
                         }
                     }}
-                />
-                <div style={{ width: '100%', height: '100%', position: 'relative' }}>
-                    {
-                        loadDesktop ?
-                            null : (
+                />{
+                    loadDesktop ?
+                        null : (
+                            <div style={{ width: '100%', height: '100%', position: 'absolute', left: '50%', top: 'calc(50% - 32px)', transform: 'translate(-50%, -50%)' }}>
                                 <CircularProgress style={{
                                     width: 40,
                                     height: 40,
@@ -156,9 +155,9 @@ const Desk = (props: { show: boolean, room: any }) => {
                                     top: 'calc(50% - 16px)',
                                     transform: 'translate(-50%, -50%)'
                                 }} />
-                            )
-                    }
-                </div>
+                            </div>
+                        )
+                }
             </div>
         </div>
     )

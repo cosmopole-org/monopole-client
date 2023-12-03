@@ -42,7 +42,7 @@ const Files = (props: { show: boolean, room: IRoom }) => {
     }, [folderId])
     return (
         <div
-            style={{ backgroundColor: themeColor.get({ noproxy: true })[100], width: '100%', height: 'calc(100% - 32px - 16px)', position: 'absolute', left: props.show ? 0 : '-100%', paddingTop: 32 + 16 }}
+            style={{ width: '100%', height: 'calc(100% - 32px - 16px)', position: 'absolute', left: props.show ? 0 : '-100%', paddingTop: 32 + 16 }}
         >
             <Uploader folderId={folderId} inputFile={inputFile} room={props.room} onSelect={(file: any) => {
                 api.services.file.upload({ towerId: props.room.towerId, roomId: props.room.id, file, folderId }).then((doc: any) => {

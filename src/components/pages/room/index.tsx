@@ -20,12 +20,22 @@ import SigmaFab from '../../custom/elements/SigmaFab';
 import utils from '../../utils';
 import { AppletSheet } from '../../custom/components/AppletSheet';
 
-const drawerBleeding = 72;
+const drawerBleeding = 56;
 
 const Root = styled('div')(({ theme }) => ({
   height: '100%',
-  backgroundColor:
-    theme.palette.mode === 'light' ? grey[100] : theme.palette.background.default,
+  backgroundColor: themeColor.get({noproxy: true})[50]
+}));
+
+const Puller = styled(Box)(({ theme }) => ({
+  width: 96,
+  height: 6,
+  backgroundColor: themeColor.get({noproxy: true})[200],
+  borderRadius: 3,
+  position: 'absolute',
+  top: 16,
+  left: 'calc(50%)',
+  transform: 'translateX(-50%)'
 }));
 
 const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
@@ -69,16 +79,15 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
       style={{
         position: 'absolute',
         top: -drawerBleeding,
-        borderRadius: '24px 24px 0px 0px',
         visibility: 'visible',
         right: 0,
-        left: 0
+        left: 0,
       }}
     >
-      <SigmaFab style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }} onClick={() => setMetaOpen(true)}>
-        <Rocket />
-      </SigmaFab>
-      <div style={{ height: drawerBleeding }} />
+      <Puller />
+      <div style={{
+        height: drawerBleeding, backgroundColor: themeColor.get({ noproxy: true })[50], borderRadius: metaOpen ? 0 : '24px 24px 0px 0px',
+      }} />
     </div>,
     <div
       style={{
@@ -91,11 +100,11 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
         {
           activeTab !== 'files' ?
             [
-              <div key={'room-background'} style={{ borderRadius: '24px 24px 0px 0px', background: 'url(https://i.pinimg.com/564x/2a/cd/6e/2acd6e46cc2bdc218a9104a69c36868e.jpg)', width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} ref={wallpaperContainerRef} />,
-              <div key={'room-background-overlay'} style={{ borderRadius: '24px 24px 0px 0px', opacity: 0.65, backgroundColor: themeColor.get({ noproxy: true })[200], width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} />
+              <div key={'room-background'} style={{ background: 'url(https://i.pinimg.com/564x/2a/cd/6e/2acd6e46cc2bdc218a9104a69c36868e.jpg)', width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} ref={wallpaperContainerRef} />,
+              <div key={'room-background-overlay'} style={{ opacity: 0.65, backgroundColor: themeColor.get({ noproxy: true })[200], width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} />
             ] :
             [
-              <div key={'room-background-blank'} style={{ borderRadius: '24px 24px 0px 0px', backgroundColor: '#fff', width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} />
+              <div key={'room-background-blank'} style={{ backgroundColor: themeColor.get({ noproxy: true })[100], width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} />
             ]
         }
         <div style={{ width: '100%', height: `100%` }}>
@@ -104,7 +113,7 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
         </div>
         <Paper
           style={{
-            borderRadius: '24px 24px 0px 0px', width: '100%', height: 'auto', position: 'absolute', left: 0, top: 0, backgroundColor: themeColor.get({ noproxy: true })[50]
+            width: '100%', height: 'auto', position: 'absolute', left: 0, top: 0, backgroundColor: themeColor.get({ noproxy: true })[50]
           }}
         >
           <SigmaTabs
@@ -147,7 +156,7 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
               PaperProps={{
                 style: {
                   borderRadius: '24px 24px 0px 0px',
-                  height: window.innerHeight * 8 / 10
+                  height: window.innerHeight - 56
                 }
               }}
             >
@@ -165,7 +174,7 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
               PaperProps={{
                 style: {
                   borderRadius: '24px 24px 0px 0px',
-                  height: window.innerHeight * 8 / 10
+                  height: window.innerHeight - 56
                 }
               }}
             >
@@ -174,6 +183,9 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
           )
         }
       </Root>
+      <SigmaFab style={{ position: 'absolute', right: 16, bottom: 16 + drawerBleeding }} onClick={() => setMetaOpen(true)}>
+        <Rocket />
+      </SigmaFab>
       <RoomControl
         onClose={() => setShowRoomControl(false)}
         shown={showRoomControl}
