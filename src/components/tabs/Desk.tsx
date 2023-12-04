@@ -143,7 +143,8 @@ const Desk = (props: { show: boolean, room: any }) => {
                             })
                         }
                     }}
-                />{
+                />
+                {
                     loadDesktop ?
                         null : (
                             <div style={{ width: '100%', height: '100%', position: 'absolute', left: '50%', top: 'calc(50% - 32px)', transform: 'translate(-50%, -50%)' }}>

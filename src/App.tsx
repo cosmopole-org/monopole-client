@@ -29,6 +29,8 @@ import VideoPlayer from './components/pages/videoPlayer';
 import AudioPlayer from './components/pages/audioPlayer';
 import { resetApi } from '.';
 import { Freeze } from 'react-freeze';
+import { Paper, Typography } from '@mui/material';
+import { History } from '@mui/icons-material';
 
 const useForceUpdate = () => {
     const [value, setValue] = useState(0); // integer state
@@ -233,6 +235,76 @@ function App() {
             <div style={{ width: '100%', height: '100vh', overflow: 'hidden', backgroundColor: themeColor.get({ noproxy: true })['plain'] }}>
                 {cr.get({ noproxy: true }).length > 0 ? result : null}
                 <StatusBar.Component />
+                <div
+                    id={'lab-message-row'}
+                    style={{
+                        top: -10000,
+                        height: 'auto',
+                        width: 'auto',
+                        maxWidth: 250,
+                        position: "fixed",
+                        marginLeft: 'auto',
+                        marginRight: 8,
+                        marginTop: 0,
+                        display: 'flex'
+                    }}
+                >
+                    <Paper
+                        id={'lab-message-card'}
+                        style={{
+                            height: '100%',
+                            width: 'auto',
+                            minWidth: 100,
+                            padding: 8,
+                            marginLeft: 'auto',
+                            marginRight: 0
+                        }}
+                        elevation={0}
+                        className={""}
+                    >
+                        <div style={{ width: 'auto', height: '100%', position: 'relative' }}>
+                            <Typography
+                                variant={"caption"}
+                                style={{
+                                    textAlign: "left", fontWeight: 'bold', borderRadius: 8, marginTop: 0, height: 'auto'
+                                }}
+                            >
+                                Keyhan
+                            </Typography>
+                            <Typography
+                                id={'lab-message-data'}
+                                style={{
+                                    textAlign: "left", wordWrap: 'break-word',
+                                    display: 'flex', wordBreak: 'break-word', fontSize: 14, height: 'auto',
+                                    paddingBottom: 16
+                                }}
+                            >
+
+                            </Typography>
+                            <div style={{
+                                width: 72, position: 'absolute', bottom: 0, right: 0, display: "flex",
+                                paddingLeft: 8, paddingRight: 8,
+                                borderRadius: "16px 16px 0px 16px"
+                            }}>
+                                <Typography
+                                    style={{ textAlign: "right", flex: 1, fontSize: 12 }}
+                                >
+                                    {(new Date(Date.now())).toTimeString().substring(0, 5)}
+                                </Typography>
+                                <History
+                                    style={{
+                                        width: 16,
+                                        height: 16,
+                                        marginLeft: 2,
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    </Paper>
+                    <div id={'lab-message-free-space'} style={{ marginTop: 'auto', marginBottom: 0, width: 0, height: 16 }}>
+
+                    </div>
+                </div>
             </div>
         </ThemeProvider>
     );
