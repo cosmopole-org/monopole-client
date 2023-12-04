@@ -20,6 +20,8 @@ import utils from '../../utils';
 import { AppletSheet } from '../../custom/components/AppletSheet';
 import { Freeze } from "react-freeze";
 import SigmaAvatar from '../../custom/elements/SigmaAvatar';
+import { api } from '../../..';
+import { useHookstate } from '@hookstate/core';
 
 const Root = styled('div')(({ theme }) => ({
   height: '100%',
@@ -44,13 +46,13 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
   const wallpaperContainerRef = useRef(null)
   const [metaOpen, setMetaOpen] = useState(false);
   const containerRef = useRef(null)
-  const [freezeDrawer, setFreezeDrawer] = useState(true)
+  const messages = api.memory.messages[props.room.id]?.get({noproxy: true})
+  const [freezeDrawer, setFreezeDrawer] = useState(!messages || (messages.length === 0))
   const close = () => {
     SigmaRouter.back()
   }
   const onMetaOpen = () => {
     switchLeftControl && switchLeftControl(LeftControlTypes.CLOSE, () => {
-      setFreezeDrawer(true)
       setMetaOpen(false)
       onMetaClose()
     })
@@ -151,8 +153,8 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
               container={containerRef.current}
               open={metaOpen}
               onClose={() => {
-                setFreezeDrawer(true)
                 setMetaOpen(false)
+                onMetaClose()
               }}
               onOpen={() => { }}
               anchor="bottom"

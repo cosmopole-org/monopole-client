@@ -43,10 +43,10 @@ const AudioMessage = (props: { room: IRoom, message: IMessage, side?: string, la
                             style={{
                                 height: 48,
                                 width: 48,
-                                borderRadius: '24px 8px 8px 8px',
+                                borderRadius: '8px 8px 8px 24px',
                                 position: 'absolute',
                                 left: 2,
-                                top: 6
+                                bottom: 2
                             }}
                             docId={props.message.data.docId}
                             room={props.room}
@@ -75,8 +75,8 @@ const AudioMessage = (props: { room: IRoom, message: IMessage, side?: string, la
                                 `${props.firstOfSection ? 24 : 8}px 24px 24px 8px` :
                                 `8px ${props.firstOfSection ? 24 : 24}px 8px 24px`,
                         paddingLeft: 8, paddingRight: 8, paddingBottom: 2, paddingTop: 4,
-                        textAlign: "left", fontWeight: 'bold', marginTop: 0, height: 'auto', position: 'absolute', left: 0, bottom: 0,
-                        backgroundColor: 'rgba(0, 0, 0, 0.5)', color: props.side === 'left' ? themeColor.get({ noproxy: true })['activeText'] : '#fff'
+                        textAlign: "left", fontWeight: 'bold', marginTop: 0, height: 'auto', position: 'absolute', left: 0, top: 0,
+                        color: props.side === 'left' ? themeColor.get({ noproxy: true })['activeText'] : '#fff'
                     }}
                 >
                     Keyhan
@@ -88,7 +88,6 @@ const AudioMessage = (props: { room: IRoom, message: IMessage, side?: string, la
                             <div style={{
                                 width: 'auto', position: 'absolute', bottom: 0, right: 0, display: "flex",
                                 paddingLeft: 8, paddingRight: 8, paddingBottom: 2, paddingTop: 4,
-                                backgroundColor: 'rgba(0, 0, 0, 0.5)',
                                 borderRadius: props.isQuote ? 0 :
                                     props.side === 'left' ?
                                         `${props.firstOfSection ? 24 : 8}px 24px 24px 8px` :

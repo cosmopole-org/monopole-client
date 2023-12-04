@@ -24,7 +24,7 @@ const PhotoMessage = (props: { otherDocIds: Array<string | undefined>, room: IRo
                 SigmaRouter.navigate('gallery', { initialData: { docId: props.message.data.docId, room: props.room, otherDocIds: props.otherDocIds }, overPrevious: true })
             }}
             style={{
-                height: 236,
+                height: '100%',
                 width: 220,
                 minWidth: 220,
                 borderRadius: props.isQuote ? 0 :
@@ -37,7 +37,7 @@ const PhotoMessage = (props: { otherDocIds: Array<string | undefined>, room: IRo
                 marginLeft: props.side === 'left' ? 0 : 'auto',
                 marginRight: props.side === 'left' ? 'auto' : 0,
                 position: 'relative',
-                padding: 4
+                padding: 2
             }}
             elevation={0}
             className={props.isQuote ? '' : (props.side === 'right' ? "bubble" : "bubble2") + (props.lastOfSection ? (" " + props.side) : "")}
@@ -84,7 +84,7 @@ const PhotoMessage = (props: { otherDocIds: Array<string | undefined>, room: IRo
                                 `24px ${props.firstOfSection ? 24 : 8}px 8px 8px`,
                         paddingLeft: 8, paddingRight: 8, paddingBottom: 2, paddingTop: 8,
                         textAlign: "left", fontWeight: 'bold', marginTop: 0, height: 'auto', position: 'absolute', left: 0, top: 0,
-                        backgroundColor: 'rgba(0, 0, 0, 0.5)', color: props.side === 'left' ? themeColor.get({ noproxy: true })['activeText'] : '#fff'
+                        backgroundColor: 'rgba(0, 0, 0, 0.5)', color: '#fff'
                     }}
                 >
                     Keyhan
@@ -103,7 +103,7 @@ const PhotoMessage = (props: { otherDocIds: Array<string | undefined>, room: IRo
                                         `24px ${props.firstOfSection ? 24 : 8}px 8px 8px`,
                             }}>
                                 <Typography
-                                    style={{ textAlign: "right", flex: 1, fontSize: 12, color: props.side === 'left' ? themeColor.get({ noproxy: true })['activeText'] : '#fff' }}
+                                    style={{ textAlign: "right", flex: 1, fontSize: 12, color: '#fff' }}
                                 >
                                     {(new Date(props.message.time)).toTimeString().substring(0, 5)}
                                 </Typography>
@@ -114,7 +114,7 @@ const PhotoMessage = (props: { otherDocIds: Array<string | undefined>, room: IRo
                                                 width: 16,
                                                 height: 16,
                                                 marginLeft: 2,
-                                                fill: props.side === 'left' ? themeColor.get({ noproxy: true })['activeText'] : '#fff'
+                                                fill: '#fff'
                                             }}
                                         />
                                     ) : (
@@ -123,7 +123,7 @@ const PhotoMessage = (props: { otherDocIds: Array<string | undefined>, room: IRo
                                                 width: 16,
                                                 height: 16,
                                                 marginLeft: 2,
-                                                fill: props.side === 'left' ? themeColor.get({ noproxy: true })['activeText'] : '#fff'
+                                                fill: '#fff'
                                             }}
                                         />
                                     )

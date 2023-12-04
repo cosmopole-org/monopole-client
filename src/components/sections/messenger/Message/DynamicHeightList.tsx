@@ -137,6 +137,7 @@ const DynamicHeightList = (props: { room: IRoom, messages: Array<IMessage>, mess
                         width={size.width}
                         height={size.height}
                         style={{
+                            paddingTop: 16, 
                             overflow: 'auto'
                         }}
                     />

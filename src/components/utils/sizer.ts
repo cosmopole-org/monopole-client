@@ -11,7 +11,6 @@ const measureTextMessageHeight = (message: IMessage, index: number, messages: Ar
     let messageData = document.getElementById('lab-message-data')
     let messageCard = document.getElementById('lab-message-card')
     if (messageData && messageRow && messageFS && messageCard) {
-        messageRow.style.marginTop = '0px'
         messageFS.style.width = isLastOfSection ? '0px' : '18px'
         messageCard.className = "bubble" + (isLastOfSection ? (" " + "right") : "")
         messageCard.style.width = `${message.authorId === api.memory.myHumanId.get({ noproxy: true }) ? 300 : 250}px`
