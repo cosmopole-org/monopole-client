@@ -72,17 +72,17 @@ const StatusBar = () => {
                             >
                                 {
                                     leftControlType === LeftControlTypes.NOTIFICATIONS ?
-                                        <Notifications style={{ color: theme === StatusThemes.LIGHT ? '#666' : '#fff' }} /> :
+                                        <Notifications style={{ color: '#fff' }} /> :
                                         leftControlType === LeftControlTypes.BACK ?
-                                            <ArrowBack style={{ color: theme === StatusThemes.LIGHT ? '#666' : '#fff' }} /> :
+                                            <ArrowBack style={{ color: '#fff' }} /> :
                                             leftControlType === LeftControlTypes.CLOSE ?
-                                                <Close style={{ color: theme === StatusThemes.LIGHT ? '#666' : '#fff' }} /> :
+                                                <Close style={{ color: '#fff' }} /> :
                                                 null
                                 }
                             </IconButton>
                         )
                 }
-                <Typography variant={'body1'} style={{ color: theme === StatusThemes.LIGHT ? '#666' : '#fff', position: 'absolute', left: '50%', top: 8, transform: 'translateX(-50%)', display: 'flex' }}>
+                <Typography variant={'body1'} style={{ color: '#fff', position: 'absolute', left: '50%', top: 8, transform: 'translateX(-50%)', display: 'flex' }}>
                     {title}
                 </Typography>
                 {
@@ -93,7 +93,7 @@ const StatusBar = () => {
                                     rightControlFunctionality && rightControlFunctionality()
                                 }}
                                 size="small" style={{ width: 32, height: 32, backgroundColor: color, borderRadius: '50%', position: 'absolute', top: 4, right: 8 + 32 + 8 }}>
-                                <KeyboardCommandKey style={{ color: theme === StatusThemes.LIGHT ? '#666' : '#fff' }} />
+                                <KeyboardCommandKey style={{ color: '#fff' }} />
                             </IconButton>
                         ) :
                         rightControlType === RightControlTypes.SETTINGS ?
@@ -103,7 +103,7 @@ const StatusBar = () => {
                                         rightControlFunctionality && rightControlFunctionality()
                                     }}
                                     size="small" style={{ width: 32, height: 32, backgroundColor: color, borderRadius: '50%', position: 'absolute', top: 4, right: 8 + 32 + 8 }}>
-                                    <Settings style={{ color: theme === StatusThemes.LIGHT ? '#666' : '#fff' }} />
+                                    <Settings style={{ color: '#fff' }} />
                                 </IconButton>
                             ) :
                             null
@@ -113,7 +113,7 @@ const StatusBar = () => {
                         null :
                         (
                             <IconButton size="small" style={{ width: 32, height: 32, backgroundColor: color, borderRadius: '50%', position: 'absolute', top: 4, right: 8 }}>
-                                <Dashboard style={{ color: theme === StatusThemes.LIGHT ? '#666' : '#fff' }} />
+                                <Dashboard style={{ color: '#fff' }} />
                             </IconButton>
                         )
                 }

@@ -222,13 +222,7 @@ function App() {
         }
     }, [])
     let result: Array<any> = []
-    historyStack.slice(0, 1).forEach(({ id, path, initialData }, index) => {
-        let Comp = pages[path]
-        result.push(
-            <Comp {...initialData as any} key={id} id={id} isOnTop={(historyStack.length - 1) === index} />
-        )
-    })
-    historyStack.slice(historyStack.length > 2 ? historyStack.length - 2 : 1).forEach(({ id, path, initialData }, index) => {
+    historyStack.forEach(({ id, path, initialData }, index) => {
         let Comp = pages[path]
         result.push(
             <Comp {...initialData as any} key={id} id={id} isOnTop={(historyStack.length - 1) === index} />

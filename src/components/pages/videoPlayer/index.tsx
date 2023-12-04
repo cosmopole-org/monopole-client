@@ -4,9 +4,7 @@ import IRoom from '../../../api/models/room';
 import { SigmaRouter, themeColor } from '../../../App';
 import { api } from '../../..';
 import { LeftControlTypes, RightControlTypes, StatusThemes, switchColor, switchLeftControl, switchRightControl, switchTitle } from '../../sections/StatusBar';
-import config from '../../../config';
 import SliderPage from '../../layouts/SliderPage';
-import { url } from 'inspector';
 
 const format = (seconds: any) => {
   if (isNaN(seconds)) {

@@ -48,46 +48,43 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
   const close = () => {
     SigmaRouter.back()
   }
+  const onMetaOpen = () => {
+    switchLeftControl && switchLeftControl(LeftControlTypes.CLOSE, () => {
+      setFreezeDrawer(true)
+      setMetaOpen(false)
+      onMetaClose()
+    })
+    switchRightControl && switchRightControl(RightControlTypes.COMMANDS, () => setShowRoomControl(true))
+    switchTitle && switchTitle(props.room.title)
+    switchColor && switchColor(themeColor.get({ noproxy: true })[500], StatusThemes.DARK)
+  }
+  const onMetaClose = () => {
+    switchLeftControl && switchLeftControl(LeftControlTypes.BACK, close)
+    switchRightControl && switchRightControl(RightControlTypes.COMMANDS, () => setShowRoomControl(true))
+    switchTitle && switchTitle(props.room.title)
+    switchColor && switchColor(themeColor.get({ noproxy: true })[500], StatusThemes.DARK)
+  }
   useEffect(() => {
     return () => {
       desktopEditMode.set(false)
     }
   }, [])
   useEffect(() => {
-    if (props.isOnTop) {
-      switchLeftControl && switchLeftControl(LeftControlTypes.BACK, close)
-      switchRightControl && switchRightControl(RightControlTypes.COMMANDS, () => setShowRoomControl(true))
-      switchTitle && switchTitle(props.room.title)
-      switchColor && switchColor(themeColor.get({ noproxy: true })[500], StatusThemes.DARK)
-    }
+    if (metaOpen) onMetaOpen();
+    else onMetaClose()
   }, [props.isOnTop])
-  useEffect(() => {
-    if (metaOpen) {
-      switchLeftControl && switchLeftControl(LeftControlTypes.CLOSE, () => {
-        setFreezeDrawer(true)
-        setMetaOpen(false)
-      })
-      switchRightControl && switchRightControl(RightControlTypes.COMMANDS, () => setShowRoomControl(true))
-      switchTitle && switchTitle(props.room.title)
-      switchColor && switchColor(themeColor.get({ noproxy: true })[500], StatusThemes.DARK)
-    } else {
-      switchLeftControl && switchLeftControl(LeftControlTypes.BACK, close)
-      switchRightControl && switchRightControl(RightControlTypes.COMMANDS, () => setShowRoomControl(true))
-      switchTitle && switchTitle(props.room.title)
-      switchColor && switchColor(themeColor.get({ noproxy: true })[500], StatusThemes.DARK)
-    }
-  }, [metaOpen])
   let drawerContent = [
     <div style={{ borderRadius: '24px 24px 0px 0px', width: '100%', height: 80, backgroundColor: themeColor.get({ noproxy: true })[50] }}>
       <Puller />
     </div>,
     <Freeze freeze={freezeDrawer}
       placeholder={
-        <div style={{ width: '100%', height: '100%', backgroundColor: themeColor.get({ noproxy: true })[50],
-        display: 'flex', textAlign: 'center', justifyContent: 'center', alignItems: 'center', verticalAlign: 'middle'
+        <div style={{
+          width: '100%', height: '100%', backgroundColor: themeColor.get({ noproxy: true })[50],
+          display: 'flex', textAlign: 'center', justifyContent: 'center', alignItems: 'center', verticalAlign: 'middle'
         }}>
           <SigmaAvatar style={{ width: 112, height: 112 }}>
-            <People style={{width: 'calc(100% - 48px)', height: 'calc(100% - 48px)', margin: 24}} />
+            <People style={{ width: 'calc(100% - 48px)', height: 'calc(100% - 48px)', margin: 24 }} />
           </SigmaAvatar>
         </div>
       }>
@@ -206,6 +203,7 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
       </Paper>
       <SigmaFab style={{ position: 'absolute', right: 16, bottom: 16 }} onClick={() => {
         setMetaOpen(true)
+        onMetaOpen()
         setTimeout(() => {
           setFreezeDrawer(false)
         }, 500)
