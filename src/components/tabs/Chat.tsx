@@ -28,13 +28,9 @@ const Chat = (props: { show: boolean, room: IRoom }) => {
     const [pointedPostMessage, setPointedPostMessage] = useState(undefined)
     const [pointedMessage, setPointedMessage]: [any, (message: any) => void] = useState(undefined)
     const [action, setAction] = useState('')
-    const [loaded, setLoaded] = useState(false)
     let msgs = useHookstate(api.memory.messages[props.room.id])
     let messagesList = msgs.get({ noproxy: true })
     useEffect(() => {
-        setTimeout(() => {
-            setLoaded(true)
-        }, 250);
         api.services.messenger.onMessageReceived('chat', (data: any) => {
             let { message } = data
             if (props.room.id === message.roomId) {
@@ -162,11 +158,9 @@ const Chat = (props: { show: boolean, room: IRoom }) => {
                 })
             }} />
             {
-                loaded ? (
-                    <Messages room={props.room} messages={messagesList} onMessageSelect={(message: any) => {
-                        setPointedMessage(message)
-                    }} />
-                ) : null
+                <Messages room={props.room} messages={messagesList} onMessageSelect={(message: any) => {
+                    setPointedMessage(message)
+                }} />
             }
             <div style={{
                 width: '100%', height: 'auto', position: 'absolute', left: 0, bottom: 0

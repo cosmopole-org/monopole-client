@@ -1,7 +1,7 @@
 
 import './index.css';
 import { LeftControlTypes, RightControlTypes, StatusThemes, statusbarHeight, switchColor, switchLeftControl, switchRightControl, switchTitle } from '../../sections/StatusBar';
-import { Box, CssBaseline, Drawer, Paper, Skeleton, SwipeableDrawer, Typography } from '@mui/material';
+import { Box, Card, CircularProgress, CssBaseline, Drawer, Fade, Paper, Skeleton, SwipeableDrawer, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useEffect, useRef, useState } from 'react';
 import { SigmaRouter, themeBasedTextColor, themeColor } from '../../../App';
@@ -18,6 +18,8 @@ import { Global } from '@emotion/react';
 import SigmaFab from '../../custom/elements/SigmaFab';
 import utils from '../../utils';
 import { AppletSheet } from '../../custom/components/AppletSheet';
+import { Freeze } from "react-freeze";
+import SigmaAvatar from '../../custom/elements/SigmaAvatar';
 
 const Root = styled('div')(({ theme }) => ({
   height: '100%',
@@ -42,6 +44,7 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
   const wallpaperContainerRef = useRef(null)
   const [metaOpen, setMetaOpen] = useState(false);
   const containerRef = useRef(null)
+  const [freezeDrawer, setFreezeDrawer] = useState(true)
   const close = () => {
     SigmaRouter.back()
   }
@@ -60,7 +63,10 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
   }, [props.isOnTop])
   useEffect(() => {
     if (metaOpen) {
-      switchLeftControl && switchLeftControl(LeftControlTypes.CLOSE, () => setMetaOpen(false))
+      switchLeftControl && switchLeftControl(LeftControlTypes.CLOSE, () => {
+        setFreezeDrawer(true)
+        setMetaOpen(false)
+      })
       switchRightControl && switchRightControl(RightControlTypes.COMMANDS, () => setShowRoomControl(true))
       switchTitle && switchTitle(props.room.title)
       switchColor && switchColor(themeColor.get({ noproxy: true })[500], StatusThemes.DARK)
@@ -75,48 +81,59 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
     <div style={{ borderRadius: '24px 24px 0px 0px', width: '100%', height: 80, backgroundColor: themeColor.get({ noproxy: true })[50] }}>
       <Puller />
     </div>,
-    <div
-      style={{
-        height: '100%',
-        marginTop: -40
-      }}
-    >
-      <div style={{
-        position: 'relative', width: '100%', height: '100%', zIndex: 2, transition: 'opacity .25s'
-      }}>
-        {
-          activeTab !== 'files' ?
-            [
-              <div key={'room-background'} style={{ borderRadius: '24px 24px 0px 0px', background: 'url(https://i.pinimg.com/564x/2a/cd/6e/2acd6e46cc2bdc218a9104a69c36868e.jpg)', width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} ref={wallpaperContainerRef} />,
-              <div key={'room-background-overlay'} style={{ borderRadius: '24px 24px 0px 0px', opacity: 0.65, backgroundColor: themeColor.get({ noproxy: true })[200], width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} />
-            ] :
-            [
-              <div key={'room-background-blank'} style={{ borderRadius: '24px 24px 0px 0px', backgroundColor: themeColor.get({ noproxy: true })[100], width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} />
-            ]
-        }
-        <div style={{ width: '100%', height: `100%` }}>
-          <Chat show={activeTab === 'chat'} room={props.room} />
-          <Files show={activeTab === 'files'} room={props.room} />
+    <Freeze freeze={freezeDrawer}
+      placeholder={
+        <div style={{ width: '100%', height: '100%', backgroundColor: themeColor.get({ noproxy: true })[50],
+        display: 'flex', textAlign: 'center', justifyContent: 'center', alignItems: 'center', verticalAlign: 'middle'
+        }}>
+          <SigmaAvatar style={{ width: 112, height: 112 }}>
+            <People style={{width: 'calc(100% - 48px)', height: 'calc(100% - 48px)', margin: 24}} />
+          </SigmaAvatar>
         </div>
-        <Paper
-          style={{
-            width: '100%', height: 'auto', position: 'absolute', left: 0, top: 0, backgroundColor: themeColor.get({ noproxy: true })[50],
-            borderRadius: '24px 24px 0px 0px'
-          }}
-        >
-          <SigmaTabs
-            onChange={(e, newValue) => {
-              setActiveTab(newValue)
+      }>
+      <div
+        style={{
+          height: '100%',
+          marginTop: -40
+        }}
+      >
+        <div style={{
+          position: 'relative', width: '100%', height: '100%', zIndex: 2
+        }}>
+          {
+            activeTab !== 'files' ?
+              [
+                <div key={'room-background'} style={{ borderRadius: '24px 24px 0px 0px', background: 'url(https://i.pinimg.com/564x/2a/cd/6e/2acd6e46cc2bdc218a9104a69c36868e.jpg)', width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} ref={wallpaperContainerRef} />,
+                <div key={'room-background-overlay'} style={{ borderRadius: '24px 24px 0px 0px', opacity: 0.65, backgroundColor: themeColor.get({ noproxy: true })[200], width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} />
+              ] :
+              [
+                <div key={'room-background-blank'} style={{ borderRadius: '24px 24px 0px 0px', backgroundColor: themeColor.get({ noproxy: true })[100], width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} />
+              ]
+          }
+          <div style={{ width: '100%', height: `100%` }}>
+            <Chat show={activeTab === 'chat'} room={props.room} />
+            <Files show={activeTab === 'files'} room={props.room} />
+          </div>
+          <Paper
+            style={{
+              width: '100%', height: 'auto', position: 'absolute', left: 0, top: 0, backgroundColor: themeColor.get({ noproxy: true })[50],
+              borderRadius: '24px 24px 0px 0px'
             }}
-            value={activeTab}
-            style={{ position: 'relative', zIndex: 2 }}
           >
-            <SigmaTab icon={<><Message /><Typography variant={'body2'} style={{ marginLeft: 4, marginTop: 2 }}>Chat</Typography></>} value={'chat'} />
-            <SigmaTab icon={<><Description /><Typography variant={'body2'} style={{ marginLeft: 4, marginTop: 2 }}>Files</Typography></>} value={'files'} />
-          </SigmaTabs>
-        </Paper>
+            <SigmaTabs
+              onChange={(e, newValue) => {
+                setActiveTab(newValue)
+              }}
+              value={activeTab}
+              style={{ position: 'relative', zIndex: 2, backgroundColor: themeColor.get({ noproxy: true })[50] }}
+            >
+              <SigmaTab icon={<><Message /><Typography variant={'body2'} style={{ marginLeft: 4, marginTop: 2 }}>Chat</Typography></>} value={'chat'} />
+              <SigmaTab icon={<><Description /><Typography variant={'body2'} style={{ marginLeft: 4, marginTop: 2 }}>Files</Typography></>} value={'files'} />
+            </SigmaTabs>
+          </Paper>
+        </div>
       </div>
-    </div>
+    </Freeze>
   ]
   return (
     <SliderPage id={props.id}>
@@ -134,11 +151,13 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
         {
           utils.screen.isTouchDevice() ? (
             <SwipeableDrawer
-              transitionDuration={500}
               container={containerRef.current}
               open={metaOpen}
-              onClose={() => setMetaOpen(false)}
-              onOpen={() => setMetaOpen(true)}
+              onClose={() => {
+                setFreezeDrawer(true)
+                setMetaOpen(false)
+              }}
+              onOpen={() => { }}
               anchor="bottom"
               disableSwipeToOpen
               ModalProps={{
@@ -155,7 +174,6 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
             </SwipeableDrawer>
           ) : (
             <Drawer
-              transitionDuration={1000}
               container={containerRef.current}
               open={metaOpen}
               onClose={() => setMetaOpen(false)}
@@ -176,7 +194,7 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
         }
       </Root>
       <Paper style={{
-        borderRadius: '24px 24px 0px 0px', width: '100%', height: 48, backgroundColor: themeColor.get({ noproxy: true })[100],
+        borderRadius: '24px 24px 0px 0px', width: '100%', height: 48, backgroundColor: themeColor.get({ noproxy: true })[50],
         position: 'absolute', left: 0, bottom: 0
       }}>
         <div style={{ display: 'flex', marginTop: 12 }}>
@@ -186,7 +204,13 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
           </Typography>
         </div>
       </Paper>
-      <SigmaFab style={{ position: 'absolute', right: 16, bottom: 16 }} onClick={() => setMetaOpen(true)}>
+      <SigmaFab style={{ position: 'absolute', right: 16, bottom: 16 }} onClick={() => {
+        setMetaOpen(true)
+        setTimeout(() => {
+          setFreezeDrawer(false)
+        }, 500)
+      }}
+      >
         <People />
       </SigmaFab>
       <RoomControl

@@ -28,6 +28,7 @@ import Gallery from './components/pages/gallery';
 import VideoPlayer from './components/pages/videoPlayer';
 import AudioPlayer from './components/pages/audioPlayer';
 import { resetApi } from '.';
+import { Freeze } from 'react-freeze';
 
 const useForceUpdate = () => {
     const [value, setValue] = useState(0); // integer state
@@ -191,9 +192,6 @@ export let SigmaRouter = {
     },
     back: () => {
         if (historyStack.length > 1) {
-            if (historyStack[historyStack.length - 1].path === 'room') {
-                exitShadow && exitShadow()
-            }
             listeners[historyStack[historyStack.length - 1].id] &&
                 listeners[historyStack[historyStack.length - 1].id]('exit-right')
             historyStack.pop()
@@ -224,13 +222,14 @@ function App() {
         }
     }, [])
     let result: Array<any> = []
-    historyStack.forEach(({ id, path, initialData }, index) => {
+    historyStack.slice(0, 1).forEach(({ id, path, initialData }, index) => {
         let Comp = pages[path]
-        if (path === 'room') {
-            result.push(
-                <Shadow key={`shadow-${index}`} />
-            )
-        }
+        result.push(
+            <Comp {...initialData as any} key={id} id={id} isOnTop={(historyStack.length - 1) === index} />
+        )
+    })
+    historyStack.slice(historyStack.length > 2 ? historyStack.length - 2 : 1).forEach(({ id, path, initialData }, index) => {
+        let Comp = pages[path]
         result.push(
             <Comp {...initialData as any} key={id} id={id} isOnTop={(historyStack.length - 1) === index} />
         )

@@ -29,6 +29,7 @@ const Host = (props: { appletKey: string, code: string, index: number, entry: st
         appletRef.current.setContextBuilder((mod) => new Native(mod, Controls))
         let root = document.getElementById(hostContainerrId)
         if (root !== null) {
+            root.innerHTML = ''
             let driver = new MwcDriver(appletRef.current, root)
             driver.start(props.entry)
         }
