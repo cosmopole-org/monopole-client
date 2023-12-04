@@ -83,7 +83,7 @@ const PhotoMessage = (props: { otherDocIds: Array<string | undefined>, room: IRo
                                 `${props.firstOfSection ? 24 : 8}px 24px 24px 8px` :
                                 `24px ${props.firstOfSection ? 24 : 8}px 8px 8px`,
                         paddingLeft: 8, paddingRight: 8, paddingBottom: 2, paddingTop: 8,
-                        textAlign: "left", fontWeight: 'bold', marginTop: 0, height: 'auto', position: 'absolute', left: 0, top: 0,
+                        textAlign: "left", fontWeight: 'bold', marginTop: 0, height: 'auto', position: 'absolute', left: 4, top: 4,
                         backgroundColor: 'rgba(0, 0, 0, 0.5)', color: '#fff'
                     }}
                 >
@@ -94,12 +94,12 @@ const PhotoMessage = (props: { otherDocIds: Array<string | undefined>, room: IRo
                         null :
                         (
                             <div style={{
-                                width: 'auto', position: 'absolute', bottom: 0, right: 0, display: "flex",
+                                width: 'auto', position: 'absolute', bottom: 4, right: 4, display: "flex",
                                 paddingLeft: 8, paddingRight: 8, paddingBottom: 2, paddingTop: 4,
                                 backgroundColor: 'rgba(0, 0, 0, 0.5)',
                                 borderRadius: props.isQuote ? 0 :
                                     props.side === 'left' ?
-                                        `${props.firstOfSection ? 24 : 8}px 24px 24px 8px` :
+                                        `24px 24px 24px 8px` :
                                         `24px ${props.firstOfSection ? 24 : 8}px 8px 8px`,
                             }}>
                                 <Typography
