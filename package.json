@@ -3,6 +3,7 @@
   "description": "Welcome to Monopole !",
   "version": "0.0.1",
   "dependencies": {
+    "@dnd-kit/core": "^6.1.0",
     "@emoji-mart/data": "^1.1.2",
     "@emoji-mart/react": "^1.1.1",
     "@emotion/react": "^11.11.1",

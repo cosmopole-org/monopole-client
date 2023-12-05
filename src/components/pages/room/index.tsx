@@ -1,50 +1,40 @@
 
 import './index.css';
-import { LeftControlTypes, RightControlTypes, StatusThemes, statusbarHeight, switchColor, switchLeftControl, switchRightControl, switchTitle } from '../../sections/StatusBar';
-import { Box, Card, CircularProgress, CssBaseline, Drawer, Fade, Paper, Skeleton, SwipeableDrawer, Typography } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { LeftControlTypes, RightControlTypes, StatusThemes, switchColor, switchLeftControl, switchRightControl, switchTitle } from '../../sections/StatusBar';
+import { Paper, Typography } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
-import { SigmaRouter, themeBasedTextColor, themeColor } from '../../../App';
+import { SigmaRouter, themeColor } from '../../../App';
 import SliderPage from '../../layouts/SliderPage';
-import { Dashboard, Description, History, Message, People, Rocket } from '@mui/icons-material';
-import Chat from '../../tabs/Chat';
+import { Message, People } from '@mui/icons-material';
 import RoomControl from '../../custom/components/RoomControl';
 import Desk, { addWidgetToSDesktop, desktopEditMode } from '../../tabs/Desk';
-import Files from '../../tabs/Files';
-import { SigmaTab, SigmaTabs } from '../../custom/elements/SigmaTabs';
 import IRoom from '../../../api/models/room';
 import MachineBox from '../../custom/components/MachineBox';
-import { Global } from '@emotion/react';
 import SigmaFab from '../../custom/elements/SigmaFab';
-import utils from '../../utils';
 import { AppletSheet } from '../../custom/components/AppletSheet';
-import { Freeze } from "react-freeze";
-import SigmaAvatar from '../../custom/elements/SigmaAvatar';
-import { api } from '../../..';
-import { useHookstate } from '@hookstate/core';
 import Shadow, { showRoomShadow } from './shadow';
-import Meta, { metaOpen } from './meta';
-
-const Root = styled('div')(({ theme }) => ({
-  height: '100%',
-  backgroundColor: themeColor.get({ noproxy: true })[50]
-}));
+import Meta, { changeMetaDrawerState } from './meta';
 
 const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
   const [showRoomControl, setShowRoomControl] = useState(false)
   const [showMachineBox, setShowMachineBox] = useState(false)
   const wallpaperContainerRef = useRef(null)
-  const close = () => {
+  const isMetaOpen = useRef(false);
+  const updateMetaState = (state: boolean) => {
+    isMetaOpen.current = state;
+    changeMetaDrawerState && changeMetaDrawerState(state);
+  }
+    const close = () => {
     SigmaRouter.back()
   }
   const closeMeta = (closedItself: boolean) => {
-    !closedItself && metaOpen.set(false)
+    !closedItself && updateMetaState(false)
     onMetaClose()
   }
   const openMeta = () => {
     showRoomShadow.set(true)
     onMetaOpen()
-    metaOpen.set(true)
+    updateMetaState(true)
   }
   const onMetaOpen = () => {
     switchLeftControl && switchLeftControl(LeftControlTypes.CLOSE, () => { closeMeta(false); showRoomShadow.set(false); })
@@ -64,7 +54,7 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
     }
   }, [])
   useEffect(() => {
-    if (metaOpen.get({ noproxy: true })) onMetaOpen();
+    if (isMetaOpen.current) onMetaOpen();
     else onMetaClose()
   }, [props.isOnTop])
   return (

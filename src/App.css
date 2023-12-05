@@ -1,3 +1,6 @@
+* {
+  overscroll-behavior: none;
+}
 
 .App {
   text-align: center;
@@ -33,12 +36,13 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
 }
 
-.simple-trans-main > div {
+.simple-trans-main>div {
   cursor: pointer;
   position: absolute;
   width: 100%;

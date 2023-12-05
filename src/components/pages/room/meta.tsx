@@ -7,12 +7,9 @@ import Chat from "../../tabs/Chat";
 import Files from "../../tabs/Files";
 import { SigmaTab, SigmaTabs } from "../../custom/elements/SigmaTabs";
 import { Description, Message } from "@mui/icons-material";
-import utils from "../../utils";
 import IRoom from "../../../api/models/room";
 import Draggable from "react-draggable";
-import { showRoomShadow } from "./shadow";
-
-export let metaOpen = hookstate(false)
+import { useDraggable } from '@dnd-kit/core';
 
 const Puller = styled(Box)(({ theme }) => ({
     width: 96,
@@ -25,21 +22,22 @@ const Puller = styled(Box)(({ theme }) => ({
     transform: 'translateX(-50%)'
 }));
 
+export let changeMetaDrawerState = (open: boolean) => {}
+
 export default (props: { room: IRoom, onClose: () => void }) => {
-    const mo = useHookstate(metaOpen)
     const [activeTab, setActiveTab] = useState('chat')
     const wallpaperContainerRef = useRef(null)
-    const [posY, setPosY] = useState(window.innerHeight)
     const metaRef = useRef(null)
-    useEffect(() => {
-        if (mo.get({ noproxy: true })) {
-            setPosY(112)
-        } else {
-            setPosY(window.innerHeight)
-        }
-    }, [mo])
+    const top = useRef(window.innerHeight)
+    const updateTop = (newVal: number) => {
+        top.current = newVal
+        metaRef.current && ((metaRef.current as HTMLElement).style.transform = `translateY(${top.current}px)`)
+    }
+    changeMetaDrawerState = (open: boolean) => {
+        updateTop(open ? 112 : window.innerHeight)
+    }
     let drawerContent = [
-        <div className="handle" style={{ borderRadius: '24px 24px 0px 0px', width: '100%', height: 80, backgroundColor: themeColor.get({ noproxy: true })[50] }}>
+        <div style={{ borderRadius: '24px 24px 0px 0px', width: '100%', height: 80, backgroundColor: themeColor.get({ noproxy: true })[50] }}>
             <Puller />
         </div>,
         <div
@@ -47,7 +45,6 @@ export default (props: { room: IRoom, onClose: () => void }) => {
                 height: '100%',
                 marginTop: -40
             }}
-            className="undraggable"
         >
             <div style={{
                 position: 'relative', width: '100%', height: '100%', zIndex: 2
@@ -86,30 +83,94 @@ export default (props: { room: IRoom, onClose: () => void }) => {
             </div>
         </div>
     ]
+
+    const mdX = useRef(0);
+    const mdY = useRef(0);
+    const touchStartPosY = useRef(0)
+    const touchStartPosX = useRef(0)
+    const touchLastPosY = useRef(0)
+    const touchLastPosX = useRef(0)
+    const touchStartTop = useRef(0)
+    const touchRef = useRef(null)
+    const touchable = useRef(true)
     return (
-        <Draggable axis="y" position={{ x: 0, y: posY }} cancel=".undraggable"
-            onStop={(e, data) => {
-                if (data.y > window.innerHeight - 300) {
-                    mo.set(false)
-                    props.onClose();
-                }
-            }}>
-            <div
-                ref={metaRef}
-                style={{
-                    transform: mo.get({ noproxy: true }) ? 'translateY(112px)' : `translateY(${window.innerHeight}px)`,
-                    transition: 'transform .25s',
-                    borderRadius: '24px 24px 0px 0px',
-                    height: window.innerHeight - 150,
-                    position: 'absolute',
-                    left: 0,
-                    top: 0,
-                    width: '100%',
-                    zIndex: 2
-                }}
-            >
+        <div
+            ref={metaRef}
+            style={{
+                transition: `transform .25s`,
+                transform: `translateY(${window.innerHeight}px)`,
+                borderRadius: '24px 24px 0px 0px',
+                height: window.innerHeight - 150,
+                position: 'absolute',
+                left: 0,
+                top: 0,
+                width: '100%',
+                zIndex: 2
+            }}
+        >
+            <div style={{ width: '100%', height: '100%', position: 'relative' }}>
                 {drawerContent}
+                <div
+                    ref={touchRef}
+                    style={{ width: '100%', height: '100%', position: 'absolute', left: 0, top: 0, zIndex: 2 }}
+                    onTouchStart={e => {
+                        touchStartTop.current = top.current;
+                        touchStartPosY.current = e.touches[0].clientY;
+                        touchStartPosX.current = e.touches[0].clientX;
+                    }}
+                    onTouchMove={e => {
+                        let currentTouchPosY = e.touches[0].clientY;
+                        let currentTouchPosX = e.touches[0].clientX;
+                        if (
+                            (
+                                (touchStartPosY.current > (112 + 96)) &&
+                                (document.getElementById('messagesListEl')?.scrollTop === 0) &&
+                                (currentTouchPosY > touchStartPosY.current)
+                            ) ||
+                            (
+                                touchStartPosY.current <= (112 + 96)
+                            )
+                        ) {
+                            touchRef.current && ((touchRef.current as HTMLElement).style.pointerEvents = 'auto');
+                            touchLastPosY.current = currentTouchPosY;
+                            touchLastPosX.current = currentTouchPosX;
+                            let resPos = touchStartTop.current + currentTouchPosY - touchStartPosY.current;
+                            if (resPos < 112) resPos = 112;
+                            updateTop(resPos);
+                        } else {
+                            touchRef.current && ((touchRef.current as HTMLElement).style.pointerEvents = 'none');
+                        }
+                    }}
+                    onTouchEnd={e => {
+                        touchable.current = true;
+                        touchRef.current && ((touchRef.current as HTMLElement).style.pointerEvents = 'auto');
+                        if ((Math.abs(touchLastPosY.current - touchStartPosY.current) < 16) && (Math.abs(touchLastPosX.current - touchStartPosX.current) < 16)) {
+                            // do nothihg
+                        } else {
+                            updateTop((top.current < (window.innerHeight - 300)) ? 112 : window.innerHeight);
+                            if (top.current < (window.innerHeight - 300)) {
+                                // do nothing
+                            } else {
+                                props.onClose();
+                            }
+                        }
+                    }}
+                    onMouseDown={e => {
+                        mdX.current = e.clientX;
+                        mdY.current = e.clientY;
+                    }}
+                    onMouseUp={e => {
+                        let muX = e.clientX;
+                        let muY = e.clientY;
+                        if ((Math.abs(muX - mdX.current) < 16) && (Math.abs(muY - mdY.current) < 16)) {
+                            touchRef.current && ((touchRef.current as HTMLElement).style.pointerEvents = 'none');
+                            let el = (document.elementFromPoint(mdX.current, mdY.current) as HTMLElement);
+                            el?.click && el.click()
+                            touchRef.current && ((touchRef.current as HTMLElement).style.pointerEvents = 'auto');
+                        }
+                    }}
+                />
             </div>
-        </Draggable>
+        </div>
     )
 }
