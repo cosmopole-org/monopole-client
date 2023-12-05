@@ -22,7 +22,7 @@ const Puller = styled(Box)(({ theme }) => ({
     transform: 'translateX(-50%)'
 }));
 
-export let changeMetaDrawerState = (open: boolean) => {}
+export let changeMetaDrawerState = (open: boolean) => { }
 
 export default (props: { room: IRoom, onClose: () => void }) => {
     const [activeTab, setActiveTab] = useState('chat')
@@ -124,7 +124,11 @@ export default (props: { room: IRoom, onClose: () => void }) => {
                         if (
                             (
                                 (touchStartPosY.current > (112 + 96)) &&
-                                (document.getElementById('messagesListEl')?.scrollTop === 0) &&
+                                (
+                                    activeTab === 'chat' ?
+                                        (document.getElementById('messagesListEl')?.scrollTop === 0) :
+                                        (document.getElementById('files-list')?.scrollTop === 0)
+                                ) &&
                                 (currentTouchPosY > touchStartPosY.current)
                             ) ||
                             (

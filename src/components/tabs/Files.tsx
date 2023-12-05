@@ -52,6 +52,7 @@ const Files = (props: { show: boolean, room: IRoom }) => {
                 })
             }} />
             <div
+                id={'files-list'}
                 style={{ width: '100%', height: '100%', paddingTop: 64, position: 'relative', overflowY: 'auto', display: 'flex', flexWrap: 'wrap', alignContent: 'flex-start' }}
             >
                 {
