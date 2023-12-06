@@ -15,36 +15,21 @@ const measureTextMessageHeight = (message: IMessage, index: number, messages: Ar
         messageCard.className = "bubble" + (isLastOfSection ? (" " + "right") : "")
         messageCard.style.width = `${message.authorId === api.memory.myHumanId.get({ noproxy: true }) ? 300 : 250}px`
         messageData.innerHTML = message.data.text as string
-        let value1 = messageRow.offsetHeight + Math.floor(messageData.offsetHeight / 24) * 4 + (isFirstOfSection ? 0 : 4)
-        message.meta = { value1, value2: 2, measuredHeight: value1}
+        let value1 = messageRow.offsetHeight + Math.floor(messageData.offsetHeight / 24) * 4
+        message.meta = { value1, value2: 2, measuredHeight: value1 }
     }
 }
 
 const measurePhotoMessageHeight = (message: IMessage, index: number, messages: Array<IMessage>) => {
-    let prevMessage: IMessage = messages[index - 1]
-    let isFirstOfSection = (prevMessage && (prevMessage.authorId !== message.authorId)) || !prevMessage
-    let nextMessage: IMessage = messages[index + 1]
-    let isLastOfSection = (nextMessage && (nextMessage.authorId !== message.authorId)) || !nextMessage
-    if (isLastOfSection) return 240
-    else return 250
+return 250
 }
 
 const measureVideoMessageHeight = (message: IMessage, index: number, messages: Array<IMessage>) => {
-    let prevMessage: IMessage = messages[index - 1]
-    let isFirstOfSection = (prevMessage && (prevMessage.authorId !== message.authorId)) || !prevMessage
-    let nextMessage: IMessage = messages[index + 1]
-    let isLastOfSection = (nextMessage && (nextMessage.authorId !== message.authorId)) || !nextMessage
-    if (isLastOfSection) return 240
-    else return 250
+return 250
 }
 
 const measureAudioMessageHeight = (message: IMessage, index: number, messages: Array<IMessage>) => {
-    let prevMessage: IMessage = messages[index - 1]
-    let isFirstOfSection = (prevMessage && (prevMessage.authorId !== message.authorId)) || !prevMessage
-    let nextMessage: IMessage = messages[index + 1]
-    let isLastOfSection = (nextMessage && (nextMessage.authorId !== message.authorId)) || !nextMessage
-    if (isLastOfSection) return 80
-    else return 90
+    return 90
 }
 
 export {

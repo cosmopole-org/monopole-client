@@ -24,7 +24,7 @@ const PhotoMessage = (props: { otherDocIds: Array<string | undefined>, room: IRo
                 SigmaRouter.navigate('gallery', { initialData: { docId: props.message.data.docId, room: props.room, otherDocIds: props.otherDocIds }, overPrevious: true })
             }}
             style={{
-                height: '100%',
+                height: 'calc(100% - 12px)',
                 width: 220,
                 minWidth: 220,
                 borderRadius: props.isQuote ? 0 :

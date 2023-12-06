@@ -21,7 +21,7 @@ const VideoMessage = (props: { room: IRoom, message: IMessage, side?: string, la
     return (
         <Paper
             style={{
-                height: '100%',
+                height: 'calc(100% - 12px)',
                 width: 220,
                 minWidth: 220,
                 borderRadius: props.isQuote ? 0 :
@@ -34,7 +34,9 @@ const VideoMessage = (props: { room: IRoom, message: IMessage, side?: string, la
                 marginLeft: props.side === 'left' ? 0 : 'auto',
                 marginRight: props.side === 'left' ? 'auto' : 0,
                 position: 'relative',
-                padding: 2
+                padding: 2,
+                marginTop: 0,
+                marginBottom: 'auto'
             }}
             elevation={0}
             className={props.isQuote ? '' : (props.side === 'right' ? "bubble" : "bubble2") + (props.lastOfSection ? (" " + props.side) : "")}

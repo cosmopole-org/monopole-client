@@ -318,7 +318,7 @@ class FileService {
         if (cachedDoc) return cachedDoc
         return this.network.request('file/getDocument', { towerId: data.towerId, roomId: data.roomId, documentId: data.documentId }).then((body: any) => {
             this.cache.put(`doc-${data.documentId}`, body.doc)
-            return body
+            return body.doc;
         })
     }
 }

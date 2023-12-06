@@ -10,13 +10,14 @@ const MessageRow = (props: { message: IMessage, side: string, children: any, las
         <Fade in={true}>
             <div
                 style={{
-                    height: `calc(100% - 16px - ${props.message.meta?.value2 ? props.message.meta.value2 : 0}px)`,
+                    height: `calc(100% - ${props.message.meta?.value2 ? props.message.meta.value2 : 0}px)`,
                     width: 'auto',
                     maxWidth: props.side === 'left' ? 300 : 250,
                     position: "relative",
                     marginLeft: props.side === 'left' ? 8 : 'auto',
-                    marginRight: props.side === 'left' ? 'auto' : 8,
-                    display: 'flex'
+                    marginRight: props.side === 'left' ? 'auto' : props.lastOfSection ? 0 : 6,
+                    display: 'flex',
+                    alignContent: 'flex-start'
                 }}
             >
                 {
@@ -33,8 +34,10 @@ const MessageRow = (props: { message: IMessage, side: string, children: any, las
                 {props.children}
                 {
                     (props.side === 'right') ? (
-                        <div style={{ marginTop: 'auto', marginBottom: 0, minWidth: props.lastOfSection ? 0 : 16,
-                        width: props.lastOfSection ? 0 : 16, height: 16 }}>
+                        <div style={{
+                            marginTop: 'auto', marginBottom: 0, minWidth: props.lastOfSection ? 0 : 8,
+                            width: props.lastOfSection ? 0 : 8, height: 16
+                        }}>
 
                         </div>
                     ) : null

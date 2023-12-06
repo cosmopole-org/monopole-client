@@ -14,7 +14,7 @@ const TextMessage = (props: { message: IMessage, side?: string, lastOfSection?: 
     return (
         <Paper
             style={{
-                height: 'calc(100% - 4px)',
+                height: 'calc(100% - 20px)',
                 width: 'auto',
                 minWidth: 100,
                 borderRadius: props.isQuote ? 0 :
@@ -29,7 +29,9 @@ const TextMessage = (props: { message: IMessage, side?: string, lastOfSection?: 
                         `linear-gradient(135deg, ${themeColor.get({ noproxy: true })[500]}, ${themeColor.get({ noproxy: true })[200]}) border-box` :
                         themeColor.get({ noproxy: true })['plain'],
                 marginLeft: props.side === 'left' ? 0 : 'auto',
-                marginRight: props.side === 'left' ? 'auto' : 0
+                marginRight: props.side === 'left' ? 'auto' : 0,
+                marginTop: 0,
+                marginBottom: 'auto'
             }}
             elevation={0}
             className={props.isQuote ? '' : (props.side === 'right' ? "bubble" : "bubble2") + (props.lastOfSection ? (" " + props.side) : "")}

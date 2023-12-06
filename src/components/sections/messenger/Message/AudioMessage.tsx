@@ -22,8 +22,9 @@ const AudioMessage = (props: { otherDocIds: Array<string | undefined>, room: IRo
     let progress = useHookstate(api.services.file.transferProgress)?.get({ noproxy: true })[props.message.meta?.tag]
     return (
         <Paper
+            className={props.isQuote ? '' : (props.side === 'right' ? "bubble" : "bubble2") + (props.lastOfSection ? (" " + props.side) : "")}
             style={{
-                height: 76,
+                height: 'calc(100% - 16px)',
                 width: 200,
                 minWidth: 200,
                 borderRadius: props.isQuote ? 0 :
@@ -36,10 +37,11 @@ const AudioMessage = (props: { otherDocIds: Array<string | undefined>, room: IRo
                 marginLeft: props.side === 'left' ? 0 : 'auto',
                 marginRight: props.side === 'left' ? 'auto' : 0,
                 position: 'relative',
-                padding: 4
+                padding: 4,
+                marginTop: 0,
+                marginBottom: 'auto'
             }}
             elevation={0}
-            className={props.isQuote ? '' : (props.side === 'right' ? "bubble" : "bubble2") + (props.lastOfSection ? (" " + props.side) : "")}
         >
             <div style={{ width: 'auto', height: '100%', position: 'relative' }}>
                 <div style={{ width: 52, height: '100%', position: 'relative' }}>
@@ -100,7 +102,7 @@ const AudioMessage = (props: { otherDocIds: Array<string | undefined>, room: IRo
                                     }}
                                     onClick={e => {
                                         e.stopPropagation()
-                                        SigmaRouter.navigate('audioPlayer', { initialData: { docId: props.message.data.docId, room: props.room, otherDocIds: props.otherDocIds }, overPrevious: true })
+                                        SigmaRouter.navigate('audioPlayer', { initialData: { docId: props.message.data.docId, room: props.room, otherDocIds: props.otherDocIds } })
                                     }}
                                 >
                                     <div style={{ width: '100%', height: '100%', position: 'relative' }}>
@@ -168,8 +170,8 @@ const AudioMessage = (props: { otherDocIds: Array<string | undefined>, room: IRo
                             props.side === 'left' ?
                                 `${props.firstOfSection ? 24 : 8}px 24px 24px 8px` :
                                 `8px ${props.firstOfSection ? 24 : 24}px 8px 24px`,
-                        paddingLeft: 8, paddingRight: 8, paddingBottom: 2, paddingTop: 4,
-                        textAlign: "left", fontWeight: 'bold', marginTop: 0, height: 'auto', position: 'absolute', left: 0, top: 0,
+                        paddingLeft: 8, paddingRight: 8,
+                        textAlign: "left", fontWeight: 'bold', height: 'auto', position: 'absolute', left: 0, top: 0,
                         color: props.side === 'left' ? themeColor.get({ noproxy: true })['activeText'] : '#fff'
                     }}
                 >
