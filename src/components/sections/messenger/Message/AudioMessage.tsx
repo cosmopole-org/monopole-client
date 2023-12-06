@@ -1,19 +1,25 @@
 
 import {
+    Card,
+    CircularProgress,
+    IconButton,
     Paper,
     Typography
 } from "@mui/material";
 import {
-    DoneAll, History
+    DoneAll, History, PlayArrow
 } from "@mui/icons-material";
 import './bubble.css'
-import { themeColor } from "../../../../App";
+import { SigmaRouter, themeColor } from "../../../../App";
 import IMessage from "../../../../api/models/message";
 import Image from "../../../custom/components/Image";
 import IRoom from "../../../../api/models/room";
 import Waveform from "../../../custom/components/AudioWave/Waveform";
+import { useHookstate } from "@hookstate/core";
+import { api } from "../../../..";
 
-const AudioMessage = (props: { room: IRoom, message: IMessage, side?: string, lastOfSection?: boolean, firstOfSection?: boolean, isQuote?: boolean }) => {
+const AudioMessage = (props: { otherDocIds: Array<string | undefined>, room: IRoom, message: IMessage, side?: string, lastOfSection?: boolean, firstOfSection?: boolean, isQuote?: boolean }) => {
+    let progress = useHookstate(api.services.file.transferProgress)?.get({ noproxy: true })[props.message.meta?.tag]
     return (
         <Paper
             style={{
@@ -36,26 +42,107 @@ const AudioMessage = (props: { room: IRoom, message: IMessage, side?: string, la
             className={props.isQuote ? '' : (props.side === 'right' ? "bubble" : "bubble2") + (props.lastOfSection ? (" " + props.side) : "")}
         >
             <div style={{ width: 'auto', height: '100%', position: 'relative' }}>
-                {
-                    props.message.data.docId ? (
-                        <Image
-                            local={props.message.isDummy ? props.message.meta.local : undefined}
-                            style={{
-                                height: 48,
-                                width: 48,
-                                borderRadius: '8px 8px 8px 24px',
-                                position: 'absolute',
-                                left: 2,
-                                bottom: 2
-                            }}
-                            docId={props.message.data.docId}
-                            room={props.room}
-                            tag={`${props.room.id}-${props.message.id}`}
-                            isPreview
-                            key={`message-doc-cover-${props.message.id}`}
-                        />
-                    ) : null
-                }
+                <div style={{ width: 52, height: '100%', position: 'relative' }}>
+                    {
+                        props.message.isDummy ?
+                            progress === 100 ? (
+                                <Paper
+                                    style={{
+                                        width: 40,
+                                        height: 40,
+                                        position: 'absolute',
+                                        left: 6,
+                                        bottom: 6,
+                                        borderRadius: '50%',
+                                        backgroundColor: themeColor.get({ noproxy: true })[100]
+                                    }}>
+                                    <CircularProgress
+                                        variant={"indeterminate"}
+                                        style={{
+                                            height: 36,
+                                            width: 36,
+                                            borderRadius: '8px 8px 8px 24px',
+                                            margin: 2
+                                        }} />
+                                </Paper>
+                            ) : (
+                                <Paper
+                                    elevation={0}
+                                    style={{
+                                        width: 40,
+                                        height: 40,
+                                        position: 'absolute',
+                                        left: 6,
+                                        bottom: 6,
+                                        borderRadius: '50%',
+                                        backgroundColor: themeColor.get({ noproxy: true })[100]
+                                    }}>
+                                    <CircularProgress
+                                        value={progress}
+                                        variant={"determinate"}
+                                        style={{
+                                            height: 36,
+                                            width: 36,
+                                            borderRadius: '8px 8px 8px 24px',
+                                            margin: 2
+                                        }}
+                                    />
+                                </Paper>
+                            ) : props.message.data.docId ? (
+                                <div
+                                    style={{
+                                        borderRadius: '8px 8px 8px 24px',
+                                        width: 48,
+                                        height: 48,
+                                        position: 'absolute',
+                                        left: 2,
+                                        bottom: 2
+                                    }}
+                                    onClick={e => {
+                                        e.stopPropagation()
+                                        SigmaRouter.navigate('audioPlayer', { initialData: { docId: props.message.data.docId, room: props.room, otherDocIds: props.otherDocIds }, overPrevious: true })
+                                    }}
+                                >
+                                    <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+                                        <Image
+                                            style={{
+                                                height: 48,
+                                                width: 48,
+                                                borderRadius: '8px 8px 8px 24px'
+                                            }}
+                                            docId={props.message.data.docId}
+                                            room={props.room}
+                                            tag={`${props.room.id}-${props.message.id}`}
+                                            isPreview
+                                            key={`message-doc-cover-${props.message.id}`}
+                                        />
+                                        <div
+                                            style={{
+                                                height: 48,
+                                                width: 48,
+                                                borderRadius: '8px 8px 8px 24px',
+                                                position: 'absolute',
+                                                left: 0,
+                                                top: 0,
+                                                backgroundColor: 'rgba(0, 0, 0, 0.25)'
+                                            }}
+                                        />
+                                        <IconButton
+                                            style={{
+                                                width: '100%',
+                                                height: '100%',
+                                                position: 'absolute',
+                                                left: 0,
+                                                top: 0
+                                            }}
+                                        >
+                                            <PlayArrow style={{ fill: '#fff' }} />
+                                        </IconButton>
+                                    </div>
+                                </div>
+                            ) : null
+                    }
+                </div>
                 {
                     (props.message.data.docId && !props.message.isDummy) ? (
                         <Waveform
@@ -65,7 +152,14 @@ const AudioMessage = (props: { room: IRoom, message: IMessage, side?: string, la
                             room={props.room}
                             isPreview={true}
                         />
-                    ) : null
+                    ) : (
+                        <div
+                            style={{
+                                width: 120, height: 0, position: 'absolute', left: 60, top: 40,
+                                borderStyle: 'dashed', borderColor: themeColor.get({ noproxy: true })[100], borderWidth: 4
+                            }}
+                        />
+                    )
                 }
                 <Typography
                     variant={"caption"}

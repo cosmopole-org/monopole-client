@@ -1,7 +1,7 @@
 
 import './index.css';
 import { LeftControlTypes, RightControlTypes, StatusThemes, switchColor, switchLeftControl, switchRightControl, switchTitle } from '../../sections/StatusBar';
-import { Paper, Typography } from '@mui/material';
+import { Drawer, Paper, Typography } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { SigmaRouter, themeColor } from '../../../App';
 import SliderPage from '../../layouts/SliderPage';
@@ -13,7 +13,11 @@ import MachineBox from '../../custom/components/MachineBox';
 import SigmaFab from '../../custom/elements/SigmaFab';
 import { AppletSheet } from '../../custom/components/AppletSheet';
 import Shadow, { showRoomShadow } from './shadow';
-import Meta, { changeMetaDrawerState } from './meta';
+import Meta, { changeMetaDrawerState } from './metaTouch';
+import utils from '../../utils';
+import MetaContent from './metaContent';
+import MetaNonTouch, { metaNonTouchOpen } from './metaNonTouch';
+import MetaTouch from './metaTouch';
 
 const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
   const [showRoomControl, setShowRoomControl] = useState(false)
@@ -22,9 +26,13 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
   const isMetaOpen = useRef(false);
   const updateMetaState = (state: boolean) => {
     isMetaOpen.current = state;
-    changeMetaDrawerState && changeMetaDrawerState(state);
+    if (utils.screen.isTouchDevice()) {
+      changeMetaDrawerState && changeMetaDrawerState(state);
+    } else {
+      metaNonTouchOpen.set(state)
+    }
   }
-    const close = () => {
+  const close = () => {
     SigmaRouter.back()
   }
   const closeMeta = (closedItself: boolean) => {
@@ -32,7 +40,9 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
     onMetaClose()
   }
   const openMeta = () => {
-    showRoomShadow.set(true)
+    if (utils.screen.isTouchDevice()) {
+      showRoomShadow.set(true)
+    }
     onMetaOpen()
     updateMetaState(true)
   }
@@ -80,7 +90,13 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
         <People />
       </SigmaFab>
       <Shadow onClick={() => closeMeta(false)} />
-      <Meta room={props.room} onClose={() => { closeMeta(true); showRoomShadow.set(false); }} />
+      {
+        utils.screen.isTouchDevice() ? (
+          <MetaTouch room={props.room} onClose={() => { closeMeta(true); showRoomShadow.set(false); }} />
+        ) : (
+          <MetaNonTouch room={props.room} onClose={() => { closeMeta(true); }} />
+        )
+      }
       <RoomControl
         onClose={() => setShowRoomControl(false)}
         shown={showRoomControl}

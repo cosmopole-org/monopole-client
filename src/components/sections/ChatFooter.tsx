@@ -5,6 +5,7 @@ import IMessage from "../../api/models/message";
 import { themeColor, themeColorName } from "../../App";
 import Picker from "@emoji-mart/react"
 import pickerData from "@emoji-mart/data"
+import { setChatKeyboardOpen } from "../pages/room/metaTouch";
 
 const ChatFooter = (props: { style?: any, messages: Array<IMessage>, onWidgetsClicked: () => void, onMessageSubmit: (text: string) => void, pointedMessage: any, action: any }) => {
     const [value, setValue] = useState(props.pointedMessage?.type === 'text' ? props.pointedMessage.data.text : '')
@@ -20,6 +21,7 @@ const ChatFooter = (props: { style?: any, messages: Array<IMessage>, onWidgetsCl
             setValue(valueBackup.current)
         }
     }, [props.pointedMessage])
+    useEffect(() => setChatKeyboardOpen(showEmoji), [showEmoji])
     return (
         <Paper style={props.style}>
             <div style={{ width: '100%', height: 'auto', display: 'flex' }}>

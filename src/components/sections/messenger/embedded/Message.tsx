@@ -17,7 +17,7 @@ const Message = (props: { messages: Array<IMessage>, room: IRoom, message: IMess
                 ) : props.messageType === 'video' ? (
                     <VideoMessage room={props.room} key={`chat-message-data-${props.message.id}`} message={props.message} side={props.side} lastOfSection={props.lastOfSection} firstOfSection={props.firstOfSection} />
                 ) : props.messageType === 'audio' ? (
-                    <AudioMessage room={props.room} key={`chat-message-data-${props.message.id}`} message={props.message} side={props.side} lastOfSection={props.lastOfSection} firstOfSection={props.firstOfSection} />
+                    <AudioMessage otherDocIds={props.messages.filter(msg => msg.type === 'audio').map(msg => msg.data.docId)} room={props.room} key={`chat-message-data-${props.message.id}`} message={props.message} side={props.side} lastOfSection={props.lastOfSection} firstOfSection={props.firstOfSection} />
                 ) : null
             }
         </MessageRow>
