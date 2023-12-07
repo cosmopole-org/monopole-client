@@ -4,27 +4,116 @@ import './index.css';
 import { LeftControlTypes, RightControlTypes, StatusThemes, switchColor, switchLeftControl, switchRightControl, switchTitle } from "../../sections/StatusBar";
 import { SigmaRouter, themeColor } from "../../../App";
 import { Grid, IconButton, Paper, Slide, Slider, Typography } from "@mui/material";
-import { FastForward, FastRewind, PlayArrow, Repeat, Shuffle } from "@mui/icons-material";
+import { FastForward, FastRewind, Pause, PlayArrow, Repeat, Shuffle } from "@mui/icons-material";
 import SigmaFab from "../../custom/elements/SigmaFab";
 import AudioCard from "../../custom/components/AudioCard";
 import IRoom from "../../../api/models/room";
 import { api } from "../../..";
-import { hookstate, useHookstate } from "@hookstate/core";
 
 let audio: any = undefined;
-const playingDocIdState = hookstate('');
-const audioLinkState = hookstate('');
-const audioPlayingState = hookstate(false);
+let playingDocId = '';
+let link = '';
+let playing = false;
+let repeat = false;
+let shuffle = false;
 
-export default (props: { id: string, isOnTop: boolean, otherDocIds: Array<string>, room: IRoom, docId: string }) => {
+let duration = '00:00';
+let progress = '00:00';
+let progressNumber = 0;
+let otherDocIds: any = []
+let room: any = undefined
+
+const formatTime = (seconds: number) => {
+  let currentMinutes = Math.floor(seconds / 60).toString();
+  if (currentMinutes.length === 1) currentMinutes = '0' + currentMinutes;
+  if (currentMinutes.startsWith('N')) currentMinutes = '00';
+  let currentSeconds = Math.floor(seconds % 60).toString();
+  if (currentSeconds.length === 1) currentSeconds = '0' + currentSeconds;
+  if (currentSeconds.startsWith('N')) currentSeconds = '00';
+  return (currentMinutes + ':' + currentSeconds);
+}
+
+const resetAudioPlayer = () => {
+  playing = false;
+  try {
+    audio.pause();
+  } catch (ex) { console.log(ex) }
+  duration = '00:00';
+  progress = '00:00';
+  progressNumber = 0;
+}
+
+const loadAudio = async (docId: string, room: any) => {
+  playingDocId = docId;
+  try {
+    audio.pause();
+  } catch (ex) { console.log(ex) }
+  let l = await api.services.file.generateDownloadLink({ towerId: room.towerId, roomId: room.id, documentId: playingDocId });
+  link = l;
+  audio = new Audio(link);
+}
+
+setInterval(() => {
+  if (audio) {
+    duration = formatTime(audio.duration);
+    if (playing && audio.paused) {
+      if (repeat) {
+        // do nothing
+      } else {
+        playing = !audio.paused;
+      }
+    } else {
+      playing = !audio.paused;
+    }
+    if (audio.ended) {
+      audio.currentTime = 0;
+      if (repeat) {
+        try {
+          audio.play().catch((ex: any) => console.log(ex));
+        } catch (ex) { console.log(ex) }
+      } else {
+        let nextDocId = undefined;
+        if (shuffle) {
+          nextDocId = otherDocIds[Math.floor(Math.random() * otherDocIds.length)];
+        } else {
+          let currentIndex = otherDocIds.indexOf(playingDocId);
+          nextDocId = otherDocIds[currentIndex + 1]
+          if (nextDocId === undefined) nextDocId = otherDocIds[0]
+        }
+        if (nextDocId !== undefined) {
+          loadAudio(nextDocId, room).then(() => {
+            try {
+              audio.play().catch((ex: any) => console.log(ex));
+            } catch (ex) { console.log(ex) }
+          })
+        }
+      }
+    }
+    progress = formatTime(audio.currentTime);
+    progressNumber = audio.currentTime * 100 / audio.duration;
+  }
+}, 1000)
+
+export default (props: { id: string, isOnTop: boolean, otherDocIds: Array<string>, room: IRoom, docId?: string }) => {
+  const [_, setTrigger] = useState(1);
+  const update = () => setTrigger(Math.random());
   const close = () => SigmaRouter.back();
-  let playingDocId = useHookstate(playingDocIdState);
-  let link = useHookstate(audioLinkState);
-  let playing = useHookstate(audioPlayingState);
-  useEffect(() => {
-    playingDocId.set(props.docId);
-    
-  }, [])
+  let togglePlay = (v: boolean) => {
+    playing = v;
+    try {
+      if (v) {
+        audio.play().catch((ex: any) => console.log(ex));
+      } else {
+        audio.pause();
+      }
+    } catch (ex) { console.log(ex) }
+  }
+  let playAudio = (docId: string) => {
+    loadAudio(docId, room).then(() => {
+      togglePlay(true);
+      update();
+    });
+  }
   useEffect(() => {
     if (props.isOnTop) {
       switchLeftControl && switchLeftControl(LeftControlTypes.BACK, close)
@@ -34,30 +123,19 @@ export default (props: { id: string, isOnTop: boolean, otherDocIds: Array<string
     }
   }, [props.isOnTop]);
   useEffect(() => {
-    try {
-      if (playing) {
-        audio.play().catch((ex: any) => console.log(ex));
-      } else {
-        audio?.pause();
-      }
-    } catch (ex) { console.log(ex) }
-  }, [playing]);
-  useEffect(() => {
-    try {
-      audio?.pause();
-    } catch (ex) { console.log(ex) }
-    audio = new Audio(link.get({ noproxy: true }));
-    try {
-      audio?.play().catch((ex: any) => console.log(ex))
-    } catch (ex) { console.log(ex) }
-  }, [link]);
-  useEffect(() => {
-    if (playingDocId.get({ noproxy: true }).length > 0) {
-      api.services.file.generateDownloadLink({ towerId: props.room.towerId, roomId: props.room.id, documentId: playingDocId.get({ noproxy: true }) }).then((l: string) => {
-        link.set(l);
-      });
+    if (props.room && props.docId && (props.docId !== playingDocId)) {
+      room = props.room;
+      otherDocIds = props.otherDocIds;
+      resetAudioPlayer();
+      playAudio(props.docId);
     }
-  }, [playingDocId]);
+    let timeGuard = setInterval(() => {
+      update();
+    }, 1000)
+    return () => {
+      clearInterval(timeGuard)
+    }
+  }, []);
   return (
     <SliderPage id={props.id}>
       <div style={{
@@ -72,14 +150,20 @@ export default (props: { id: string, isOnTop: boolean, otherDocIds: Array<string
           <div style={{ width: '100%', height: 72 }} />
           <Grid container columns={2}>
             {
-              props.otherDocIds.map(docId => {
+              room && otherDocIds?.map((docId: string) => {
                 return (
                   <Grid item xs={1}>
-                    <AudioCard docId={docId} room={props.room} playing={playingDocId.get({ noproxy: true }) === docId} onPlayPause={() => {
-                      if (!playing.get({ noproxy: true })) {
-                        playingDocId.set(docId);
+                    <AudioCard docId={docId} room={room} playing={playing && (playingDocId === docId)} onPlayPause={() => {
+                      if (playing) {
+                        if (docId === playingDocId) {
+                          togglePlay(false);
+                          update();
+                        } else {
+                          togglePlay(false);
+                          playAudio(docId);
+                        }
                       } else {
-                        playing.set(false);
+                        playAudio(docId);
                       }
                     }} />
                   </Grid>
@@ -117,30 +201,54 @@ export default (props: { id: string, isOnTop: boolean, otherDocIds: Array<string
               alt=""
             />
           </Paper>
-          <Slider style={{ width: '100%' }} />
+          <Slider style={{ width: '100%' }} value={progressNumber}
+            onChange={(e: any, value: any) => {
+              if (audio) {
+                try {
+                  audio.currentTime = value * audio.duration / 100;
+                } catch (ex) { console.log(ex); }
+              }
+            }} />
           <div style={{ width: '100%', display: 'flex' }}>
             <Typography>
-              00:00
+              {progress}
             </Typography>
             <div style={{ flex: 1 }} />
             <Typography>
-              00:00
+              {duration}
             </Typography>
           </div>
           <div style={{ margin: '24px 0px 5px 0px', display: 'flex', width: '100%', textAlign: 'center', justifyContent: 'center', alignItems: 'center' }}>
-            <IconButton style={{ marginLeft: 16, marginRight: 8 }}>
+            <IconButton style={{ borderRadius: '50%', backgroundColor: shuffle ? themeColor.get({ noproxy: true })[50] : 'transparent', marginLeft: 8, marginRight: 8 }}
+              onClick={() => { shuffle = !shuffle; update(); }}>
               <Shuffle />
             </IconButton>
-            <IconButton style={{ marginLeft: 8, marginRight: 8 }}>
+            <IconButton style={{ marginLeft: 8, marginRight: 8 }} onClick={() => {
+              if (audio) {
+                audio.currentTime -= 5;
+                update();
+              }
+            }}>
               <FastRewind />
             </IconButton>
-            <SigmaFab style={{ marginLeft: 8, marginRight: 8 }}>
-              <PlayArrow />
+            <SigmaFab style={{ marginLeft: 8, marginRight: 8 }} onClick={() => {
+              if (otherDocIds && (otherDocIds.length > 0)) {
+                togglePlay(!playing)
+                update();
+              }
+            }}>
+              {playing ? <Pause /> : <PlayArrow />}
             </SigmaFab>
-            <IconButton style={{ marginLeft: 8, marginRight: 8 }}>
+            <IconButton style={{ marginLeft: 8, marginRight: 8 }} onClick={() => {
+              if (audio) {
+                audio.currentTime += 5;
+                update();
+              }
+            }}>
               <FastForward />
             </IconButton>
-            <IconButton style={{ marginLeft: 8, marginRight: 16 }}>
+            <IconButton style={{ borderRadius: '50%', backgroundColor: repeat ? themeColor.get({ noproxy: true })[50] : 'transparent', marginLeft: 8, marginRight: 16 }}
+              onClick={() => { repeat = !repeat; update(); }}>
               <Repeat />
             </IconButton>
           </div>

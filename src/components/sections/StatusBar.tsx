@@ -1,7 +1,7 @@
-import { ArrowBack, Close, Dashboard, KeyboardCommandKey, Notifications, Settings } from "@mui/icons-material"
+import { ArrowBack, Close, Dashboard, KeyboardCommandKey, MusicNote, Notifications, Settings } from "@mui/icons-material"
 import { IconButton, Paper, Typography } from "@mui/material"
 import { useState } from "react"
-import { SigmaRouter, themeColor } from "../../App"
+import { SigmaRouter, themeBasedTextColor, themeColor } from "../../App"
 
 const statusbarHeight = () => 40
 const LeftControlTypes = {
@@ -29,8 +29,6 @@ const StatusBar = () => {
     const [leftControlType, setLeftControlType] = useState(LeftControlTypes.NOTIFICATIONS)
     const [rightControlType, setRightControlType] = useState(RightControlTypes.NONE)
     const [title, setTitle] = useState('')
-    const [color, setColor] = useState(themeColor.get({ noproxy: true })[500].toString())
-    const [theme, setTheme] = useState(StatusThemes.LIGHT)
     switchLeftControl = (type: number, functionality?: () => void) => {
         setLeftControlType(type)
         leftControlFunctionality = functionality
@@ -41,8 +39,7 @@ const StatusBar = () => {
     }
     switchTitle = (title: string) => setTitle(title)
     switchColor = (color: string, theme: number) => {
-        setColor(color);
-        setTheme(theme)
+
     }
     return SigmaRouter.topPath() === 'splash' ?
         null : (
@@ -50,7 +47,7 @@ const StatusBar = () => {
                 style={{
                     width: 'calc(100% - 16px)',
                     height: 40,
-                    backgroundColor: color,
+                    backgroundColor: themeColor.get({ noproxy: true })[200].toString(),
                     backdropFilter: 'blur(10px)',
                     zIndex: 99999,
                     position: 'fixed',
@@ -65,24 +62,24 @@ const StatusBar = () => {
                     SigmaRouter.topPath() === 'auth' ?
                         null :
                         (
-                            <IconButton size={'small'} style={{ width: 32, height: 32, backgroundColor: color, borderRadius: '50%', position: 'absolute', top: 4, left: 8 }}
+                            <IconButton size={'small'} style={{ width: 32, height: 32, borderRadius: '50%', position: 'absolute', top: 4, left: 8 }}
                                 onClick={() => {
                                     leftControlFunctionality && leftControlFunctionality()
                                 }}
                             >
                                 {
                                     leftControlType === LeftControlTypes.NOTIFICATIONS ?
-                                        <Notifications style={{ color: '#fff' }} /> :
+                                        <Notifications style={{ color: themeBasedTextColor.get({ noproxy: true }) }} /> :
                                         leftControlType === LeftControlTypes.BACK ?
-                                            <ArrowBack style={{ color: '#fff' }} /> :
+                                            <ArrowBack style={{ color: themeBasedTextColor.get({ noproxy: true }) }} /> :
                                             leftControlType === LeftControlTypes.CLOSE ?
-                                                <Close style={{ color: '#fff' }} /> :
+                                                <Close style={{ color: themeBasedTextColor.get({ noproxy: true }) }} /> :
                                                 null
                                 }
                             </IconButton>
                         )
                 }
-                <Typography variant={'body1'} style={{ color: '#fff', position: 'absolute', left: '50%', top: 8, transform: 'translateX(-50%)', display: 'flex' }}>
+                <Typography variant={'body1'} style={{ color: themeBasedTextColor.get({ noproxy: true }), position: 'absolute', left: '50%', top: 8, transform: 'translateX(-50%)', display: 'flex' }}>
                     {title}
                 </Typography>
                 {
@@ -92,8 +89,8 @@ const StatusBar = () => {
                                 onClick={() => {
                                     rightControlFunctionality && rightControlFunctionality()
                                 }}
-                                size="small" style={{ width: 32, height: 32, backgroundColor: color, borderRadius: '50%', position: 'absolute', top: 4, right: 8 + 32 + 8 }}>
-                                <KeyboardCommandKey style={{ color: '#fff' }} />
+                                size="small" style={{ width: 32, height: 32, borderRadius: '50%', position: 'absolute', top: 4, right: 8 + 32 + 8 }}>
+                                <KeyboardCommandKey style={{ color: themeBasedTextColor.get({ noproxy: true }) }} />
                             </IconButton>
                         ) :
                         rightControlType === RightControlTypes.SETTINGS ?
@@ -102,8 +99,8 @@ const StatusBar = () => {
                                     onClick={() => {
                                         rightControlFunctionality && rightControlFunctionality()
                                     }}
-                                    size="small" style={{ width: 32, height: 32, backgroundColor: color, borderRadius: '50%', position: 'absolute', top: 4, right: 8 + 32 + 8 }}>
-                                    <Settings style={{ color: '#fff' }} />
+                                    size="small" style={{ width: 32, height: 32, borderRadius: '50%', position: 'absolute', top: 4, right: 8 + 32 + 8 }}>
+                                    <Settings style={{ color: themeBasedTextColor.get({ noproxy: true }) }} />
                                 </IconButton>
                             ) :
                             null
@@ -112,8 +109,12 @@ const StatusBar = () => {
                     SigmaRouter.topPath() === 'auth' ?
                         null :
                         (
-                            <IconButton size="small" style={{ width: 32, height: 32, backgroundColor: color, borderRadius: '50%', position: 'absolute', top: 4, right: 8 }}>
-                                <Dashboard style={{ color: '#fff' }} />
+                            <IconButton size="small" style={{ width: 32, height: 32, borderRadius: '50%', position: 'absolute', top: 4, right: 8 }}
+                                onClick={() => {
+                                    SigmaRouter.navigate('audioPlayer');
+                                }}
+                            >
+                                <MusicNote style={{ color: themeBasedTextColor.get({ noproxy: true }) }} />
                             </IconButton>
                         )
                 }
