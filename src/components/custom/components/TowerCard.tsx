@@ -7,15 +7,12 @@ import { api } from "../../.."
 
 const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void, showRating?: boolean }) => {
     return (
-        <Card elevation={0} style={{ ...props.style, position: 'relative', width: 'calc(100% - 32px)', padding: 16, height: 176, backgroundColor: themeColor.get({ noproxy: true })[50], borderRadius: 24 }}>
+        <Card elevation={0} style={{ ...props.style, position: 'relative', width: 'calc(100% - 32px)', padding: 16, height: 144, backgroundColor: themeColor.get({ noproxy: true })[50], borderRadius: 24 }}>
             <SigmaAvatar style={{ width: 48, height: 48 }}>
                 {props.tower.title.substring(0, 1)}
             </SigmaAvatar>
             <Typography variant={'h6'} style={{ marginTop: 16 }}>
                 {props.tower.title}
-            </Typography>
-            <Typography variant={'body1'} style={{ marginTop: 8 }}>
-                This is a sample tower from sigma.
             </Typography>
             {
                 props.showRating ? (

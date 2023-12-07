@@ -54,7 +54,9 @@ if (tempThemeColorName === null) {
     localStorage.setItem('themeColor', tempThemeColorName)
 }
 export let themeColorName = hookstate(tempThemeColorName)
-export let themeColor = hookstate(tempThemeColorName === 'night' ? fixedNightColor : (colors as { [id: string]: any })[tempThemeColorName])
+
+let colorFamily = { ...(colors as { [id: string]: any })[tempThemeColorName], plain: '#fff', activeText: '#333', passiveText: '#666' }
+export let themeColor = hookstate(tempThemeColorName === 'night' ? fixedNightColor : colorFamily)
 export let themeBasedTextColor = hookstate(tempThemeColorName === 'night' ? '#fff' : '#333')
 export let themeColorSecGroup = hookstate(colors.blue)
 var metaThemeColor = document.querySelector("meta[name=theme-color]");
@@ -88,10 +90,10 @@ let theme = createTheme({
     palette: {
         mode: tempThemeColorName === 'night' ? 'dark' : 'light',
         primary: {
-            main: themeColor.get({ noproxy: true })[500],
+            main: themeColor.get({ noproxy: true })[200],
         },
         secondary: {
-            main: colors.purple[500],
+            main: colors.purple[200],
         },
         background: {
             paper: tempThemeColorName === 'night' ? fixedNightColor['plain'] : '#fff'
@@ -127,10 +129,10 @@ export let reconstructMaterialPalette = (name: string, color: any) => {
         palette: {
             mode: name === 'night' ? 'dark' : 'light',
             primary: {
-                main: color[500],
+                main: color[200],
             },
             secondary: {
-                main: colors.purple[500],
+                main: colors.purple[200],
             },
             background: {
                 paper: name === 'night' ? fixedNightColor['plain'] : '#fff'

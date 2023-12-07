@@ -20,6 +20,7 @@ import MetaNonTouch, { metaNonTouchOpen } from './metaNonTouch';
 import MetaTouch from './metaTouch';
 
 const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
+  const containerRef: any = useRef(null)
   const [showRoomControl, setShowRoomControl] = useState(false)
   const [showMachineBox, setShowMachineBox] = useState(false)
   const wallpaperContainerRef = useRef(null)
@@ -69,49 +70,51 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
   }, [props.isOnTop])
   return (
     <SliderPage id={props.id}>
-      <div key={'room-background'} style={{ background: 'url(https://i.pinimg.com/564x/2a/cd/6e/2acd6e46cc2bdc218a9104a69c36868e.jpg)', width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} ref={wallpaperContainerRef} />,
-      <div key={'room-background-overlay'} style={{ opacity: 0.65, backgroundColor: themeColor.get({ noproxy: true })[200], width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} />
-      <Desk show={true} room={props.room} />
-      <Paper style={{
-        borderRadius: '24px 24px 0px 0px', width: '100%', height: 48, backgroundColor: themeColor.get({ noproxy: true })[50],
-        position: 'absolute', left: 0, bottom: 0
-      }}>
-        <div style={{ display: 'flex', marginTop: 12 }}>
-          <Message style={{ marginLeft: 16, marginRight: 8 }} />
-          <Typography variant='body2'>
-            Keyhan: Please send me the docs.
-          </Typography>
-        </div>
-      </Paper>
-      <SigmaFab style={{ position: 'absolute', right: 16, bottom: 16, zIndex: 1 }} onClick={() => {
-        openMeta()
-      }}
-      >
-        <People />
-      </SigmaFab>
-      <Shadow onClick={() => closeMeta(false)} />
-      {
-        utils.screen.isTouchDevice() ? (
-          <MetaTouch room={props.room} onClose={() => { closeMeta(true); showRoomShadow.set(false); }} />
-        ) : (
-          <MetaNonTouch room={props.room} onClose={() => { closeMeta(true); }} />
-        )
-      }
-      <RoomControl
-        onClose={() => setShowRoomControl(false)}
-        shown={showRoomControl}
-        toggleEditMode={(v) => desktopEditMode.set(v)}
-        openToolbox={() => {
-          setShowRoomControl(false)
-          setShowMachineBox(true)
+      <div style={{ width: '100%', height: '100%' }} ref={containerRef}>
+        <div key={'room-background'} style={{ background: 'url(https://i.pinimg.com/564x/2a/cd/6e/2acd6e46cc2bdc218a9104a69c36868e.jpg)', width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} ref={wallpaperContainerRef} />,
+        <div key={'room-background-overlay'} style={{ opacity: 0.65, backgroundColor: themeColor.get({ noproxy: true })[200], width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} />
+        <Desk show={true} room={props.room} />
+        <Paper style={{
+          borderRadius: '24px 24px 0px 0px', width: '100%', height: 48, backgroundColor: themeColor.get({ noproxy: true })[50],
+          position: 'absolute', left: 0, bottom: 0
+        }}>
+          <div style={{ display: 'flex', marginTop: 12 }}>
+            <Message style={{ marginLeft: 16, marginRight: 8 }} />
+            <Typography variant='body2'>
+              Keyhan: Please send me the docs.
+            </Typography>
+          </div>
+        </Paper>
+        <SigmaFab style={{ position: 'absolute', right: 16, bottom: 16, zIndex: 1 }} onClick={() => {
+          openMeta()
         }}
-      />
-      <MachineBox
-        createWorker={(machineId: string) => addWidgetToSDesktop(props.room, machineId)}
-        onClose={() => setShowMachineBox(false)}
-        shown={showMachineBox}
-      />
-      <AppletSheet />
+        >
+          <People />
+        </SigmaFab>
+        <Shadow onClick={() => closeMeta(false)} />
+        {
+          utils.screen.isTouchDevice() ? (
+            <MetaTouch room={props.room} onClose={() => { closeMeta(true); showRoomShadow.set(false); }} />
+          ) : (
+            <MetaNonTouch container={containerRef.current} room={props.room} onClose={() => { closeMeta(true); }} />
+          )
+        }
+        <RoomControl
+          onClose={() => setShowRoomControl(false)}
+          shown={showRoomControl}
+          toggleEditMode={(v) => desktopEditMode.set(v)}
+          openToolbox={() => {
+            setShowRoomControl(false)
+            setShowMachineBox(true)
+          }}
+        />
+        <MachineBox
+          createWorker={(machineId: string) => addWidgetToSDesktop(props.room, machineId)}
+          onClose={() => setShowMachineBox(false)}
+          shown={showMachineBox}
+        />
+        <AppletSheet />
+      </div>
     </SliderPage >
   )
 }

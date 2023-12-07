@@ -4,7 +4,7 @@ import './index.css';
 import { LeftControlTypes, RightControlTypes, StatusThemes, switchColor, switchLeftControl, switchRightControl, switchTitle } from "../../sections/StatusBar";
 import { SigmaRouter, themeColor } from "../../../App";
 import { Grid, IconButton, Paper, Slide, Slider, Typography } from "@mui/material";
-import { FastForward, FastRewind, Pause, PlayArrow, Repeat, Shuffle } from "@mui/icons-material";
+import { FastForward, FastRewind, Pause, PlayArrow, Repeat, Shuffle, Tag } from "@mui/icons-material";
 import SigmaFab from "../../custom/elements/SigmaFab";
 import AudioCard from "../../custom/components/AudioCard";
 import IRoom from "../../../api/models/room";
@@ -22,6 +22,44 @@ let progress = '00:00';
 let progressNumber = 0;
 let otherDocIds: any = []
 let room: any = undefined
+
+export let isPlaying = (docId: string) => (playing && (docId === playingDocId))
+
+let progressStore: { [id: string]: number } = {}
+export let getProgress = (docId: string) => progressStore[docId]
+let progressListeners: { [id: string]: any } = {}
+export let registerAudioProgressListener = (docId: string, listener: any) => {
+  progressListeners[docId] = listener;
+  if (audio && playingDocId) {
+    if (playingDocId === docId) {
+      return progressStore[docId];
+    }
+  }
+  return 0;
+}
+export let unregisterAudioProgressListener = (docId: string) => {
+  delete progressListeners[docId];
+}
+let playListeners: { [id: string]: any } = {}
+export let registerAudioPlayListener = (docId: string, listener: any) => {
+  playListeners[docId] = listener;
+  return 0;
+}
+export let unregisterAudioPlayListener = (docId: string) => {
+  delete playListeners[docId];
+}
+
+export let seekAudioTo = (docId: string, percent: number) => {
+  if (docId === playingDocId) {
+    if (audio) {
+      try {
+        audio.currentTime = percent * audio.duration / 100;
+        return true;
+      } catch (ex) { console.log(ex) }
+    }
+  }
+  return false;
+}
 
 const formatTime = (seconds: number) => {
   let currentMinutes = Math.floor(seconds / 60).toString();
@@ -44,13 +82,22 @@ const resetAudioPlayer = () => {
 }
 
 const loadAudio = async (docId: string, room: any) => {
-  playingDocId = docId;
-  try {
-    audio.pause();
-  } catch (ex) { console.log(ex) }
-  let l = await api.services.file.generateDownloadLink({ towerId: room.towerId, roomId: room.id, documentId: playingDocId });
-  link = l;
-  audio = new Audio(link);
+  return new Promise(async resolve => {
+    let progress = progressStore[docId];
+    playingDocId = docId;
+    try {
+      audio.pause();
+    } catch (ex) { console.log(ex) }
+    let l = await api.services.file.generateDownloadLink({ towerId: room.towerId, roomId: room.id, documentId: playingDocId });
+    link = l;
+    audio = new Audio(link);
+    audio.onloadedmetadata = () => {
+      if (progress !== undefined) {
+        audio.currentTime = Math.floor(progress * audio.duration / 100);
+      }
+      resolve(true);
+    }
+  })
 }
 
 setInterval(() => {
@@ -91,29 +138,51 @@ setInterval(() => {
     }
     progress = formatTime(audio.currentTime);
     progressNumber = audio.currentTime * 100 / audio.duration;
+    progressStore[playingDocId] = progressNumber;
+    if (!audio.paused) {
+      let callback = progressListeners[playingDocId];
+      if (callback) {
+        callback(progressStore[playingDocId]);
+      }
+    }
   }
-}, 1000)
+}, 1000);
+
+export let togglePlay = (v: boolean) => {
+  playing = v;
+  try {
+    if (v) {
+      audio.play().catch((ex: any) => console.log(ex));
+    } else {
+      audio.pause();
+    }
+    let callback = playListeners[playingDocId];
+    if (callback) {
+      callback();
+    }
+  } catch (ex) { console.log(ex) }
+}
+export let playAudio = (docId: string, r?: IRoom, oids?: any) => {
+  if (r) {
+    room = r;
+    otherDocIds = oids;
+  }
+  if (playingDocId === docId) {
+    togglePlay(true);
+  } else {
+    if (playingDocId) {
+      togglePlay(false)
+    }
+    loadAudio(docId, room).then(() => {
+      togglePlay(true);
+    });
+  }
+}
 
 export default (props: { id: string, isOnTop: boolean, otherDocIds: Array<string>, room: IRoom, docId?: string }) => {
   const [_, setTrigger] = useState(1);
   const update = () => setTrigger(Math.random());
   const close = () => SigmaRouter.back();
-  let togglePlay = (v: boolean) => {
-    playing = v;
-    try {
-      if (v) {
-        audio.play().catch((ex: any) => console.log(ex));
-      } else {
-        audio.pause();
-      }
-    } catch (ex) { console.log(ex) }
-  }
-  let playAudio = (docId: string) => {
-    loadAudio(docId, room).then(() => {
-      togglePlay(true);
-      update();
-    });
-  }
   useEffect(() => {
     if (props.isOnTop) {
       switchLeftControl && switchLeftControl(LeftControlTypes.BACK, close)

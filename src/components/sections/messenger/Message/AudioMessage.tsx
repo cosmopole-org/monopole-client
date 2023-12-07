@@ -1,13 +1,12 @@
 
 import {
-    Card,
     CircularProgress,
     IconButton,
     Paper,
     Typography
 } from "@mui/material";
 import {
-    DoneAll, History, PlayArrow
+    DoneAll, History, Pause, PlayArrow
 } from "@mui/icons-material";
 import './bubble.css'
 import { SigmaRouter, themeColor } from "../../../../App";
@@ -17,9 +16,22 @@ import IRoom from "../../../../api/models/room";
 import Waveform from "../../../custom/components/AudioWave/Waveform";
 import { useHookstate } from "@hookstate/core";
 import { api } from "../../../..";
+import { isPlaying, playAudio, registerAudioPlayListener, togglePlay, unregisterAudioPlayListener } from "../../../pages/audioPlayer";
+import { useEffect, useState } from "react";
 
 const AudioMessage = (props: { otherDocIds: Array<string | undefined>, room: IRoom, message: IMessage, side?: string, lastOfSection?: boolean, firstOfSection?: boolean, isQuote?: boolean }) => {
-    let progress = useHookstate(api.services.file.transferProgress)?.get({ noproxy: true })[props.message.meta?.tag]
+    const progress = useHookstate(api.services.file.transferProgress)?.get({ noproxy: true })[props.message.meta?.tag]
+    const [_, setTrigger] = useState(Math.random())
+    useEffect(() => {
+        if (props.message.data.docId) {
+            registerAudioPlayListener(props.message.data.docId, () => setTrigger(Math.random()));
+        }
+        return () => {
+            if (props.message.data.docId) {
+                unregisterAudioPlayListener(props.message.data.docId);
+            }
+        }
+    }, [props.message.data.docId]);
     return (
         <Paper
             className={props.isQuote ? '' : (props.side === 'right' ? "bubble" : "bubble2") + (props.lastOfSection ? (" " + props.side) : "")}
@@ -102,7 +114,6 @@ const AudioMessage = (props: { otherDocIds: Array<string | undefined>, room: IRo
                                     }}
                                     onClick={e => {
                                         e.stopPropagation()
-                                        SigmaRouter.navigate('audioPlayer', { initialData: { docId: props.message.data.docId, room: props.room, otherDocIds: props.otherDocIds } })
                                     }}
                                 >
                                     <div style={{ width: '100%', height: '100%', position: 'relative' }}>
@@ -137,8 +148,17 @@ const AudioMessage = (props: { otherDocIds: Array<string | undefined>, room: IRo
                                                 left: 0,
                                                 top: 0
                                             }}
+                                            onClick={() => {
+                                                if (props.message.data.docId) {
+                                                    if (isPlaying(props.message.data.docId)) {
+                                                        togglePlay(false)
+                                                    } else {
+                                                        playAudio(props.message.data.docId, props.room, props.otherDocIds);
+                                                    }
+                                                }
+                                            }}
                                         >
-                                            <PlayArrow style={{ fill: '#fff' }} />
+                                            {isPlaying(props.message.data.docId) ? <Pause style={{ fill: '#fff' }} /> : <PlayArrow style={{ fill: '#fff' }} />}
                                         </IconButton>
                                     </div>
                                 </div>
@@ -148,7 +168,7 @@ const AudioMessage = (props: { otherDocIds: Array<string | undefined>, room: IRo
                 {
                     (props.message.data.docId && !props.message.isDummy) ? (
                         <Waveform
-                            style={{ width: 128, position: 'absolute', left: 60, top: 8 }}
+                            style={{ width: 128, position: 'absolute', left: 60, top: 8, height: 56 }}
                             docId={props.message.data.docId}
                             tag={`${props.room.id}-${props.message.id}-waveform`}
                             room={props.room}

@@ -5,10 +5,11 @@ import MetaContent from "./metaContent";
 
 export const metaNonTouchOpen = hookstate(false);
 
-export default (props: { room: IRoom, onClose: () => void }) => {
+export default (props: { room: IRoom, onClose: () => void, container: HTMLElement }) => {
     const open = useHookstate(metaNonTouchOpen);
     return (
         <Drawer
+            container={props.container}
             anchor="bottom"
             open={open.get({ noproxy: true })}
             onClose={() => open.set(false)}

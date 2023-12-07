@@ -111,23 +111,28 @@ export default (props: { room: IRoom, onClose: () => void }) => {
                     onMouseUp={e => {
                         let muX = e.clientX;
                         let muY = e.clientY;
-                        function triggerMouseEvent(node: any, eventType: string) {
-                            var clickEvent = document.createEvent('MouseEvents');
-                            clickEvent.initEvent(eventType, true, true);
-                            node.dispatchEvent(clickEvent);
-                        }
-                        function clickOnEl(el: any) {
-                            triggerMouseEvent(el, "mouseover");
-                            triggerMouseEvent(el, "mousedown");
-                            triggerMouseEvent(el, "mouseup");
-                            triggerMouseEvent(el, "click");
+                        function triggerMouseEvent(node: any, eventType: string, x: number, y: number) {
+                            node.dispatchEvent(new MouseEvent(eventType, {
+                                view: window,
+                                bubbles: true,
+                                cancelable: true,
+                                clientX: x,
+                                clientY: y,
+                                button: 0
+                            }));
+                        };
+                        function clickOnEl(el: any, x: number, y: number) {
+                            triggerMouseEvent(el, "mouseover", x, y);
+                            triggerMouseEvent(el, "mousedown", x, y);
+                            triggerMouseEvent(el, "mouseup", x, y);
+                            triggerMouseEvent(el, "click", x, y);
                             el.focus();
-
                         }
                         if ((Math.abs(muX - mdX.current) < 16) && (Math.abs(muY - mdY.current) < 16)) {
                             touchRef.current && ((touchRef.current as HTMLElement).style.pointerEvents = 'none');
                             let el = (document.elementFromPoint(mdX.current, mdY.current) as HTMLElement);
-                            clickOnEl(el);
+                            let box = el.getBoundingClientRect();
+                            clickOnEl(el, e.clientX, e.clientY);
                             console.log(el);
                             touchRef.current && ((touchRef.current as HTMLElement).style.pointerEvents = 'auto');
                         }

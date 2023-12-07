@@ -3,21 +3,20 @@ import { useRef, useState, useEffect } from "react";
 const clamp = (val: number, min: number, max: number) => Math.min(Math.max(val, min), max)
 
 export default (props: {
-  trackProgress: number, trackDuration: number, startTime: number,
-  setTrackProgress: any, trackPlaying: boolean,
+  trackProgress: number,
+  setTrackProgress: any, trackPlaying: boolean
 }) => {
     let {
-        trackProgress, trackDuration, startTime,
-        setTrackProgress, trackPlaying,
+        trackProgress,
+        setTrackProgress, trackPlaying
       } = props
   useEffect(() => {
     let animation: any
     if (trackPlaying) {
       animation = window.requestAnimationFrame(() => {
-        const trackProgressPerc = ((Date.now() - startTime)) * 100 / trackDuration
         setTrackProgress(
           clamp(
-            trackProgressPerc,
+            trackProgress,
             0, 100,
           ),
         )
@@ -28,8 +27,6 @@ export default (props: {
     }
   }, [
     trackPlaying,
-    trackDuration,
-    startTime,
     trackProgress,
   ])
 }

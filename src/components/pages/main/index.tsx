@@ -1,7 +1,7 @@
 
 import './index.css';
 import SigmaBottomNavigation from '../../custom/elements/SigmaBottomNavigation';
-import { Explore as ExploreIcon, Home as HomeIcon, Inbox as InboxIcon} from '@mui/icons-material';
+import { Explore as ExploreIcon, Home as HomeIcon, Inbox as InboxIcon } from '@mui/icons-material';
 import SliderPage from '../../layouts/SliderPage';
 import Home from '../../tabs/Home';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -17,6 +17,7 @@ import Inbox from '../../tabs/Inbox';
 const Main = (props: { id: string, isOnTop: boolean }) => {
     const navigate = useNavigate()
     const contentRef = useRef(null)
+    const myUser = api.memory.humans.get({ noproxy: true })[api.memory.myHumanId.get({ noproxy: true })];
     const [value, setValue] = useState(1);
     const updateTitle = useCallback((index: number) => {
         if (index === 0) switchTitle && switchTitle('Explore')
@@ -53,13 +54,13 @@ const Main = (props: { id: string, isOnTop: boolean }) => {
         if (props.isOnTop) {
             switchLeftControl && switchLeftControl(LeftControlTypes.NOTIFICATIONS)
             switchRightControl && switchRightControl(RightControlTypes.NONE)
-            switchColor && switchColor(themeColor.get({noproxy: true})[500], StatusThemes.DARK)
+            switchColor && switchColor(themeColor.get({ noproxy: true })[500], StatusThemes.DARK)
             updateTitle(value)
         }
     }, [props.isOnTop])
     return (
         <SliderPage id={props.id}>
-            <div style={{ position: 'relative', width: '100%', height: '100%', background: themeColor.get({noproxy: true})[50] }}>
+            <div style={{ position: 'relative', width: '100%', height: '100%', background: themeColor.get({ noproxy: true })[50] }}>
                 <div ref={contentRef} style={{ width: '100%', height: '100%', transition: 'transform .35s, opacity .35s' }}>
                     <Routes>
                         <Route path='/explore' Component={() => <Explore show={value === 0} isOnTop={props.isOnTop} />} />
@@ -75,7 +76,7 @@ const Main = (props: { id: string, isOnTop: boolean }) => {
                         { label: 'Explore', icon: ExploreIcon },
                         { label: 'Home', icon: HomeIcon },
                         { label: 'Inbox', icon: InboxIcon },
-                        { label: 'Settings', icon: () => <SigmaAvatar style={{ height: 32, width: 32, marginLeft: 8}}>K</SigmaAvatar> }
+                        { label: 'Settings', icon: () => <SigmaAvatar style={{ height: 32, width: 32, marginLeft: 8 }}>{myUser.firstName.substring(0, 1)}</SigmaAvatar> }
                     ]}
                 />
             </div>
