@@ -35,11 +35,10 @@ const Inbox = (props: { isOnTop: boolean, show: boolean }) => {
                     }
                 }
             }}>
-            <img ref={headerRef} style={{ opacity: 1, width: '100%', height: 266, position: 'sticky', top: 0, transition: 'opacity .5s' }} src={headerImageAddress.get({ noproxy: true })} alt={'header'} />
             <Timeline
                 style={{
-                    minHeight: 'calc(100% - 248px)', width: 'calc(100% - 32px)', background: themeColor.get({ noproxy: true })[50],
-                    position: 'absolute', left: 0, top: 216, borderRadius: `24px 24px 0px 0px`
+                    minHeight: 'calc(100% - 64px)', width: 'calc(100% - 32px)', background: themeColor.get({ noproxy: true })[50],
+                    position: 'absolute', left: 0, top: -20, paddingTop: 56
                 }}
                 sx={{
                     [`& .${timelineOppositeContentClasses.root}`]: {

@@ -16,7 +16,7 @@ import IRoom from "../../../../api/models/room";
 import Waveform from "../../../custom/components/AudioWave/Waveform";
 import { useHookstate } from "@hookstate/core";
 import { api } from "../../../..";
-import { isPlaying, playAudio, registerAudioPlayListener, togglePlay, unregisterAudioPlayListener } from "../../../pages/audioPlayer";
+import { isLoading, isPlaying, playAudio, registerAudioPlayListener, togglePlay, unregisterAudioPlayListener } from "../../../pages/audioPlayer";
 import { useEffect, useState } from "react";
 
 const AudioMessage = (props: { otherDocIds: Array<string | undefined>, room: IRoom, message: IMessage, side?: string, lastOfSection?: boolean, firstOfSection?: boolean, isQuote?: boolean }) => {
@@ -129,6 +129,19 @@ const AudioMessage = (props: { otherDocIds: Array<string | undefined>, room: IRo
                                             isPreview
                                             key={`message-doc-cover-${props.message.id}`}
                                         />
+                                        {
+                                            isLoading(props.message.data.docId) ? (
+                                                <CircularProgress
+                                                    variant="indeterminate"
+                                                    style={{
+                                                        position: 'absolute',
+                                                        width: '100%',
+                                                        height: '100%',
+                                                        left: 0,
+                                                        top: 0
+                                                    }} />
+                                            ) : null
+                                        }
                                         <div
                                             style={{
                                                 height: 48,

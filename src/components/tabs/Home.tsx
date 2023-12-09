@@ -65,8 +65,7 @@ const Home = (props: { isOnTop: boolean, show: boolean }) => {
         }
     }, [props.show, props.isOnTop])
     return (
-        <div ref={containerRef} style={{ backgroundColor: themeColor.get({ noproxy: true })['plain'], overflowY: 'auto', position: 'relative', width: '100%', height: 'calc(100% - 64px)', zIndex: 2 }}>
-            <img ref={headerRef} style={{ opacity: 1, width: '100%', height: 266, position: 'sticky', top: 0, transition: 'opacity .5s' }} src={headerImageAddress.get({ noproxy: true })} alt={'header'} />
+        <div ref={containerRef} style={{ backgroundColor: themeColor.get({ noproxy: true })[50], overflowY: 'auto', position: 'relative', width: '100%', height: 'calc(100% - 64px)', zIndex: 2 }}>
             <PulseBar.Component />
             <TowersList.Component />
             <SearchBar containerRef={SearchBarHandler.searchContainerRef} placeHolder={'Search Towers...'} onSearch={(text: string) => setSearchText(text)} />

@@ -22,8 +22,10 @@ let progress = '00:00';
 let progressNumber = 0;
 let otherDocIds: any = []
 let room: any = undefined
+let loading = false;
 
 export let isPlaying = (docId: string) => (playing && (docId === playingDocId))
+export let isLoading = (docId: string) => (loading && (docId === playingDocId))
 
 let progressStore: { [id: string]: number } = {}
 export let getProgress = (docId: string) => progressStore[docId]
@@ -85,6 +87,11 @@ const loadAudio = async (docId: string, room: any) => {
   return new Promise(async resolve => {
     let progress = progressStore[docId];
     playingDocId = docId;
+    loading = true;
+    let callback = playListeners[playingDocId];
+    if (callback) {
+      callback();
+    }
     try {
       audio.pause();
     } catch (ex) { console.log(ex) }
@@ -95,6 +102,7 @@ const loadAudio = async (docId: string, room: any) => {
       if (progress !== undefined) {
         audio.currentTime = Math.floor(progress * audio.duration / 100);
       }
+      loading = false;
       resolve(true);
     }
   })

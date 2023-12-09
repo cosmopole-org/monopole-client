@@ -52,7 +52,7 @@ const Main = (props: { id: string, isOnTop: boolean }) => {
     }, [])
     useEffect(() => {
         if (props.isOnTop) {
-            switchLeftControl && switchLeftControl(LeftControlTypes.NOTIFICATIONS)
+            switchLeftControl && switchLeftControl(LeftControlTypes.FEED, () => {})
             switchRightControl && switchRightControl(RightControlTypes.NONE)
             switchColor && switchColor(themeColor.get({ noproxy: true })[500], StatusThemes.DARK)
             updateTitle(value)

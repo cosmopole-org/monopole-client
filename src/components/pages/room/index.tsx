@@ -61,6 +61,7 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
   }
   useEffect(() => {
     return () => {
+      showRoomShadow.set(false)
       desktopEditMode.set(false)
     }
   }, [])
@@ -68,6 +69,7 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
     if (isMetaOpen.current) onMetaOpen();
     else onMetaClose()
   }, [props.isOnTop])
+
   return (
     <SliderPage id={props.id}>
       <div style={{ width: '100%', height: '100%' }} ref={containerRef}>

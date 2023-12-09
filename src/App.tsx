@@ -28,6 +28,10 @@ import AudioPlayer from './components/pages/audioPlayer';
 import { resetApi } from '.';
 import { Paper, Typography } from '@mui/material';
 import { History } from '@mui/icons-material';
+import 'swiper/css';
+import 'swiper/less/effect-cards';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { EffectCards } from 'swiper/modules';
 
 const useForceUpdate = () => {
     const [value, setValue] = useState(0); // integer state
@@ -191,17 +195,17 @@ export let SigmaRouter = {
         lastNaviationType = 'navigate'
         currentRoute.set(path)
     },
-    back: () => {
+    back: (doNotSlideBack?: boolean) => {
         if (historyStack.length > 1) {
-            listeners[historyStack[historyStack.length - 1].id] &&
-                listeners[historyStack[historyStack.length - 1].id]('exit-right')
-            historyStack.pop()
-            lastNaviationType = 'back'
-            listeners[historyStack[historyStack.length - 1].id] &&
-                listeners[historyStack[historyStack.length - 1].id]('enter-left')
-            setTimeout(() => {
-                currentRoute.set(historyStack[historyStack.length - 1].id)
-            }, 250);
+            if (!doNotSlideBack) {
+                swiper?.slidePrev();
+            } else {
+                historyStack.pop()
+                lastNaviationType = 'back'
+                setTimeout(() => {
+                    currentRoute.set(historyStack[historyStack.length - 1].id)
+                }, 250);
+            }
         }
     },
     topPath: () => {
@@ -213,26 +217,47 @@ export let SigmaRouter = {
     removeBottom: () => { historyStack.splice(0, 1) }
 }
 
+let swiper: any = undefined;
+
 function App() {
     forceUpdate = useForceUpdate()
     const cr = useHookstate(currentRoute)
     useEffect(() => {
+        swiper.on('slideChange', function (event: any) {
+            if (event.activeIndex > event.previousIndex) {
+                // do nothing
+            } else {
+                SigmaRouter.back(true);
+            }
+        });
         if (!loaded) {
             loaded = true
-            SigmaRouter.reset()
+            SigmaRouter.navigate('splash')
         }
     }, [])
+    useEffect(() => {
+        swiper.slideNext();
+    }, [cr.get({ noproxy: true })])
     let result: Array<any> = []
     historyStack.forEach(({ id, path, initialData }, index) => {
         let Comp = pages[path]
         result.push(
-            <Comp {...initialData as any} key={id} id={id} isOnTop={(historyStack.length - 1) === index} />
+            <SwiperSlide key={id}>
+                <Comp {...initialData as any} key={id} id={id} isOnTop={(historyStack.length - 1) === index} />
+            </SwiperSlide>
         )
     })
     return (
         <ThemeProvider theme={theme}>
-            <div style={{ width: '100%', height: '100vh', overflow: 'hidden', backgroundColor: themeColor.get({ noproxy: true })['plain'] }}>
-                {cr.get({ noproxy: true }).length > 0 ? result : null}
+            <div className='swiper' style={{ width: '100%', height: '100vh', overflow: 'hidden', backgroundColor: themeColor.get({ noproxy: true })['plain'] }}>
+                <Swiper
+                    modules={[EffectCards]}
+                    effect="cards"
+                    touchStartPreventDefault={false}
+                    onSwiper={(s: any) => { swiper = s; swiper.update() }}
+                >
+                    {cr.get({ noproxy: true }).length > 0 ? result : null}
+                </Swiper>
                 <StatusBar.Component />
                 <div
                     id={'lab-message-row'}
