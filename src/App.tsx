@@ -21,7 +21,7 @@ import Machines from './components/pages/machines';
 import CreateMachine from './components/forms/createMachine';
 import { hookstate, useHookstate } from '@hookstate/core';
 import { switchColor } from './components/sections/StatusBar';
-import TowerPicker from './components/pages/TowerPicker';
+import TowerPicker from './components/pages/towerPicker';
 import Gallery from './components/pages/gallery';
 import VideoPlayer from './components/pages/videoPlayer';
 import AudioPlayer from './components/pages/audioPlayer';

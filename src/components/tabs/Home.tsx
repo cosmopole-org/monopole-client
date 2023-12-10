@@ -11,11 +11,12 @@ import { Add } from "@mui/icons-material"
 import { SigmaRouter, headerImageAddress, themeColor, themeColorName } from "../../App"
 import SigmaFab from "../custom/elements/SigmaFab"
 import SearchBar from "../custom/components/SearchBar"
+import '../../resources/styles/home.css'
 
 let savedSCrollTop = 0,
     cachedSearchBarTop: { value: number, maxValue: number } = {
-        value: 24 + statusbarHeight(),
-        maxValue: 24 + statusbarHeight()
+        value: 40 + statusbarHeight(),
+        maxValue: 40 + statusbarHeight()
     }
 
 const Home = (props: { isOnTop: boolean, show: boolean }) => {
@@ -66,7 +67,20 @@ const Home = (props: { isOnTop: boolean, show: boolean }) => {
     }, [props.show, props.isOnTop])
     return (
         <div ref={containerRef} style={{ backgroundColor: themeColor.get({ noproxy: true })[50], overflowY: 'auto', position: 'relative', width: '100%', height: 'calc(100% - 8px)', zIndex: 2 }}>
-            <PulseBar.Component />
+            <div className="area" style={{
+                height: 200,
+                background: `linear-gradient(to left, ${themeColor.get({ noproxy: true })[100]}, ${themeColor.get({ noproxy: true })[50]})`
+            }}>
+                <ul className="circles">
+                    {
+                        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(i => (
+                            <li style={{
+                                background: themeColor.get({ noproxy: true })[500]
+                            }}></li>
+                        ))
+                    }
+                </ul>
+            </div >
             <TowersList.Component />
             <SearchBar containerRef={SearchBarHandler.searchContainerRef} placeHolder={'Search Towers...'} onSearch={(text: string) => setSearchText(text)} />
             <TowerMoreMenu

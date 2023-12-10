@@ -36,7 +36,6 @@ const TowerMoreMenu = (props: { shown: boolean, onClose: () => void, tower: any 
                     caption='Delete Tower'
                 />
                 <Divider />
-                <SigmaMenuItem onClick={() => { props.onClose(); }} icon={KeyboardCommandKey} caption='Start the timer' />
             </Drawer>
         </React.Fragment >
     );

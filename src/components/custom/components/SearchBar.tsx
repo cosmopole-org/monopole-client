@@ -14,7 +14,7 @@ const SearchBar = (props: { containerRef: any, placeHolder: string, onSearch?: (
                 height: 40,
                 position: 'absolute',
                 left: 16,
-                top: 16 + statusbarHeight() + 8,
+                top: 16 + statusbarHeight() + 24,
                 backgroundColor: themeColor.get({noproxy: true})['plain'],
                 backdropFilter: 'blur(10px)',
                 borderRadius: 20,
