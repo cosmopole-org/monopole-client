@@ -29,9 +29,9 @@ import { resetApi } from '.';
 import { Paper, Typography } from '@mui/material';
 import { History } from '@mui/icons-material';
 import 'swiper/css';
-import 'swiper/less/effect-cards';
+import 'swiper/css/effect-creative';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { EffectCards } from 'swiper/modules';
+import { EffectCreative } from 'swiper/modules';
 
 const useForceUpdate = () => {
     const [value, setValue] = useState(0); // integer state
@@ -251,8 +251,17 @@ function App() {
         <ThemeProvider theme={theme}>
             <div className='swiper' style={{ width: '100%', height: '100vh', overflow: 'hidden', backgroundColor: themeColor.get({ noproxy: true })['plain'] }}>
                 <Swiper
-                    modules={[EffectCards]}
-                    effect="cards"
+                    effect="creative"
+                    creativeEffect={{
+                        prev: {
+                            shadow: true,
+                            translate: [-100, 0, -1],
+                        },
+                        next: {
+                            translate: ["100%", 0, 0],
+                        }
+                    }}
+                    modules={[EffectCreative]}
                     touchStartPreventDefault={false}
                     onSwiper={(s: any) => { swiper = s; swiper.update() }}
                 >

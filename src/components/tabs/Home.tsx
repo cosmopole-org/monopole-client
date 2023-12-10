@@ -45,7 +45,7 @@ const Home = (props: { isOnTop: boolean, show: boolean }) => {
         },
         savedSCrollTop,
         {
-            paddingTop: 200 + statusbarHeight()
+            paddingTop: 144 + statusbarHeight()
         },
         80,
         false,
@@ -65,7 +65,7 @@ const Home = (props: { isOnTop: boolean, show: boolean }) => {
         }
     }, [props.show, props.isOnTop])
     return (
-        <div ref={containerRef} style={{ backgroundColor: themeColor.get({ noproxy: true })[50], overflowY: 'auto', position: 'relative', width: '100%', height: 'calc(100% - 64px)', zIndex: 2 }}>
+        <div ref={containerRef} style={{ backgroundColor: themeColor.get({ noproxy: true })[50], overflowY: 'auto', position: 'relative', width: '100%', height: 'calc(100% - 8px)', zIndex: 2 }}>
             <PulseBar.Component />
             <TowersList.Component />
             <SearchBar containerRef={SearchBarHandler.searchContainerRef} placeHolder={'Search Towers...'} onSearch={(text: string) => setSearchText(text)} />
@@ -74,7 +74,7 @@ const Home = (props: { isOnTop: boolean, show: boolean }) => {
                 onClose={() => setPointedTower(undefined)}
                 shown={pointedTower !== undefined}
             />
-            <SigmaFab style={{ position: 'absolute', right: 16, bottom: 16, borderRadius: 16 }} onClick={() => {
+            <SigmaFab style={{ position: 'absolute', right: 16, bottom: 16 + 56, borderRadius: 16 }} onClick={() => {
                 SigmaRouter.navigate('createTower')
             }}>
                 <Add />

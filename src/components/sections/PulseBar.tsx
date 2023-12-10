@@ -7,7 +7,7 @@ const PulseBar = (props: { pulseContainerRef: any }) => {
         <div ref={props.pulseContainerRef} style={{
             width: '100%',
             height: 64,
-            paddingTop: statusbarHeight() + 136,
+            paddingTop: statusbarHeight() + 80,
             overflowX: 'auto',
             position: 'absolute',
             left: 0,
