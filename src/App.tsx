@@ -223,19 +223,6 @@ function App() {
     forceUpdate = useForceUpdate()
     const cr = useHookstate(currentRoute)
     useEffect(() => {
-        swiper.on('slideChange', function (event: any) {
-            if (event.activeIndex > event.previousIndex) {
-                // do nothing
-            } else {
-                SigmaRouter.back(true);
-            }
-        });
-        if (!loaded) {
-            loaded = true
-            SigmaRouter.navigate('splash')
-        }
-    }, [])
-    useEffect(() => {
         swiper.slideNext();
     }, [cr.get({ noproxy: true })])
     let result: Array<any> = []
@@ -256,14 +243,30 @@ function App() {
                         prev: {
                             shadow: true,
                             translate: [-100, 0, -1],
+                            opacity: 0.5
                         },
                         next: {
                             translate: ["100%", 0, 0],
+                            opacity: 1
                         }
                     }}
                     modules={[EffectCreative]}
                     touchStartPreventDefault={false}
-                    onSwiper={(s: any) => { swiper = s; swiper.update() }}
+                    onSwiper={(s: any) => {
+                        swiper = s;
+                        swiper.update()
+                        swiper.on('slideChange', function (event: any) {
+                            if (event.activeIndex > event.previousIndex) {
+                                // do nothing
+                            } else {
+                                SigmaRouter.back(true);
+                            }
+                        });
+                        if (!loaded) {
+                            loaded = true
+                            SigmaRouter.navigate('splash')
+                        }
+                    }}
                 >
                     {cr.get({ noproxy: true }).length > 0 ? result : null}
                 </Swiper>

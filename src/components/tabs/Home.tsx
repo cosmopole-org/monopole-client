@@ -6,17 +6,16 @@ import useTowersList from "../hooks/useTowersList"
 import { statusbarHeight } from "../sections/StatusBar"
 import { api } from "../.."
 import { useHookstate } from "@hookstate/core"
-import { Fab } from "@mui/material"
 import { Add } from "@mui/icons-material"
-import { SigmaRouter, headerImageAddress, themeColor, themeColorName } from "../../App"
+import { SigmaRouter, themeColor } from "../../App"
 import SigmaFab from "../custom/elements/SigmaFab"
 import SearchBar from "../custom/components/SearchBar"
 import '../../resources/styles/home.css'
 
 let savedSCrollTop = 0,
     cachedSearchBarTop: { value: number, maxValue: number } = {
-        value: 40 + statusbarHeight(),
-        maxValue: 40 + statusbarHeight()
+        value: 24 + statusbarHeight(),
+        maxValue: 24 + statusbarHeight()
     }
 
 const Home = (props: { isOnTop: boolean, show: boolean }) => {
@@ -46,7 +45,7 @@ const Home = (props: { isOnTop: boolean, show: boolean }) => {
         },
         savedSCrollTop,
         {
-            paddingTop: 144 + statusbarHeight()
+            paddingTop: 112 + statusbarHeight()
         },
         80,
         false,
@@ -68,7 +67,7 @@ const Home = (props: { isOnTop: boolean, show: boolean }) => {
     return (
         <div ref={containerRef} style={{ backgroundColor: themeColor.get({ noproxy: true })[50], overflowY: 'auto', position: 'relative', width: '100%', height: 'calc(100% - 8px)', zIndex: 2 }}>
             <div className="area" style={{
-                height: 200,
+                height: 162,
                 background: `linear-gradient(to left, ${themeColor.get({ noproxy: true })[100]}, ${themeColor.get({ noproxy: true })[50]})`
             }}>
                 <ul className="circles">

@@ -7,7 +7,7 @@ const useSearchBar = (cachedTopBackup: { value: number, maxValue: number }) => {
         if (searchContainerRef.current !== null) {
             let searchContainer = searchContainerRef.current as HTMLElement
             let checkedTop = cachedTopBackup.value - dy
-            if (checkedTop > (40 + statusbarHeight())) checkedTop = cachedTopBackup.maxValue
+            if (checkedTop > (24 + statusbarHeight())) checkedTop = cachedTopBackup.maxValue
             else if (checkedTop < -52) checkedTop = -52
             cachedTopBackup.value = checkedTop
             searchContainer.style.top = `${checkedTop}px`

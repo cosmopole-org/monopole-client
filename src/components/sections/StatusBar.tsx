@@ -1,4 +1,4 @@
-import { ArrowBack, Close, Dashboard, Feed, KeyboardCommandKey, MusicNote, Notifications, Settings } from "@mui/icons-material"
+import { ArrowBack, Close, Dashboard, Feed, KeyboardCommandKey, MusicNote, Notifications, Settings, Wallet } from "@mui/icons-material"
 import { IconButton, Paper, Typography } from "@mui/material"
 import { useState } from "react"
 import { SigmaRouter, themeBasedTextColor, themeColor } from "../../App"
@@ -8,7 +8,7 @@ const LeftControlTypes = {
     NOTIFICATIONS: 0,
     BACK: 1,
     CLOSE: 2,
-    FEED: 3
+    WALLET: 3
 }
 const RightControlTypes = {
     NONE: 0,
@@ -75,8 +75,8 @@ const StatusBar = () => {
                                             <ArrowBack style={{ color: themeBasedTextColor.get({ noproxy: true }) }} /> :
                                             leftControlType === LeftControlTypes.CLOSE ?
                                                 <Close style={{ color: themeBasedTextColor.get({ noproxy: true }) }} /> :
-                                                leftControlType === LeftControlTypes.FEED ?
-                                                    <Feed style={{ color: themeBasedTextColor.get({ noproxy: true }) }} /> :
+                                                leftControlType === LeftControlTypes.WALLET ?
+                                                    <Wallet style={{ color: themeBasedTextColor.get({ noproxy: true }) }} /> :
                                                     null
                                 }
                             </IconButton>
