@@ -67,8 +67,8 @@ const Home = (props: { isOnTop: boolean, show: boolean }) => {
     return (
         <div ref={containerRef} style={{ backgroundColor: themeColor.get({ noproxy: true })[50], overflowY: 'auto', position: 'relative', width: '100%', height: 'calc(100% - 8px)', zIndex: 2 }}>
             <div className="area" style={{
-                height: 162,
-                background: `linear-gradient(to left, ${themeColor.get({ noproxy: true })[100]}, ${themeColor.get({ noproxy: true })[50]})`
+                height: 176,
+                background: `linear-gradient(to left, ${themeColor.get({ noproxy: true })[200]}, ${themeColor.get({ noproxy: true })[100]})`
             }}>
                 <ul className="circles">
                     {

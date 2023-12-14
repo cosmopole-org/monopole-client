@@ -98,8 +98,10 @@ const Desk = (props: { show: boolean, room: any }) => {
     useEffect(() => {
         api.services.worker.onMachinePacketDeliver('get/widget', (data: any) => {
             if (!desktop.appletExists(data.workerId)) {
-                let gridData = cachedWorkers.filter(w => w.id === data.workerId)[0].secret.grid
-                desktop.addWidget({ id: data.workerId, jsxCode: data.code, gridData: gridData.xxs })
+                let gridData = cachedWorkers.filter(w => w.id === data.workerId)[0]?.secret?.grid
+                if (gridData) {
+                    desktop.addWidget({ id: data.workerId, jsxCode: data.code, gridData: gridData.xxs })
+                }
             } else {
                 desktop.updateWidget(data.workerId, data.code)
             }

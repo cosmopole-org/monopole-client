@@ -5,6 +5,7 @@ import TowerFactory from './factories/tower';
 import RoomFactory from './factories/room';
 import HumanFactory from './factories/human';
 import MachineFactory from './factories/machine';
+import HomeFolderFactory from './factories/homefolder';
 
 class DatabaseDriver {
 
@@ -21,8 +22,9 @@ class DatabaseDriver {
         tower: TowerFactory | undefined,
         room: RoomFactory | undefined,
         human: HumanFactory | undefined,
-        machine: MachineFactory | undefined
-    } = { tower: undefined, room: undefined, human: undefined, machine: undefined }
+        machine: MachineFactory | undefined,
+        homefolder: HomeFolderFactory | undefined
+    } = { tower: undefined, room: undefined, human: undefined, machine: undefined, homefolder: undefined }
 
     private async prepareDatabase() {
         this.schemaBuilder = lf.schema.create('sigma', 1);
@@ -47,6 +49,7 @@ class DatabaseDriver {
         this.factories.room = new RoomFactory(this.db as lf.Database, this.tables['room'] as lf.schema.Table)
         this.factories.human = new HumanFactory(this.db as lf.Database, this.tables['human'] as lf.schema.Table)
         this.factories.machine = new MachineFactory(this.db as lf.Database, this.tables['machine'] as lf.schema.Table)
+        this.factories.homefolder = new HomeFolderFactory(this.db as lf.Database, this.tables['homefolder'] as lf.schema.Table)
     }
 
     constructor(onCreate: () => void) {

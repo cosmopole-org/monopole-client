@@ -3,6 +3,7 @@ import { State } from "@hookstate/core"
 import { DatabaseDriver, NetworkDriver } from "../drivers"
 import memoryUtils from "../utils/memory"
 import { AppUtils } from "../../App"
+import { api } from "../.."
 
 class HumanService {
 
@@ -65,7 +66,7 @@ class HumanService {
 
     async verify(data: { vCode: string }): Promise<void> {
         if (this._cCode) {
-            return this.network.request('human/verify', { cCode: this._cCode, vCode: data.vCode }).then((body: any) => {
+            return this.network.request('human/verify', { cCode: this._cCode, vCode: data.vCode }).then(async (body: any) => {
                 if (body.success) {
                     if (body.session?.token) {
                         this.updateToken(body.session.token)
@@ -80,6 +81,8 @@ class HumanService {
                         this.memory.known.spaces.set(newKnownSpaces)
                         this.memory.humans.set(memoryUtils.humans.prepareHumans([human], this.memory.humans.get({ noproxy: true })))
                         this.memory.myHumanId.set(human.id)
+                        await this.signIn()
+                        await api.services.home.read()
                     }
                 }
                 return { ...body, accountExist: body.session !== undefined }
@@ -88,7 +91,7 @@ class HumanService {
     }
 
     async complete(data: { firstName: string, lastName?: string }): Promise<void> {
-        return this.network.request('human/complete', { cCode: this._cCode, firstName: data.firstName, lastName: data.lastName }).then((body: any) => {
+        return this.network.request('human/complete', { cCode: this._cCode, firstName: data.firstName, lastName: data.lastName }).then(async (body: any) => {
             if (body.success) {
                 if (body.session?.token) {
                     this.updateToken(body.session.token)
@@ -103,6 +106,8 @@ class HumanService {
                     this.memory.known.spaces.set(newKnownSpaces)
                     this.memory.humans.set(memoryUtils.humans.prepareHumans([human], this.memory.humans.get({ noproxy: true })))
                     this.memory.myHumanId.set(human.id)
+                    await this.signIn()
+                    await api.services.home.read()
                 }
             }
             return body

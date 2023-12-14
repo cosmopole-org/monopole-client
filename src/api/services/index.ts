@@ -7,6 +7,7 @@ import MachineService from "./machine.service"
 import WorkerService from "./worker.service"
 import MessengerService from "./messenger.service"
 import FileService from "./file.service"
+import HomeService from "./home.service"
 
 export {
     HumanService,
@@ -16,5 +17,6 @@ export {
     MachineService,
     WorkerService,
     MessengerService,
-    FileService
+    FileService,
+    HomeService
 }

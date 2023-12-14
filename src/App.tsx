@@ -25,7 +25,7 @@ import TowerPicker from './components/pages/towerPicker';
 import Gallery from './components/pages/gallery';
 import VideoPlayer from './components/pages/videoPlayer';
 import AudioPlayer from './components/pages/audioPlayer';
-import { resetApi } from '.';
+import { api, resetApi } from '.';
 import { Paper, Typography } from '@mui/material';
 import { History } from '@mui/icons-material';
 import 'swiper/css';
@@ -105,6 +105,9 @@ let theme = createTheme({
     },
 });
 export let reconstructMaterialPalette = (name: string, color: any) => {
+    Object.values(api.memory.spaces.get({ noproxy: true })).forEach((t: any) => {
+        t.wallpaper = undefined;
+    });
     localStorage.setItem('themeColor', name)
     var metaThemeColor = document.querySelector("meta[name=theme-color]");
     metaThemeColor?.setAttribute("content", color[50]);

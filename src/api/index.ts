@@ -5,6 +5,7 @@ import * as Services from "./services";
 import memoryUtils from "./utils/memory";
 import ITower from "./models/tower";
 import IHuman from "./models/human";
+import IHomeFolder from "./models/homefolder";
 
 class Api {
 
@@ -38,7 +39,8 @@ class Api {
         machine: Services.MachineService,
         worker: Services.WorkerService,
         messenger: Services.MessengerService
-        file: Services.FileService
+        file: Services.FileService,
+        home: Services.HomeService
     }
     memory: {
         myHumanId: State<any>,
@@ -46,6 +48,7 @@ class Api {
         humans: State<{ [id: string]: IHuman }>,
         machines: State<any>,
         messages: { [id: string]: any },
+        homeFolders: State<any>,
         known: {
             spaces: State<any>,
             humans: State<any>,
@@ -61,12 +64,14 @@ class Api {
         let humans: { [id: string]: IHuman } = {}
         let machines: { [id: string]: IHuman } = {}
         let messages: { [id: string]: any } = {}
+        let homeFolders: Array<IHomeFolder> = []
         this.memory = {
             myHumanId: hookstate(myHumanId),
             spaces: hookstate(spaces),
             humans: hookstate(humans),
             machines: hookstate(machines),
             messages: messages,
+            homeFolders: hookstate(homeFolders),
             known: {
                 spaces: hookstate(spaces),
                 humans: hookstate(humans),
@@ -83,7 +88,8 @@ class Api {
             worker: new Services.WorkerService(this.storage, this.network, this.memory),
             invite: new Services.InviteService(this.storage, this.network, this.memory),
             messenger: new Services.MessengerService(this.storage, this.network, this.memory),
-            file: new Services.FileService(this.storage, this.network, this.cache, this.memory)
+            file: new Services.FileService(this.storage, this.network, this.cache, this.memory),
+            home: new Services.HomeService(this.storage, this.network, this.memory)
         }
     }
 }

@@ -9,6 +9,7 @@ const fill = async (
         spaces: State<any>,
         humans: State<any>,
         machines: State<any>,
+        homeFolders: State<any>,
         known: {
             spaces: State<any>,
             humans: State<any>,
@@ -28,6 +29,8 @@ const fill = async (
     let machines = await storage.factories.machine?.read()
     memory.machines.set(memoryUtils.machines.prepareMachines(machines as Array<any>, { ...memory.machines.get({ noproxy: true }) }))
     memory.known.machines.set(memoryUtils.machines.prepareMachines(machines as Array<any>, { ...memory.known.machines.get({ noproxy: true }) }))
+    let homeFolders = await storage.factories.homefolder?.read()
+    memory.homeFolders.set(homeFolders)
 }
 
 export default fill
