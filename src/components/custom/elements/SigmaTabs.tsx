@@ -28,6 +28,9 @@ const SigmaTabs = styled((props: SigmaTabsProps) => (
         width: '100%',
         backgroundColor: theme.palette.action.active,
     },
+    '& button': {
+        minWidth: 32
+    }
 }));
 
 interface SigmaTabProps {

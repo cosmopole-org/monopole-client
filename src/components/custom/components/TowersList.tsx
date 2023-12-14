@@ -78,14 +78,16 @@ const TowersList = (props: { towers: Array<any>, hasFocus: boolean, showRating: 
                     backgroundColor: themeColor.get({ noproxy: true })['plain']
                 }}
             >
-                <Paper style={{ width: '100%', height: 'auto', borderRadius: '24px 24px 0px 0px' }}>
+                <Paper style={{
+                    width: '100%', height: 'auto', borderRadius: '24px 24px 0px 0px',
+                    backgroundColor: themeColor.get({ noproxy: true })[50],
+                }}>
                     {
                         props.showRating ? null : (
                             <SigmaTabs variant={'scrollable'} centered={true} value={activeTab} onChange={(e: any, val: string) => { setActiveTab(val); }}
                                 style={{
-                                    width: '100%',
-                                    height: 40,
-                                    backgroundColor: themeColor.get({ noproxy: true })[50],
+                                    width: 'calc(100% - 16px)',
+                                    height: 48,
                                     borderRadius: '24px 24px 0px 0px'
                                 }}
                             >
@@ -94,7 +96,7 @@ const TowersList = (props: { towers: Array<any>, hasFocus: boolean, showRating: 
                                         return (
                                             <SigmaTab
                                                 value={f.id}
-                                                label={f.title}
+                                                icon={<><Folder style={{ marginRight: 4 }} />{f.title}</>}
                                             />
                                         )
                                     })
@@ -103,7 +105,7 @@ const TowersList = (props: { towers: Array<any>, hasFocus: boolean, showRating: 
                         )
                     }
                 </Paper>
-                <IconButton style={{ position: 'absolute', width: 48, height: 48, right: 0, top: 0, borderRadius: '4px 24px 0px 4px', backgroundColor: themeColor.get({ noproxy: true })[100] }} onClick={() => {
+                <IconButton style={{ position: 'absolute', width: 40, height: 40, right: 4, top: 4, borderRadius: '50%', backgroundColor: themeColor.get({ noproxy: true })[100] }} onClick={() => {
                     let folderName = window.prompt('enter name of folder:', 'untitled')
                     if (folderName) {
                         if (folderName.length > 0) {
