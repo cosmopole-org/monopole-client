@@ -29,7 +29,7 @@ const SigmaTabs = styled((props: SigmaTabsProps) => (
         backgroundColor: theme.palette.action.active,
     },
     '& button': {
-        minWidth: 32
+        minWidth: 0
     }
 }));
 

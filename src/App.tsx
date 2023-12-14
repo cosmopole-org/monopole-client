@@ -32,6 +32,7 @@ import 'swiper/css';
 import 'swiper/css/effect-creative';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectCreative } from 'swiper/modules';
+import ManageHomeFolders from './components/forms/manageHomeFolders';
 
 const useForceUpdate = () => {
     const [value, setValue] = useState(0); // integer state
@@ -174,7 +175,8 @@ let pages: { [id: string]: any } = {
     'createTower': CreateTower,
     'createRoom': CreateRoom,
     'updateProfile': UpdateProfile,
-    'createMachine': CreateMachine
+    'createMachine': CreateMachine,
+    'manageHomeFolders': ManageHomeFolders
 }
 
 export let SigmaRouter = {

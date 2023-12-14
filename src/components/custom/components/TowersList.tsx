@@ -2,9 +2,9 @@ import { IconButton, Paper, Typography } from "@mui/material"
 import { useEffect, useLayoutEffect, useRef, useState } from "react"
 import TowerCard from "./TowerCard"
 import { statusbarHeight } from "../../sections/StatusBar"
-import { themeColor, themeColorName } from "../../../App"
+import { SigmaRouter, themeColor, themeColorName } from "../../../App"
 import { SigmaTab, SigmaTabs } from "../elements/SigmaTabs"
-import { Add, AllInbox, AllOut, FamilyRestroom, Folder, Games, Work } from "@mui/icons-material"
+import { Add, AllInbox, AllOut, Edit, FamilyRestroom, Folder, Games, Work } from "@mui/icons-material"
 import { api } from "../../.."
 import SigmaFab from "../elements/SigmaFab"
 import { useHookstate } from "@hookstate/core"
@@ -84,7 +84,7 @@ const TowersList = (props: { towers: Array<any>, hasFocus: boolean, showRating: 
                 }}>
                     {
                         props.showRating ? null : (
-                            <SigmaTabs variant={'scrollable'} centered={true} value={activeTab} onChange={(e: any, val: string) => { setActiveTab(val); }}
+                            <SigmaTabs variant={'scrollable'} value={activeTab} onChange={(e: any, val: string) => { setActiveTab(val); }}
                                 style={{
                                     width: 'calc(100% - 16px)',
                                     height: 48,
@@ -105,23 +105,14 @@ const TowersList = (props: { towers: Array<any>, hasFocus: boolean, showRating: 
                         )
                     }
                 </Paper>
-                <IconButton style={{ position: 'absolute', width: 40, height: 40, right: 4, top: 4, borderRadius: '50%', backgroundColor: themeColor.get({ noproxy: true })[100] }} onClick={() => {
-                    let folderName = window.prompt('enter name of folder:', 'untitled')
-                    if (folderName) {
-                        if (folderName.length > 0) {
-                            api.services.home.create({ title: folderName })
-                        } else {
-                            alert('folder name can not be empty.')
-                        }
-                    } else {
-                        alert('folder name can not be empty.')
-                    }
+                <SigmaFab style={{ position: 'absolute', width: 40, height: 40, right: 4, top: 4, borderRadius: '8px 24px 8px 8px', backgroundColor: themeColor.get({ noproxy: true })[100] }} onClick={() => {
+                    SigmaRouter.navigate('manageHomeFolders')
                 }}>
-                    <Add />
-                </IconButton>
+                    <Edit />
+                </SigmaFab>
                 <div style={{ width: 'calc(100% - 32px)', height: 'auto', paddingLeft: 16, paddingRight: 16, paddingTop: 8 }}>
                     {
-                        props.towers.map((tower: any) => (
+                        props.towers.filter(tower => ((tower.folderId === activeTab) || (activeTab === 'all'))).map((tower: any) => (
                             <TowerCard tower={tower} key={`tower-card-${tower.id}`} showRating={props.showRating} style={{ marginTop: 16 }} onMoreClicked={() => {
                                 props.showTowerMoreMenu && props.showTowerMoreMenu(tower)
                             }} />

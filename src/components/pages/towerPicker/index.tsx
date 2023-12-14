@@ -5,16 +5,15 @@ import { Paper, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { SigmaRouter, themeColor } from '../../../App';
 import SliderPage from '../../layouts/SliderPage';
-import HumanTag from '../../custom/components/HumanTag';
 import { useHookstate } from '@hookstate/core';
 import { api } from '../../..';
 import ITower from '../../../api/models/tower';
-import TowerCard from '../../custom/components/TowerCard';
 import TowerPickerCard from '../../custom/components/TowerPickerCard';
 
-const TowerPicker = (props: { id: string, isOnTop: boolean, onTowerSelect: (tower: ITower) => void }) => {
+const TowerPicker = (props: { id: string, isOnTop: boolean, onTowerSelect: (tower: ITower) => void, onTowerDeselect?: (tower: ITower) => void, keepOnSelect?: boolean, selectedTowerIds?: Array<string> }) => {
   const towers = useHookstate(api.memory.spaces).get({ noproxy: true })
   const myHumanId = useHookstate(api.memory.myHumanId).get({ noproxy: true })
+  const [selections, setSelections] = useState(props.selectedTowerIds ? props.selectedTowerIds : [])
   const close = () => {
     SigmaRouter.back()
   }
@@ -40,9 +39,16 @@ const TowerPicker = (props: { id: string, isOnTop: boolean, onTowerSelect: (towe
             <TowerPickerCard
               key={`tower-picker-item-${tower.id}`}
               tower={tower}
+              checked={selections.includes(tower.id)}
               onSelect={() => {
-                close()
-                props.onTowerSelect(tower)
+                if (!props.keepOnSelect) close()
+                if (selections.includes(tower.id)) {
+                  setSelections([...selections.filter(tid => tid !== tower.id)])
+                  props.onTowerDeselect && props.onTowerDeselect(tower)
+                } else {
+                  setSelections([...selections, tower.id])
+                  props.onTowerSelect(tower)
+                }
               }}
               style={{ marginTop: 16 }}
             />

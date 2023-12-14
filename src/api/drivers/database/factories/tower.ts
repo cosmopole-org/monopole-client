@@ -15,7 +15,8 @@ class TowerFactory extends BaseFactory {
             title: data.title,
             avatarId: data.avatarId,
             isPublic: data.isPublic,
-            secret: data.secret
+            secret: data.secret,
+            folderId: data.folderId ? data.folderId : '-'
         });
     }
 
@@ -39,6 +40,7 @@ class TowerFactory extends BaseFactory {
         updateQuery.set(this.table.avatarId, data.avatarId)
         updateQuery.set(this.table.isPublic, data.isPublic)
         updateQuery.set(this.table.secret, data.secret)
+        updateQuery.set(this.table.folderId, data.folderId)
         await updateQuery.exec();
     }
 

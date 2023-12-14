@@ -6,6 +6,7 @@ interface ITower {
     avatarId: string,
     isPublic: boolean,
     secret: any,
+    folderId: any,
     rooms: { [id: string]: IRoom }
 }
 

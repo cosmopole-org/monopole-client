@@ -7,6 +7,7 @@ const createTable = (schemaBuilder: lf.schema.Builder) => {
         addColumn('avatarId', lf.Type.STRING).
         addColumn('isPublic', lf.Type.BOOLEAN).
         addColumn('secret', lf.Type.OBJECT).
+        addColumn('folderId', lf.Type.STRING).
         addPrimaryKey(['id']);
 }
 
