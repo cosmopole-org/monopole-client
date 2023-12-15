@@ -1,6 +1,5 @@
 
-import { useEffect, useRef } from 'react';
-import { SigmaRouter } from '../../App';
+import { useRef } from 'react';
 
 const SliderPage = (props: { id: string, direction?: string, children: any }) => {
     const containerRef = useRef(null)

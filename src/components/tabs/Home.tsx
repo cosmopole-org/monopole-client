@@ -25,6 +25,12 @@ const Home = (props: { isOnTop: boolean, show: boolean }) => {
     const containerRef = useRef(null)
     const headerRef = useRef(null)
     const spaces = Object.values(allSpaces).filter(tower => tower.title.includes(searchText))
+    const chats = Object.values(useHookstate(api.memory.chats).get({ noproxy: true }))
+    const chatTowerIdsDict: { [id: string]: boolean } = {}
+    chats.forEach(chat => {
+        chatTowerIdsDict[chat.towerId] = true
+    });
+    let towers = spaces.filter(s => (chatTowerIdsDict[s.id] === undefined))
     let TowersList = useTowersList(
         (dy: number, v: boolean, collapsibleScrollTop: number) => {
             PulseBar.collapseCallback(v, collapsibleScrollTop)
@@ -50,7 +56,7 @@ const Home = (props: { isOnTop: boolean, show: boolean }) => {
         80,
         false,
         props.show,
-        spaces
+        towers
     )
     let PulseBar = usePulseBar()
     let SearchBarHandler = useSearchBar(cachedSearchBarTop)
@@ -65,7 +71,7 @@ const Home = (props: { isOnTop: boolean, show: boolean }) => {
         }
     }, [props.show, props.isOnTop])
     return (
-        <div ref={containerRef} style={{ backgroundColor: themeColor.get({ noproxy: true })[50], overflowY: 'auto', position: 'relative', width: '100%', height: 'calc(100% - 8px)', zIndex: 2 }}>
+        <div ref={containerRef} style={{ backgroundColor: themeColor.get({ noproxy: true })[50], overflowY: 'auto', position: 'relative', width: '100%', height: '100%', zIndex: 2 }}>
             <div className="area" style={{
                 height: 176,
                 background: `linear-gradient(to left, ${themeColor.get({ noproxy: true })[200]}, ${themeColor.get({ noproxy: true })[100]})`

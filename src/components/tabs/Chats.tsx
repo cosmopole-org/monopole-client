@@ -27,12 +27,12 @@ const Chats = (props: { isOnTop: boolean, show: boolean }) => {
     const FriendsBarHandler = useFriends()
     const SearchBarHandler = useSearchBar(cachedSearchBarTop)
     const allHumans = useHookstate(api.memory.humans).get({ noproxy: true })
-    const allSpaces = useHookstate(api.memory.spaces).get({ noproxy: true })
+    const allChats = useHookstate(api.memory.chats).get({ noproxy: true })
     const search = useCallback((text: string) => {
         setSearchText(text)
     }, [searchText])
     const humans = Object.values(allHumans).filter(h => (h.firstName + ' ' + h.lastName).includes(searchText))
-    const chats = Object.values(allSpaces).filter(c => c.title.includes(searchText))
+    const chats = Object.values(allChats).filter((c: any) => c.tower.title.includes(searchText))
     let ChatsList = useChatsList(
         (dy: number, v: boolean, collapsibleScrollTop: number) => {
             FriendsBarHandler.collapseCallback(v, collapsibleScrollTop)
@@ -67,11 +67,6 @@ const Chats = (props: { isOnTop: boolean, show: boolean }) => {
         <div ref={containerRef} style={{ position: 'relative', width: '100%', height: '100%' }}>
             <FriendBar humans={humans} containerRef={FriendsBarHandler.friendsContainerRef} />
             <ChatsList.Component />
-            <TowerMoreMenu
-                tower={pointedTower}
-                onClose={() => setPointedTower(undefined)}
-                shown={pointedTower !== undefined}
-            />
             <SearchBar containerRef={SearchBarHandler.searchContainerRef} placeHolder={'Search Sigma Universe...'}
                 onSearch={(text: string) => {
                     setSearchText(text)

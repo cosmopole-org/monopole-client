@@ -250,13 +250,10 @@ function App() {
                     effect="creative"
                     creativeEffect={{
                         prev: {
-                            shadow: true,
-                            translate: [-100, 0, -1],
-                            opacity: 0.5
+                            shadow: true
                         },
                         next: {
-                            translate: ["100%", 0, 0],
-                            opacity: 1
+                            translate: ["100%", 0, 0]
                         }
                     }}
                     modules={[EffectCreative]}

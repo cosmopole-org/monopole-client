@@ -11,7 +11,7 @@ const useChatsList = (
     bottomSpace: number,
     showRating: boolean,
     hasFocus: boolean,
-    towers: Array<any>
+    chats: Array<any>
 ) => {
     const chatsContainerRef = useRef(null)
     return {
@@ -26,7 +26,7 @@ const useChatsList = (
                 chatsContainerRef={chatsContainerRef}
                 onCollapsibleBarStateChange={onCollapsibleBarStateChange}
                 showTowerMoreMenu={showTowerMoreMenu}
-                towers={towers}
+                chats={chats}
             />
         ),
         chatsContainerRef

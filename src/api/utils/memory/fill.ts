@@ -1,12 +1,14 @@
 import { State } from "@hookstate/core"
 import { DatabaseDriver } from "../../drivers"
 import memoryUtils from "."
+import IChat from "../../models/chat"
 
 const fill = async (
     storage: DatabaseDriver,
     memory: {
         myHumanId: State<any>,
         spaces: State<any>,
+        chats: State<any>,
         humans: State<any>,
         machines: State<any>,
         homeFolders: State<any>,
@@ -31,6 +33,17 @@ const fill = async (
     memory.known.machines.set(memoryUtils.machines.prepareMachines(machines as Array<any>, { ...memory.known.machines.get({ noproxy: true }) }))
     let homeFolders = await storage.factories.homefolder?.read()
     memory.homeFolders.set(homeFolders)
+    let chats = await storage.factories.chat?.read()
+    if (chats) {
+        let chatsResult: any = {}
+        Object.values(chats).forEach((chat: any) => {
+            console.log(chat.id)
+            let ids = chat.id.split('-')
+            let peerId = (ids[0] === myHumanId ? ids[1] : ids[0])
+            chatsResult[peerId] = { ...chat, tower: memory.spaces.get({ noproxy: true })[chat.towerId] }
+        })
+        memory.chats.set(chatsResult)
+    }
 }
 
 export default fill

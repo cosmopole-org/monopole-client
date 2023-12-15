@@ -5,7 +5,7 @@ import { SigmaRouter, themeColor } from "../../../App"
 import SliderPage from "../../layouts/SliderPage"
 import IHuman from "../../../api/models/human"
 import IMachine from "../../../api/models/machine"
-import { ArrowForward, LocationCity, SmartToy } from "@mui/icons-material"
+import { ArrowForward, LocationCity, Message, SmartToy } from "@mui/icons-material"
 import SigmaAvatar from "../../custom/elements/SigmaAvatar"
 import ITower from "../../../api/models/tower"
 import { api } from "../../.."
@@ -59,6 +59,36 @@ const Profile = (props: { id: string, isOnTop: boolean, human?: IHuman, machine?
                             </IconButton>
                             <Typography style={{ flex: 1, marginTop: 8 }}>
                                 Open Machine
+                            </Typography>
+                            <IconButton>
+                                <ArrowForward />
+                            </IconButton>
+                        </Card>
+                    ) :
+                        null
+                }
+                {
+                    props.human ? (
+                        <Card
+                            elevation={0}
+                            style={{
+                                paddingLeft: 16, paddingRight: 16, backgroundColor: themeColor.get({ noproxy: true })[100], borderRadius: 24, height: 'auto', display: 'flex',
+                                marginLeft: 16, width: 'calc(100% - 64px)', position: 'relative', marginTop: 16, paddingTop: 8, paddingBottom: 8
+                            }}
+                            onClick={() => {
+                                if (props.human) {
+                                    api.services.interaction.interact({ peerId: props.human.id }).then((body: any) => {
+                                        let { chat, room, tower } = body
+                                        SigmaRouter.navigate('chat', { initialData: { room } })
+                                    })
+                                }
+                            }}
+                        >
+                            <IconButton>
+                                <Message />
+                            </IconButton>
+                            <Typography style={{ flex: 1, marginTop: 8 }}>
+                                Interact
                             </Typography>
                             <IconButton>
                                 <ArrowForward />

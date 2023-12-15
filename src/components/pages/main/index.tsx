@@ -30,16 +30,12 @@ const Main = (props: { id: string, isOnTop: boolean }) => {
         if (contentRef.current !== null) {
             let content = contentRef.current as HTMLElement
             setValue(index)
-            content.style.transition = 'transform .5s, opacity .35s'
             content.style.opacity = '0'
-            content.style.transform = 'translateY(100px)'
             setTimeout(() => {
                 navigate(['/chats', '/towers', '/inbox', '/settings'][index])
                 updateTitle(index)
                 setTimeout(() => {
-                    content.style.transition = 'transform .35s, opacity .35s'
                     content.style.opacity = '1'
-                    content.style.transform = 'translateY(0px)'
                 });
             }, 250);
         }
@@ -62,7 +58,7 @@ const Main = (props: { id: string, isOnTop: boolean }) => {
     return (
         <SliderPage id={props.id}>
             <div style={{ position: 'relative', width: '100%', height: '100%', background: themeColor.get({ noproxy: true })[50] }}>
-                <div ref={contentRef} style={{ width: '100%', height: '100%', transition: 'transform .35s, opacity .35s' }}>
+                <div ref={contentRef} style={{ width: '100%', height: '100%', transition: 'opacity .25s', position: 'relative', zIndex: 1 }}>
                     <Routes>
                         <Route path='/chats' Component={() => <Chats show={value === 0} isOnTop={props.isOnTop} />} />
                         <Route path='/towers' Component={() => <Home show={value === 1} isOnTop={props.isOnTop} />} />

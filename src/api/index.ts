@@ -6,6 +6,7 @@ import memoryUtils from "./utils/memory";
 import ITower from "./models/tower";
 import IHuman from "./models/human";
 import IHomeFolder from "./models/homefolder";
+import IChat from "./models/chat";
 
 class Api {
 
@@ -40,11 +41,13 @@ class Api {
         worker: Services.WorkerService,
         messenger: Services.MessengerService
         file: Services.FileService,
-        home: Services.HomeService
+        home: Services.HomeService,
+        interaction: Services.InteractionService,
     }
     memory: {
         myHumanId: State<any>,
         spaces: State<{ [id: string]: ITower }>,
+        chats: State<{ [id: string]: IChat }>,
         humans: State<{ [id: string]: IHuman }>,
         machines: State<any>,
         messages: { [id: string]: any },
@@ -61,6 +64,7 @@ class Api {
         this.cache = new CacheDriver()
         let myHumanId: string | undefined = undefined
         let spaces: { [id: string]: ITower } = {}
+        let chats: { [id: string]: IChat } = {}
         let humans: { [id: string]: IHuman } = {}
         let machines: { [id: string]: IHuman } = {}
         let messages: { [id: string]: any } = {}
@@ -68,6 +72,7 @@ class Api {
         this.memory = {
             myHumanId: hookstate(myHumanId),
             spaces: hookstate(spaces),
+            chats: hookstate(chats),
             humans: hookstate(humans),
             machines: hookstate(machines),
             messages: messages,
@@ -89,7 +94,8 @@ class Api {
             invite: new Services.InviteService(this.storage, this.network, this.memory),
             messenger: new Services.MessengerService(this.storage, this.network, this.memory),
             file: new Services.FileService(this.storage, this.network, this.cache, this.memory),
-            home: new Services.HomeService(this.storage, this.network, this.memory)
+            home: new Services.HomeService(this.storage, this.network, this.memory),
+            interaction: new Services.InteractionService(this.storage, this.network, this.memory)
         }
     }
 }
