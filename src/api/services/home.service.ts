@@ -90,7 +90,9 @@ class HomeService {
             let spaces = this.memory.spaces.get({ noproxy: true })
             homeFolders.forEach((folder: IHomeFolder) => {
                 folder.towerIds.forEach(tid => {
-                    spaces[tid].folderId = folder.id
+                    if (spaces[tid]) {
+                        spaces[tid].folderId = folder.id
+                    }
                 })
             });
             this.storage.factories.tower?.createBatch(Object.values(spaces))

@@ -34,6 +34,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectCreative } from 'swiper/modules';
 import ManageHomeFolders from './components/forms/manageHomeFolders';
 import Explore from './components/pages/explore';
+import ChatPage from './components/pages/chat';
 
 const useForceUpdate = () => {
     const [value, setValue] = useState(0); // integer state
@@ -173,6 +174,7 @@ let pages: { [id: string]: any } = {
     'videoPlayer': VideoPlayer,
     'audioPlayer': AudioPlayer,
     'explore': Explore,
+    'chat': ChatPage,
     // forms
     'createTower': CreateTower,
     'createRoom': CreateRoom,

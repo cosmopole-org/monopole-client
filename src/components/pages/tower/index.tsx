@@ -61,7 +61,7 @@ const Tower = (props: { id: string, isOnTop: boolean, tower: ITower }) => {
                         }
                     }
                 }}>
-                <img ref={headerRef} style={{ opacity: 1, width: '100%', height: 266, position: 'sticky', top: 0, transition: 'opacity .5s' }} src={headerImageAddress.get({ noproxy: true })} alt={'header'} />
+                <img ref={headerRef} style={{ opacity: 1, width: '100%', height: 266, position: 'sticky', top: 0, transition: 'opacity .5s' }} src={(props.tower as any).wallpaper} alt={'header'} />
                 <Timeline
                     style={{
                         minHeight: 'calc(100% - 248px)', width: 'calc(100% - 32px)', background: themeColor.get({ noproxy: true })[50],

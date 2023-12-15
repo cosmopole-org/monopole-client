@@ -1,7 +1,7 @@
 
 import './index.css';
 import SigmaBottomNavigation from '../../custom/elements/SigmaBottomNavigation';
-import { Explore as ExploreIcon, Forum, Home as HomeIcon, Inbox as InboxIcon } from '@mui/icons-material';
+import { Explore as ExploreIcon, Forum, Home as HomeIcon, Inbox as InboxIcon, LocationCity } from '@mui/icons-material';
 import SliderPage from '../../layouts/SliderPage';
 import Home from '../../tabs/Home';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -19,7 +19,7 @@ const Main = (props: { id: string, isOnTop: boolean }) => {
     const navigate = useNavigate()
     const contentRef = useRef(null)
     const myUser = api.memory.humans.get({ noproxy: true })[api.memory.myHumanId.get({ noproxy: true })];
-    const [value, setValue] = useState(1);
+    const [value, setValue] = useState(0);
     const updateTitle = useCallback((index: number) => {
         if (index === 0) switchTitle && switchTitle('Chats')
         if (index === 1) switchTitle && switchTitle('Towers')
@@ -75,7 +75,7 @@ const Main = (props: { id: string, isOnTop: boolean }) => {
                     activeTab={value}
                     items={[
                         { label: 'Chats', icon: Forum },
-                        { label: 'Towers', icon: HomeIcon },
+                        { label: 'Towers', icon: LocationCity },
                         { label: 'Inbox', icon: InboxIcon },
                         { label: 'Settings', icon: () => <SigmaAvatar style={{ height: 32, width: 32, marginLeft: 8 }}>{myUser.firstName.substring(0, 1)}</SigmaAvatar> }
                     ]}
