@@ -1,11 +1,11 @@
 
 import './index.css';
 import SigmaBottomNavigation from '../../custom/elements/SigmaBottomNavigation';
-import { Explore as ExploreIcon, Home as HomeIcon, Inbox as InboxIcon } from '@mui/icons-material';
+import { Explore as ExploreIcon, Forum, Home as HomeIcon, Inbox as InboxIcon } from '@mui/icons-material';
 import SliderPage from '../../layouts/SliderPage';
 import Home from '../../tabs/Home';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import Explore from '../../tabs/Explore';
+import Explore from '../explore';
 import Settings from '../../tabs/Settings';
 import { LeftControlTypes, RightControlTypes, StatusThemes, switchColor, switchLeftControl, switchRightControl, switchTitle } from '../../sections/StatusBar';
 import { Route, Routes, useNavigate } from 'react-router-dom';
@@ -13,6 +13,7 @@ import { SigmaRouter, themeColor } from '../../../App';
 import { api } from '../../..';
 import SigmaAvatar from '../../custom/elements/SigmaAvatar';
 import Inbox from '../../tabs/Inbox';
+import Chats from '../../tabs/Chats';
 
 const Main = (props: { id: string, isOnTop: boolean }) => {
     const navigate = useNavigate()
@@ -20,8 +21,8 @@ const Main = (props: { id: string, isOnTop: boolean }) => {
     const myUser = api.memory.humans.get({ noproxy: true })[api.memory.myHumanId.get({ noproxy: true })];
     const [value, setValue] = useState(1);
     const updateTitle = useCallback((index: number) => {
-        if (index === 0) switchTitle && switchTitle('Explore')
-        if (index === 1) switchTitle && switchTitle('Home')
+        if (index === 0) switchTitle && switchTitle('Chats')
+        if (index === 1) switchTitle && switchTitle('Towers')
         if (index === 2) switchTitle && switchTitle('Inbox')
         if (index === 3) switchTitle && switchTitle('Settings')
     }, [value])
@@ -33,7 +34,7 @@ const Main = (props: { id: string, isOnTop: boolean }) => {
             content.style.opacity = '0'
             content.style.transform = 'translateY(100px)'
             setTimeout(() => {
-                navigate(['/explore', '/main', '/inbox', '/settings'][index])
+                navigate(['/chats', '/towers', '/inbox', '/settings'][index])
                 updateTitle(index)
                 setTimeout(() => {
                     content.style.transition = 'transform .35s, opacity .35s'
@@ -53,7 +54,7 @@ const Main = (props: { id: string, isOnTop: boolean }) => {
     useEffect(() => {
         if (props.isOnTop) {
             switchLeftControl && switchLeftControl(LeftControlTypes.WALLET, () => {})
-            switchRightControl && switchRightControl(RightControlTypes.NONE)
+            switchRightControl && switchRightControl(RightControlTypes.EXPLORE, () => SigmaRouter.navigate('explore'))
             switchColor && switchColor(themeColor.get({ noproxy: true })[500], StatusThemes.DARK)
             updateTitle(value)
         }
@@ -63,8 +64,8 @@ const Main = (props: { id: string, isOnTop: boolean }) => {
             <div style={{ position: 'relative', width: '100%', height: '100%', background: themeColor.get({ noproxy: true })[50] }}>
                 <div ref={contentRef} style={{ width: '100%', height: '100%', transition: 'transform .35s, opacity .35s' }}>
                     <Routes>
-                        <Route path='/explore' Component={() => <Explore show={value === 0} isOnTop={props.isOnTop} />} />
-                        <Route path='/main' Component={() => <Home show={value === 1} isOnTop={props.isOnTop} />} />
+                        <Route path='/chats' Component={() => <Chats show={value === 0} isOnTop={props.isOnTop} />} />
+                        <Route path='/towers' Component={() => <Home show={value === 1} isOnTop={props.isOnTop} />} />
                         <Route path='/inbox' Component={() => <Inbox show={value === 2} isOnTop={props.isOnTop} />} />
                         <Route path='/settings' Component={() => <Settings show={value === 3} isOnTop={props.isOnTop} />} />
                     </Routes>
@@ -73,8 +74,8 @@ const Main = (props: { id: string, isOnTop: boolean }) => {
                     onSwitch={handleChangeIndex}
                     activeTab={value}
                     items={[
-                        { label: 'Explore', icon: ExploreIcon },
-                        { label: 'Home', icon: HomeIcon },
+                        { label: 'Chats', icon: Forum },
+                        { label: 'Towers', icon: HomeIcon },
                         { label: 'Inbox', icon: InboxIcon },
                         { label: 'Settings', icon: () => <SigmaAvatar style={{ height: 32, width: 32, marginLeft: 8 }}>{myUser.firstName.substring(0, 1)}</SigmaAvatar> }
                     ]}

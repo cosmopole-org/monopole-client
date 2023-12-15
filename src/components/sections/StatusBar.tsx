@@ -1,4 +1,4 @@
-import { ArrowBack, Close, Dashboard, Feed, KeyboardCommandKey, MusicNote, Notifications, Settings, Wallet } from "@mui/icons-material"
+import { ArrowBack, Close, Dashboard, Explore, Feed, KeyboardCommandKey, MusicNote, Notifications, Settings, Wallet } from "@mui/icons-material"
 import { IconButton, Paper, Typography } from "@mui/material"
 import { useState } from "react"
 import { SigmaRouter, themeBasedTextColor, themeColor } from "../../App"
@@ -13,7 +13,8 @@ const LeftControlTypes = {
 const RightControlTypes = {
     NONE: 0,
     COMMANDS: 1,
-    SETTINGS: 2
+    SETTINGS: 2,
+    EXPLORE: 3
 }
 const StatusThemes = {
     LIGHT: 0,
@@ -86,27 +87,24 @@ const StatusBar = () => {
                     {title}
                 </Typography>
                 {
-                    rightControlType === RightControlTypes.COMMANDS ?
+                    rightControlType !== RightControlTypes.NONE ?
                         (
                             <IconButton
                                 onClick={() => {
                                     rightControlFunctionality && rightControlFunctionality()
                                 }}
                                 size="small" style={{ width: 32, height: 32, borderRadius: '50%', position: 'absolute', top: 4, right: 8 + 32 + 8 }}>
-                                <KeyboardCommandKey style={{ color: themeBasedTextColor.get({ noproxy: true }) }} />
+                                {
+                                    rightControlType === RightControlTypes.COMMANDS ? (
+                                        <KeyboardCommandKey style={{ color: themeBasedTextColor.get({ noproxy: true }) }} />
+                                    ) : rightControlType === RightControlTypes.SETTINGS ? (
+                                        <Settings style={{ color: themeBasedTextColor.get({ noproxy: true }) }} />
+                                    ) : rightControlType === RightControlTypes.EXPLORE ? (
+                                        <Explore style={{ color: themeBasedTextColor.get({ noproxy: true }) }} />
+                                    ) : null
+                                }
                             </IconButton>
-                        ) :
-                        rightControlType === RightControlTypes.SETTINGS ?
-                            (
-                                <IconButton
-                                    onClick={() => {
-                                        rightControlFunctionality && rightControlFunctionality()
-                                    }}
-                                    size="small" style={{ width: 32, height: 32, borderRadius: '50%', position: 'absolute', top: 4, right: 8 + 32 + 8 }}>
-                                    <Settings style={{ color: themeBasedTextColor.get({ noproxy: true }) }} />
-                                </IconButton>
-                            ) :
-                            null
+                        ) : null
                 }
                 {
                     SigmaRouter.topPath() === 'auth' ?

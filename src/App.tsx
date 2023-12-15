@@ -33,6 +33,7 @@ import 'swiper/css/effect-creative';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectCreative } from 'swiper/modules';
 import ManageHomeFolders from './components/forms/manageHomeFolders';
+import Explore from './components/pages/explore';
 
 const useForceUpdate = () => {
     const [value, setValue] = useState(0); // integer state
@@ -171,6 +172,7 @@ let pages: { [id: string]: any } = {
     'gallery': Gallery,
     'videoPlayer': VideoPlayer,
     'audioPlayer': AudioPlayer,
+    'explore': Explore,
     // forms
     'createTower': CreateTower,
     'createRoom': CreateRoom,

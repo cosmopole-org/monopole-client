@@ -9,7 +9,6 @@ import { api } from "../.."
 import ITower from "../../api/models/tower"
 import TowerMoreMenu from "../custom/components/TowerMoreMenu"
 import IMachine from "../../api/models/machine"
-import { themeColor } from "../../App"
 
 let savedSCrollTop = 0,
     cachedSearchBarTop: { value: number, maxValue: number } = {
@@ -19,7 +18,7 @@ let savedSCrollTop = 0,
     cachedTowers: Array<ITower> = [],
     cachedMachines: Array<IMachine> = []
 
-const Explore = (props: { isOnTop: boolean, show: boolean }) => {
+const Chats = (props: { isOnTop: boolean, show: boolean }) => {
     const [pointedTower, setPointedTower] = useState()
     const containerRef = useRef(null)
     const [searchText, setSearchText] = useState('')
@@ -91,4 +90,4 @@ const Explore = (props: { isOnTop: boolean, show: boolean }) => {
     )
 }
 
-export default Explore
+export default Chats

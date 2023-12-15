@@ -105,11 +105,15 @@ const TowersList = (props: { towers: Array<any>, hasFocus: boolean, showRating: 
                         )
                     }
                 </Paper>
-                <SigmaFab style={{ position: 'absolute', width: 40, height: 40, right: 4, top: 4, borderRadius: '8px 24px 8px 8px', backgroundColor: themeColor.get({ noproxy: true })[100] }} onClick={() => {
-                    SigmaRouter.navigate('manageHomeFolders')
-                }}>
-                    <Edit />
-                </SigmaFab>
+                {
+                    props.showRating ? null : (
+                        <SigmaFab style={{ position: 'absolute', width: 40, height: 40, right: 4, top: 4, borderRadius: '8px 24px 8px 8px', backgroundColor: themeColor.get({ noproxy: true })[100] }} onClick={() => {
+                            SigmaRouter.navigate('manageHomeFolders')
+                        }}>
+                            <Edit />
+                        </SigmaFab>
+                    )
+                }
                 <div style={{ width: 'calc(100% - 32px)', height: 'auto', paddingLeft: 16, paddingRight: 16, paddingTop: 8 }}>
                     {
                         props.towers.filter(tower => ((tower.folderId === activeTab) || (activeTab === 'all'))).map((tower: any) => (
