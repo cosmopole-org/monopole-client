@@ -9,8 +9,8 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
     if (props.showRating) {
         return (
             <Card elevation={0} style={{ ...props.style, position: 'relative', width: 'calc(100% - 32px)', padding: 16, height: 168, backgroundColor: themeColor.get({ noproxy: true })[50], borderRadius: 24 }}>
-                <img style={{ width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} src={props.tower.wallpaper} />
                 <Typography variant={'h6'} style={{
+                    minWidth: 88,
                     position: 'absolute',
                     left: 40,
                     top: 16,
@@ -41,7 +41,6 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
                             left: 0,
                             top: 0,
                             backgroundColor: themeColor.get({ noproxy: true })[100],
-                            opacity: 0.5,
                             zIndex: 0
                         }} />
                         <div style={{
@@ -106,7 +105,6 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
     } else {
         return (
             <Card elevation={0} style={{ ...props.style, position: 'relative', width: 'calc(100% - 32px)', padding: 16, height: 168, backgroundColor: themeColor.get({ noproxy: true })[50], borderRadius: 24 }}>
-                <img style={{ width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} src={props.tower.wallpaper} />
                 <Typography variant={'h6'} style={{
                     position: 'absolute',
                     left: 40,
@@ -146,7 +144,6 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
                             left: 0,
                             top: 0,
                             backgroundColor: themeColor.get({ noproxy: true })[100],
-                            opacity: 0.5,
                             zIndex: 0
                         }} />
                         <div style={{
