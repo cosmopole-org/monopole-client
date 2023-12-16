@@ -18,6 +18,8 @@ import utils from '../../utils';
 import MetaContent from './metaContent';
 import MetaNonTouch, { metaNonTouchOpen } from './metaNonTouch';
 import MetaTouch from './metaTouch';
+import { useHookstate } from '@hookstate/core';
+import { api } from '../../..';
 
 const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
   const containerRef: any = useRef(null)
@@ -25,6 +27,7 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
   const [showMachineBox, setShowMachineBox] = useState(false)
   const wallpaperContainerRef = useRef(null)
   const isMetaOpen = useRef(false);
+  const messagesList = useHookstate(api.memory.messages[props.room.id]).get({ noproxy: true })
   const updateMetaState = (state: boolean) => {
     isMetaOpen.current = state;
     if (utils.screen.isTouchDevice()) {
@@ -70,6 +73,8 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
     else onMetaClose()
   }, [props.isOnTop])
 
+  const lastMessage = messagesList ? messagesList[messagesList.length - 1] : undefined
+
   return (
     <SliderPage id={props.id}>
       <div style={{ width: '100%', height: '100%' }} ref={containerRef}>
@@ -82,8 +87,19 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
         }}>
           <div style={{ display: 'flex', marginTop: 12 }}>
             <Message style={{ marginLeft: 16, marginRight: 8 }} />
-            <Typography variant='body2'>
-              Keyhan: Please send me the docs.
+            <Typography variant='body2' style={{
+              maxWidth: 'calc(100% - 128px)',
+              wordWrap: 'break-word', textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap', overflow: 'hidden'
+            }}>
+              {lastMessage ?
+                lastMessage.author.firstName + ' : ' + (
+                  lastMessage.type === 'text' ? lastMessage.data.text :
+                    ['photo', 'audio', 'video'].includes(lastMessage.type) ? lastMessage.type :
+                      'Unsupported message type'
+                ) :
+                'No messages yet'
+              }
             </Typography>
           </div>
         </Paper>

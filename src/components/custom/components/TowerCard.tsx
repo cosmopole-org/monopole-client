@@ -1,13 +1,14 @@
 import { Card, IconButton, Rating, Typography } from "@mui/material"
 import SigmaBadgeButton from "../elements/SigmaBadgeButton"
 import { AllOut, ArrowForward, LocationCity, MoreVert } from "@mui/icons-material"
-import { SigmaRouter, themeColor } from "../../../App"
+import { SigmaRouter, themeBasedTextColor, themeColor } from "../../../App"
 import SigmaAvatar from "../elements/SigmaAvatar"
 import { api } from "../../.."
 import '../../../resources/styles/towercard.css'
 import { useEffect } from "react"
 import { useHookstate } from "@hookstate/core"
 import IRoom from "../../../api/models/room"
+import utils from "../../utils"
 
 const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void, showRating?: boolean }) => {
     useEffect(() => {
@@ -192,10 +193,19 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
                                 <Typography variant="body2" style={{ marginLeft: 8, fontWeight: 'bold' }}>
                                     Main Room
                                 </Typography>
-                                <Typography variant="body2" style={{ marginLeft: 8 }}>
-                                    {lastMessage ? lastMessage.type === 'text' ? lastMessage.data.text : ['photo', 'audio', 'video'].includes(lastMessage.type) ? lastMessage.type : `unsupported message type` : `Empty chat`}
+                                <Typography variant="body2" style={{
+                                    marginLeft: 8,
+                                    width: '100%',
+                                    maxWidth: 200,
+                                    wordWrap: 'break-word', textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap', overflow: 'hidden'
+                                }}>
+                                    {lastMessage ? (lastMessage.author.firstName + ': ' + (lastMessage.type === 'text' ? lastMessage.data.text : ['photo', 'audio', 'video'].includes(lastMessage.type) ? lastMessage.type : `unsupported message type`)) : `Empty chat`}
                                 </Typography>
                             </div>
+                            <Typography variant="caption" style={{ position: 'absolute', top: 10, right: 32, color: themeBasedTextColor.get({ noproxy: true }) }}>
+                                {lastMessage ? (utils.formatter.default.formatDate(lastMessage.time) + ' ' + utils.formatter.default.formatTime(lastMessage.time)) : '-'}
+                            </Typography>
                         </div>
                     </div>
                 </div>

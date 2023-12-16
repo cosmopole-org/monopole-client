@@ -33,7 +33,7 @@ const Machines = (props: { id: string, isOnTop: boolean }) => {
         </div>
         <Paper
           style={{
-            borderRadius: 0, width: '100%', height: 'auto', paddingTop: statusbarHeight() + 16, position: 'absolute', left: 0, top: 0, backgroundColor: themeColor.get({ noproxy: true })[50]
+            borderRadius: 0, width: '100%', height: 'auto', paddingTop: statusbarHeight() + 16, position: 'absolute', left: 0, top: 0
           }}
         >
           <SigmaTabs

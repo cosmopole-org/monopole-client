@@ -45,12 +45,12 @@ let forceUpdate = () => { };
 const currentRoute = hookstate('')
 
 export const fixedNightColor = {
-    '500': '#292e39',
-    '400': '#292e39',
-    '200': '#2e3440',
-    '100': '#3b4252',
-    '50': '#434c5e',
-    'plain': '#4c566a',
+    '500': '#092635',
+    '400': '#0b2937',
+    '200': '#0e2b3a',
+    '100': '#122e3d',
+    '50': '#153241',
+    'plain': '#0b2937',
     'activeText': '#ffffff',
     'passiveText': '#dddddd'
 }
@@ -75,6 +75,13 @@ const headerImageAddresses = {
 export let headerImageAddress = hookstate(tempThemeColorName === 'night' ? headerImageAddresses.dark : headerImageAddresses.light)
 let theme = createTheme({
     components: {
+        MuiPaper: {
+            styleOverrides: {
+                root: {
+                    backgroundColor: themeColor.get({ noproxy: true })[100],
+                }
+            }
+        },
         MuiTab: {
             styleOverrides: {
                 root: {
@@ -103,7 +110,7 @@ let theme = createTheme({
             main: colors.purple[200],
         },
         background: {
-            paper: tempThemeColorName === 'night' ? fixedNightColor['plain'] : '#fff'
+            paper: tempThemeColorName === 'night' ? fixedNightColor[100] : '#fff'
         }
     },
 });
@@ -117,6 +124,13 @@ export let reconstructMaterialPalette = (name: string, color: any) => {
     themeColorName.set(name)
     theme = createTheme({
         components: {
+            MuiPaper: {
+                styleOverrides: {
+                    root: {
+                        backgroundColor: color[100],
+                    }
+                }
+            },
             MuiTab: {
                 styleOverrides: {
                     root: {
@@ -145,7 +159,7 @@ export let reconstructMaterialPalette = (name: string, color: any) => {
                 main: colors.purple[200],
             },
             background: {
-                paper: name === 'night' ? fixedNightColor['plain'] : '#fff'
+                paper: color[50]
             }
         },
     });
