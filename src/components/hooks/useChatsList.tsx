@@ -10,8 +10,7 @@ const useChatsList = (
     overridenStyle: any,
     bottomSpace: number,
     showRating: boolean,
-    hasFocus: boolean,
-    chats: Array<any>
+    hasFocus: boolean
 ) => {
     const chatsContainerRef = useRef(null)
     return {
@@ -26,7 +25,6 @@ const useChatsList = (
                 chatsContainerRef={chatsContainerRef}
                 onCollapsibleBarStateChange={onCollapsibleBarStateChange}
                 showTowerMoreMenu={showTowerMoreMenu}
-                chats={chats}
             />
         ),
         chatsContainerRef

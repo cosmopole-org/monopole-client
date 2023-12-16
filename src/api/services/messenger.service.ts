@@ -2,6 +2,8 @@ import { State, hookstate } from "@hookstate/core"
 import { DatabaseDriver, NetworkDriver } from "../drivers"
 import IMessage from "../models/message"
 import { none } from "@hookstate/core"
+import memoryUtils from "../utils/memory"
+import { api } from "../.."
 
 export let MessageTypes = {
     TEXT: "text",
@@ -55,6 +57,12 @@ class MessengerService {
                 this.memory.messages[message.roomId][this.memory.messages[message.roomId].get({ noproxy: true }).findIndex((m: IMessage) => m.id === message.id)]?.set(none)
             }
         })
+
+        this.onMessageReceived('messenger-service', (data: any) => {
+            let { message } = data
+            this.check(message.roomId)
+            this.memory.messages[message.roomId].merge([message])
+        })
     }
 
     check(roomId: string) {
@@ -98,6 +106,30 @@ class MessengerService {
         return this.network.request('messenger/read', { towerId: data.towerId, roomId: data.roomId, offset: data.offset, count: data.count }).then((body: any) => {
             this.check(data.roomId)
             this.memory.messages[data.roomId].set(body.messages)
+            return body
+        })
+    }
+
+    async lastMessages(): Promise<any> {
+        return this.network.request('messenger/lastMessages', {}).then((body: any) => {
+            let { rooms } = body
+            let authors = rooms.map((room: any) => {
+                if (this.memory.messages[room.id]?.get({ noproxy: true })?.length > 0) {
+                    // do nothing
+                } else {
+                    this.check(room.id)
+                    if (room.lastMessage) {
+                        this.memory.messages[room.id].set([room.lastMessage])
+                    } else {
+                        this.memory.messages[room.id].set([])
+                    }
+                }
+                return room.lastMessage
+            })
+                .filter((msg: any) => msg !== undefined)
+                .map((msg: any) => msg.author)
+            this.storage.factories.human?.createBatch(authors)
+            this.memory.humans.set(memoryUtils.humans.prepareHumans(authors, { ...this.memory.humans.get({ noproxy: true }) }))
             return body
         })
     }

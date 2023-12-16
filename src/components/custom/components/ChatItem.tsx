@@ -17,8 +17,12 @@ const ChatItem = (props: { chat: any, style?: any, onMoreClicked?: () => void })
     if (!peer) {
         return null
     }
+    const lastMessage = messagesList ? messagesList[messagesList.length - 1] : undefined
+    if (!lastMessage) {
+        return null
+    }
     return (
-        <div style={{ ...props.style, display: 'flex', position: 'relative', width: '100%', height: 64 }}
+        <div style={{ ...props.style, borderRadius: 24, paddingTop: 8, paddingLeft: 8, display: 'flex', position: 'relative', width: '100%', height: 64, backgroundColor: themeColor.get({ noproxy: true })[100] }}
             onClick={() => {
                 SigmaRouter.navigate('chat', { initialData: { room: mainRoom } })
             }}>
@@ -30,13 +34,12 @@ const ChatItem = (props: { chat: any, style?: any, onMoreClicked?: () => void })
                     {peer.firstName + ' ' + peer.lastName}
                 </Typography>
                 <Typography variant="body2" style={{ color: themeBasedTextColor.get({ noproxy: true }) }}>
-                    {messagesList?.length > 0 ? messagesList[messagesList.length - 1].data.text : `Operator: Welcome to ${props.chat.tower.title} tower !`}
+                    {lastMessage ? lastMessage.type === 'text' ? lastMessage.data.text : ['photo', 'audio', 'video'].includes(lastMessage.type) ? lastMessage.type  : `unsupported message type` : `Empty chat`}
                 </Typography>
             </div>
-            <Typography variant="caption" style={{ position: 'absolute', top: 4, right: 0, color: themeBasedTextColor.get({ noproxy: true }) }}>
-                {messagesList ? utils.formatter.default.formatDate(messagesList[messagesList.length - 1].time) : '-'}
+            <Typography variant="caption" style={{ position: 'absolute', top: 16, right: 16, color: themeBasedTextColor.get({ noproxy: true }) }}>
+                {lastMessage ? (utils.formatter.default.formatDate(lastMessage.time) + ' ' + utils.formatter.default.formatTime(lastMessage.time)) : '-'}
             </Typography>
-            <div style={{ opacity: 0.25, width: 'calc(100% - 56px)', height: 1, backgroundColor: themeBasedTextColor.get({ noproxy: true }), position: 'absolute', left: 56, bottom: 0 }} />
         </div >
     )
 }

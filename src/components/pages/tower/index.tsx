@@ -82,7 +82,7 @@ const Tower = (props: { id: string, isOnTop: boolean, tower: ITower }) => {
                             <Typography style={{ width: '100%', textAlign: 'left' }}>
                                 Floor 1
                             </Typography>
-                            <Card elevation={2} style={{ padding: 16, marginTop: 16, borderRadius: 24, backgroundColor: themeColor.get({ noproxy: true })['plain'] }}>
+                            <Card elevation={0} style={{ padding: 16, marginTop: 16, borderRadius: 24, backgroundColor: themeColor.get({ noproxy: true })['plain'] }}>
                                 {
                                     Object.values(rooms).map((room: any) => {
                                         return (

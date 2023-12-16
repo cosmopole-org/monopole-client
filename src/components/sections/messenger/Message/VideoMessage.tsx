@@ -92,7 +92,7 @@ const VideoMessage = (props: { room: IRoom, message: IMessage, side?: string, la
                         backgroundColor: 'rgba(0, 0, 0, 0.5)', color: '#fff'
                     }}
                 >
-                    Keyhan
+                    {(props.message as any).author.firstName}
                 </Typography>
                 {
                     props.isQuote ?

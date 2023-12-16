@@ -42,6 +42,7 @@ class TowerService {
     async create(data: { title: string, avatarId?: string, isPublic?: boolean }): Promise<void> {
         return this.network.request('tower/create', { title: data.title, avatarId: data.avatarId, isPublic: data.isPublic === true }).then(async (body: any) => {
             let { tower, room } = body
+            tower.folderId = '-'
             await this.storage.factories.tower?.create(tower)
             await this.storage.factories.room?.create(room)
             let newSpaces = memoryUtils.spaces.prepareSpaces([tower], [room], { ...this.memory.spaces.get({ noproxy: true }) })
@@ -57,8 +58,10 @@ class TowerService {
     }
 
     async update(data: { towerId: string, title?: string, avatarId?: string, isPublic?: boolean }): Promise<void> {
+        let oldTower = this.memory.spaces.get({ noproxy: true })[data.towerId]
         return this.network.request('tower/update', { towerId: data.towerId, title: data.title, avatarId: data.avatarId, isPublic: data.isPublic }).then(async (body: any) => {
             let { tower } = body
+            tower.folderId = oldTower.folderId
             await this.storage.factories.tower?.update(tower)
             this.memory.spaces.set(memoryUtils.spaces.transformTower(tower, this.memory.spaces.get({ noproxy: true })))
             return body
@@ -76,6 +79,7 @@ class TowerService {
     async join(data: { towerId: string }): Promise<void> {
         return this.network.request('tower/join', { towerId: data.towerId }).then(async (body: any) => {
             let tower = this.memory.known.spaces.get({ noproxy: true })[data.towerId]
+            tower.folderId = '-'
             await this.storage.factories.tower?.create(tower)
             let { rooms } = await api.services.room.search({ towerId: data.towerId, query: '' })
             await this.storage.factories.room?.createBatch(rooms)
@@ -95,6 +99,19 @@ class TowerService {
 
     async readMembers(data: { towerId: string }): Promise<any> {
         return this.network.request('tower/readMembers', { towerId: data.towerId })
+    }
+
+    async read(): Promise<any> {
+        return this.network.request('tower/read', { }).then(async (body: any) => {
+            let { tower, room } = body
+            tower.folderId = '-'
+            await this.storage.factories.tower?.create(tower)
+            await this.storage.factories.room?.create(room)
+            let newSpaces = memoryUtils.spaces.prepareSpaces([tower], [room], { ...this.memory.spaces.get({ noproxy: true }) })
+            this.memory.spaces.set(newSpaces)
+            let newKnownSpaces = memoryUtils.spaces.prepareSpaces([tower], [room], { ...this.memory.known.spaces.get({ noproxy: true }) })
+            this.memory.known.spaces.set(newKnownSpaces)
+        })
     }
 }
 

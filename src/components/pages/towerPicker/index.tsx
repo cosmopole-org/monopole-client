@@ -25,7 +25,9 @@ const TowerPicker = (props: { id: string, isOnTop: boolean, onTowerSelect: (towe
       switchColor && switchColor(themeColor.get({ noproxy: true })[500], StatusThemes.DARK)
     }
   }, [props.isOnTop])
-  console.log(towers)
+  const chats = useHookstate(api.memory.chats).get({ noproxy: true })
+  let chastTowerIdsDict: { [id: string]: boolean } = {}
+  Object.values(chats).forEach(c => { chastTowerIdsDict[c.towerId] = true; });
   return (
     <SliderPage id={props.id}>
       <div style={{
@@ -35,7 +37,7 @@ const TowerPicker = (props: { id: string, isOnTop: boolean, onTowerSelect: (towe
       }}>
         <div style={{ width: '100%', height: 56 }} />
         {
-          Object.values(towers).filter(tower => tower.secret?.ownerId === myHumanId).map((tower: ITower) => (
+          Object.values(towers).filter(tower => ((tower.secret?.ownerId === myHumanId) && !chastTowerIdsDict[tower.id])).map((tower: ITower) => (
             <TowerPickerCard
               key={`tower-picker-item-${tower.id}`}
               tower={tower}

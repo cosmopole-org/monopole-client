@@ -1,32 +1,55 @@
-import { Avatar, Card, IconButton, Paper, Rating, Typography } from "@mui/material"
+import { Card, IconButton, Rating, Typography } from "@mui/material"
 import SigmaBadgeButton from "../elements/SigmaBadgeButton"
-import { AllOut, ArrowForward, ArrowRight, LocationCity, MoreVert } from "@mui/icons-material"
-import { SigmaRouter, themeColor, themeColorName } from "../../../App"
+import { AllOut, ArrowForward, LocationCity, MoreVert } from "@mui/icons-material"
+import { SigmaRouter, themeColor } from "../../../App"
 import SigmaAvatar from "../elements/SigmaAvatar"
 import { api } from "../../.."
+import '../../../resources/styles/towercard.css'
+import { useEffect } from "react"
+import { useHookstate } from "@hookstate/core"
+import IRoom from "../../../api/models/room"
 
 const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void, showRating?: boolean }) => {
+    useEffect(() => {
+        var pix = document.getElementsByClassName("pixel") as any;
+        for (var i = 0; i < pix.length; i++) {
+            pix[i].style.animationDelay = Math.ceil(Math.random() * 5000) + "ms";
+        }
+    }, [])
+    const messagesList = useHookstate(props.showRating ? [] : api.memory.messages[(Object.values(props.tower.rooms)[0] as IRoom).id])?.get({ noproxy: true })
+    const lastMessage = messagesList ? messagesList[messagesList.length - 1] : undefined
+    const backPatternColor0 = themeColor.get({ noproxy: true })[50];
+    const backPatternColor1 = themeColor.get({ noproxy: true })[100];
     if (props.showRating) {
         return (
-            <Card elevation={0} style={{ ...props.style, position: 'relative', width: 'calc(100% - 32px)', padding: 16, height: 168, backgroundColor: themeColor.get({ noproxy: true })[50], borderRadius: 24 }}>
+            <Card elevation={0} style={{
+                ...props.style, position: 'relative', width: 'calc(100% - 32px)', padding: 16, height: 168,
+                backgroundColor: backPatternColor0,
+                borderRadius: 24,
+                overflow: 'hidden'
+            }}>
+                <div style={{
+                    position: 'absolute', left: 0, top: 0,
+                    width: '100%', height: '100%',
+                    background: `
+                                radial-gradient(circle at 100% 50%, transparent 20%, ${backPatternColor1} 21%, ${backPatternColor1} 34%, transparent 35%, transparent),
+                                radial-gradient(circle at 0% 50%, transparent 20%, ${backPatternColor1} 21%, ${backPatternColor1} 34%, transparent 35%, transparent) 0 -50px`,
+                    backgroundSize: `75px 100px`
+                }} />
                 <Typography variant={'h6'} style={{
                     minWidth: 88,
                     position: 'absolute',
                     left: 40,
-                    top: 16,
-                    paddingTop: 2,
+                    top: 14,
+                    paddingTop: 0,
                     paddingBottom: 14,
-                    paddingLeft: 28,
+                    paddingLeft: 24,
                     paddingRight: 12,
-                    backgroundColor: themeColor.get({ noproxy: true })[100],
-                    borderRadius: '0px 24px 24px 0px'
                 }}>
                     {props.tower.title}
                 </Typography>
                 <SigmaAvatar style={{
-                    width: 40, height: 40, position: 'absolute', left: 16, top: 16,
-                    backgroundColor: themeColor.get({ noproxy: true })[200],
-                    border: `4px solid ${themeColor.get({ noproxy: true })[100]}`
+                    width: 44, height: 44, position: 'absolute', left: 16, top: 16,
                 }}>
                     {props.tower.title.substring(0, 1)}
                 </SigmaAvatar>
@@ -68,13 +91,11 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
                     </div>
                 </div>
                 <Rating style={{
-                    position: 'absolute', left: 44, top: 42, transform: 'scale(0.65, 0.65)',
-                    textAlign: 'center', backgroundColor: themeColor.get({ noproxy: true })[100],
-                    borderRadius: 16
+                    position: 'absolute', left: 44, top: 40, transform: 'scale(0.65, 0.65)',
+                    textAlign: 'center', borderRadius: 16
                 }} value={3} readOnly />
                 <IconButton style={{
-                    position: 'absolute', right: 16, top: 16,
-                    backgroundColor: themeColor.get({ noproxy: true })[100]
+                    position: 'absolute', right: 16, top: 16
                 }} onClick={() => {
                     props.onMoreClicked && props.onMoreClicked()
                 }}>
@@ -104,36 +125,44 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
         )
     } else {
         return (
-            <Card elevation={0} style={{ ...props.style, position: 'relative', width: 'calc(100% - 32px)', padding: 16, height: 168, backgroundColor: themeColor.get({ noproxy: true })[50], borderRadius: 24 }}>
+            <Card elevation={0} style={{
+                ...props.style, position: 'relative', width: 'calc(100% - 32px)', padding: 16, height: 168,
+                backgroundColor: backPatternColor0,
+                borderRadius: 24,
+                overflow: 'hidden'
+            }}>
+                <div style={{
+                    position: 'absolute', left: 0, top: 0,
+                    width: '100%', height: '100%',
+                    background: `
+                                radial-gradient(circle at 100% 50%, transparent 20%, ${backPatternColor1} 21%, ${backPatternColor1} 34%, transparent 35%, transparent),
+                                radial-gradient(circle at 0% 50%, transparent 20%, ${backPatternColor1} 21%, ${backPatternColor1} 34%, transparent 35%, transparent) 0 -50px`,
+                    backgroundSize: `75px 100px`
+                }} />
                 <Typography variant={'h6'} style={{
                     position: 'absolute',
                     left: 40,
                     top: 22,
                     paddingTop: 2,
                     paddingBottom: 2,
-                    paddingLeft: 28,
-                    paddingRight: 12,
-                    backgroundColor: themeColor.get({ noproxy: true })[100],
-                    borderRadius: '0px 24px 24px 0px'
+                    paddingLeft: 32,
+                    paddingRight: 12
                 }}>
                     {props.tower.title}
                 </Typography>
                 <SigmaAvatar style={{
-                    width: 28, height: 28, position: 'absolute', left: 20, top: 22,
-                    backgroundColor: themeColor.get({ noproxy: true })[200],
-                    border: `4px solid ${themeColor.get({ noproxy: true })[100]}`
+                    width: 48, height: 48, position: 'absolute', left: 16, top: 16
                 }}>
                     {props.tower.title.substring(0, 1)}
                 </SigmaAvatar>
                 <IconButton style={{
-                    position: 'absolute', right: 16, top: 16,
-                    backgroundColor: themeColor.get({ noproxy: true })[100]
+                    position: 'absolute', right: 16, top: 16
                 }} onClick={() => {
                     props.onMoreClicked && props.onMoreClicked()
                 }}>
                     <MoreVert />
                 </IconButton>
-                <div style={{ backdropFilter: 'blur(5px)', borderRadius: 24, width: 'calc(100% - 32px)', height: 56, position: 'absolute', left: 16, top: 76, overflow: 'hidden' }}>
+                <div style={{ borderRadius: 24, width: 'calc(100% - 32px)', height: 56, position: 'absolute', left: 16, top: 80, overflow: 'hidden' }}>
                     <div style={{
                         width: '100%', height: '100%', position: 'relative'
                     }}>
@@ -153,7 +182,7 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
                             left: 0,
                             top: 0,
                             padding: 8,
-                            zIndex: 1,
+                            zIndex: 0,
                             display: 'flex'
                         }}>
                             <SigmaAvatar>
@@ -164,7 +193,7 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
                                     Main Room
                                 </Typography>
                                 <Typography variant="body2" style={{ marginLeft: 8 }}>
-                                    Welcome to our room Peter !
+                                    {lastMessage ? lastMessage.type === 'text' ? lastMessage.data.text : ['photo', 'audio', 'video'].includes(lastMessage.type) ? lastMessage.type : `unsupported message type` : `Empty chat`}
                                 </Typography>
                             </div>
                         </div>
@@ -190,7 +219,7 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
                         }
                     }} />
                 </div>
-            </Card>
+            </Card >
         )
     }
 }

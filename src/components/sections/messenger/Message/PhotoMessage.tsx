@@ -87,7 +87,7 @@ const PhotoMessage = (props: { otherDocIds: Array<string | undefined>, room: IRo
                         backgroundColor: 'rgba(0, 0, 0, 0.5)', color: '#fff'
                     }}
                 >
-                    Keyhan
+                    {(props.message as any).author.firstName}
                 </Typography>
                 {
                     props.isQuote ?

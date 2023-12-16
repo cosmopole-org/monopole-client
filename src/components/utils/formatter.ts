@@ -25,6 +25,11 @@ const formatDate = (someDateTimeStamp: number) => {
   }
 }
 
+function formatTime(ms: number) {
+  return new Date(ms).toTimeString().substring(0, 5)
+}
+
+
 const formatBytes = (bytes: number, decimals = 2) => {
   if (!+bytes) return '0 Bytes'
   const k = 1024
@@ -49,6 +54,7 @@ const hexToRGB = (hex: string) => {
 
 export default {
   formatDate,
+  formatTime,
   formatBytes,
   hexToRGB
 }

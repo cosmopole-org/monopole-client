@@ -50,6 +50,7 @@ class InviteService {
     async accept(data: { towerId: string, inviteId: string }): Promise<any> {
         return this.network.request('invite/accept', { towerId: data.towerId, inviteId: data.inviteId }).then((body: any) => {
             let { tower, rooms } = body
+            tower.folderId = '-'
             this.storage.factories.tower?.create(tower)
             this.storage.factories.room?.createBatch(rooms)
             let newSpaces = memoryUtils.spaces.prepareSpaces([tower], rooms, { ...this.memory.spaces.get({ noproxy: true }) })

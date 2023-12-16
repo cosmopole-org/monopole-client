@@ -44,7 +44,7 @@ const TextMessage = (props: { message: IMessage, side?: string, lastOfSection?: 
                         background: 'transparent', color: props.side === 'left' ? themeColor.get({ noproxy: true })['activeText'] : '#fff'
                     }}
                 >
-                    Keyhan
+                    {(props.message as any).author.firstName}
                 </Typography>
                 <Typography
                     style={{

@@ -10,7 +10,7 @@ import SigmaFab from "../elements/SigmaFab"
 import { useHookstate } from "@hookstate/core"
 import ChatItem from "./ChatItem"
 
-const ChatsList = (props: { chats: Array<any>, hasFocus: boolean, showRating: boolean, bottomSpace: number, overridenStyle: any, defaultSCrollTop?: number, onScroll: (scrollTop: number) => void, chatsContainerRef: any, onCollapsibleBarStateChange: (dy: number, v: boolean, collapsibleScrollTop: number) => void, showTowerMoreMenu?: (towerId: string) => void }) => {
+const ChatsList = (props: { hasFocus: boolean, showRating: boolean, bottomSpace: number, overridenStyle: any, defaultSCrollTop?: number, onScroll: (scrollTop: number) => void, chatsContainerRef: any, onCollapsibleBarStateChange: (dy: number, v: boolean, collapsibleScrollTop: number) => void, showTowerMoreMenu?: (towerId: string) => void }) => {
     const lastScrollRef = useRef(props.defaultSCrollTop !== undefined ? props.defaultSCrollTop : 0)
     useLayoutEffect(() => {
         if (props.hasFocus && (props.defaultSCrollTop !== undefined)) {
@@ -20,6 +20,7 @@ const ChatsList = (props: { chats: Array<any>, hasFocus: boolean, showRating: bo
             }
         }
     }, [])
+    const chats = Object.values(useHookstate(api.memory.chats).get({noproxy: true}))
     return (
         <div
             ref={props.chatsContainerRef}
@@ -63,7 +64,7 @@ const ChatsList = (props: { chats: Array<any>, hasFocus: boolean, showRating: bo
                 }
                 <List style={{ width: 'calc(100% - 32px)', height: 'auto', paddingLeft: 16, paddingRight: 16, paddingTop: 0 }}>
                     {
-                        props.chats.map((chat: any) => (
+                        chats.map((chat: any) => (
                             <ListItemButton style={{padding: 0}}>
                                 <ChatItem chat={chat} key={`tower-card-${chat.id}`} style={{ marginTop: 8 }} onMoreClicked={() => {
                                     props.showTowerMoreMenu && props.showTowerMoreMenu(chat)

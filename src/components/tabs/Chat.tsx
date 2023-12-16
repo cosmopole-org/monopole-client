@@ -34,7 +34,6 @@ const Chat = (props: { show: boolean, room: IRoom }) => {
         api.services.messenger.onMessageReceived('chat', (data: any) => {
             let { message } = data
             if (props.room.id === message.roomId) {
-                msgs.merge([data.message])
                 setTimeout(chatUtils.scrollToChatEnd)
             }
         })

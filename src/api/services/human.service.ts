@@ -71,6 +71,7 @@ class HumanService {
                     if (body.session?.token) {
                         this.updateToken(body.session.token)
                         let { towers, rooms, human } = body
+                        towers.forEach((t: any) => { t.folderId = '-' });
                         this.storage.factories.tower?.createBatch(towers)
                         this.storage.factories.room?.createBatch(rooms)
                         this.storage.factories.human?.create(human)
@@ -96,6 +97,7 @@ class HumanService {
                 if (body.session?.token) {
                     this.updateToken(body.session.token)
                     let { tower, room, human } = body
+                    tower.folderId = '-';
                     this.storage.factories.tower?.create(tower)
                     this.storage.factories.room?.create(room)
                     this.storage.factories.human?.create(human)
@@ -127,7 +129,10 @@ class HumanService {
 
     async signIn(): Promise<any> {
         if (this._token) {
-            return this.network.request('human/signIn', { token: this._token })
+            return this.network.request('human/signIn', { token: this._token }).then((body: any) => {
+                api.services.messenger.lastMessages()
+                return body
+            })
         } else {
             return new Promise(resolve => {
                 resolve({ success: false, error: { message: 'token empty.' } })

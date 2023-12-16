@@ -208,7 +208,7 @@ const AudioMessage = (props: { otherDocIds: Array<string | undefined>, room: IRo
                         color: props.side === 'left' ? themeColor.get({ noproxy: true })['activeText'] : '#fff'
                     }}
                 >
-                    Keyhan
+                    {(props.message as any).author.firstName}
                 </Typography>
                 {
                     props.isQuote ?

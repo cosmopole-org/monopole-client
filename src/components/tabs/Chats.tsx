@@ -50,8 +50,7 @@ const Chats = (props: { isOnTop: boolean, show: boolean }) => {
         },
         184 + 28,
         true,
-        props.show,
-        chats
+        props.show
     )
     useEffect(() => {
         FriendsBarHandler.collapseCallback(savedSCrollTop > 16, 0)

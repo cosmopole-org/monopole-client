@@ -34,6 +34,7 @@ const Gallery = (props: { id: string, isOnTop: boolean, room: IRoom, docId: stri
                 props.otherDocIds.forEach(docId => {
                     let imageEl = document.createElement('img');
                     imageEl.setAttribute('id', `gallery-item-'${docId}`);
+                    imageEl.style.display = 'none';
                     container.appendChild(imageEl);
                     api.services.file.listenToFileTransfer(`gallery-item-${docId}`, docId + '-preview', (body: { data: Blob, newChunk?: any, end?: boolean }) => {
                         imageEl.setAttribute('src', URL.createObjectURL(body.data))
@@ -43,6 +44,7 @@ const Gallery = (props: { id: string, isOnTop: boolean, room: IRoom, docId: stri
             } else {
                 let imageEl = document.createElement('img');
                 imageEl.setAttribute('id', `gallery-item-'${props.docId}`);
+                imageEl.style.display = 'none';
                 container.appendChild(imageEl);
                 api.services.file.listenToFileTransfer(`gallery-item-${props.docId}`, props.docId + '-preview', (body: { data: Blob, newChunk?: any, end?: boolean }) => {
                     imageEl.setAttribute('src', URL.createObjectURL(body.data))
