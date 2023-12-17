@@ -14,6 +14,7 @@
     "@mui/lab": "^5.0.0-alpha.151",
     "@mui/material": "^5.14.15",
     "@mui/x-data-grid": "^6.18.5",
+    "@privacyresearch/libsignal-protocol-typescript": "^0.0.16",
     "@types/jest": "^27.5.2",
     "@types/node": "^16.18.59",
     "@types/react": "^18.2.33",
