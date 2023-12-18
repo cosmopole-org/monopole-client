@@ -87,10 +87,16 @@ class MessengerService {
         this.network.addUpdateListener('message/onUpdate', (data: any) => {
             let { message } = data
             if ((message.type === MessageTypes.TEXT) && message.data.distributionMessage) {
-                (window as any).decrypt(message.roomId, message.authorId, message.data.text, message.data.distributionMessage, (decrypted: string) => {
-                    message.data.text = decrypted
-                    callback(data)
-                })
+                (window as any).decrypt(
+                    message.roomId,
+                    message.authorId,
+                    encodingUtils.b64.base64ToBytes(message.data.text),
+                    encodingUtils.b64.base64ToBytes(message.data.distributionMessage),
+                    (decrypted: string) => {
+                        message.data.text = decrypted
+                        callback(data)
+                    }
+                )
             } else {
                 callback(data)
             }
@@ -112,7 +118,7 @@ class MessengerService {
                             towerId: data.towerId, roomId: data.roomId,
                             message: {
                                 type: data.message.type,
-                                data: { text: encodingUtils.b64.bytesToBase64(encrypted), distributionMessage: dm }
+                                data: { text: encodingUtils.b64.bytesToBase64(encrypted), distributionMessage: encodingUtils.b64.bytesToBase64(dm) }
                             }
                         }))
                     })
