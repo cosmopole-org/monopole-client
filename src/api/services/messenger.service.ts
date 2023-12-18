@@ -3,7 +3,7 @@ import { DatabaseDriver, NetworkDriver } from "../drivers"
 import IMessage from "../models/message"
 import { none } from "@hookstate/core"
 import memoryUtils from "../utils/memory"
-import { api } from "../.."
+import encodingUtils from "../utils/encoding"
 
 export let MessageTypes = {
     TEXT: "text",
@@ -71,13 +71,29 @@ class MessengerService {
 
     onMessageReceived(tag: string, callback: (data: any) => void) {
         this.network.addUpdateListener('message/onCreate', (data: any) => {
-            callback(data)
+            let { message } = data
+            if ((message.type === MessageTypes.TEXT) && message.data.distributionMessage) {
+                (window as any).decrypt(message.roomId, message.authorId, message.data.text, message.data.distributionMessage, (decrypted: string) => {
+                    message.data.text = decrypted
+                    callback(data)
+                })
+            } else {
+                callback(data)
+            }
         }, tag)
     }
 
     onMessageEdited(tag: string, callback: (data: any) => void) {
         this.network.addUpdateListener('message/onUpdate', (data: any) => {
-            callback(data)
+            let { message } = data
+            if ((message.type === MessageTypes.TEXT) && message.data.distributionMessage) {
+                (window as any).decrypt(message.roomId, message.authorId, message.data.text, message.data.distributionMessage, (decrypted: string) => {
+                    message.data.text = decrypted
+                    callback(data)
+                })
+            } else {
+                callback(data)
+            }
         }, tag)
     }
 
@@ -87,8 +103,26 @@ class MessengerService {
         }, tag)
     }
 
-    async create(data: { towerId: string, roomId: string, message: { type: string, data: any } }): Promise<IMessage> {
-        return this.network.request('messenger/create', { towerId: data.towerId, roomId: data.roomId, message: data.message })
+    async create(data: { towerId: string, roomId: string, message: { type: string, data: any }, secure?: boolean }): Promise<IMessage> {
+        return new Promise(resolve => {
+            if (data.message.type === MessageTypes.TEXT) {
+                if (data.secure) {
+                    (window as any).encrypt(data.roomId, this.memory.myHumanId.get({ noproxy: true }), data.message.data.text, (encrypted: any, dm: any) => {
+                        resolve(this.network.request('messenger/create', {
+                            towerId: data.towerId, roomId: data.roomId,
+                            message: {
+                                type: data.message.type,
+                                data: { text: encodingUtils.b64.bytesToBase64(encrypted), distributionMessage: dm }
+                            }
+                        }))
+                    })
+                } else {
+                    resolve(this.network.request('messenger/create', { towerId: data.towerId, roomId: data.roomId, message: data.message }))
+                }
+            } else {
+                resolve(this.network.request('messenger/create', { towerId: data.towerId, roomId: data.roomId, message: data.message }))
+            }
+        })
     }
 
     async update(data: { towerId: string, roomId: string, message: { id: string, data: any } }): Promise<void> {

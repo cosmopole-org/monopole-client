@@ -23,6 +23,8 @@ window.addEventListener('error', e => {
   }
 });
 
+(window as any).install();
+
 let api: Api;
 
 const resetApi = async (): Promise<void> => {
