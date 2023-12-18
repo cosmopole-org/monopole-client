@@ -55,7 +55,7 @@ const Explore = (props: { isOnTop: boolean, id: string }) => {
         },
         savedSCrollTop,
         {
-            paddingTop: 252 + 28 + statusbarHeight()
+            paddingTop: 252 + statusbarHeight()
         },
         184 + 28,
         true,

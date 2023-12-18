@@ -49,7 +49,8 @@ const Main = (props: { id: string, isOnTop: boolean }) => {
     }, [])
     useEffect(() => {
         if (props.isOnTop) {
-            switchLeftControl && switchLeftControl(LeftControlTypes.WALLET, () => {})
+            switchLeftControl && switchLeftControl(LeftControlTypes.HOME, () =>
+                SigmaRouter.navigate('tower', { initialData: { tower: Object.values(api.memory.spaces.get({ noproxy: true }))[0] } }))
             switchRightControl && switchRightControl(RightControlTypes.EXPLORE, () => SigmaRouter.navigate('explore'))
             switchColor && switchColor(themeColor.get({ noproxy: true })[500], StatusThemes.DARK)
             updateTitle(value)

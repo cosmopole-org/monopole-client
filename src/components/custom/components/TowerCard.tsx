@@ -41,10 +41,10 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
                     minWidth: 88,
                     position: 'absolute',
                     left: 40,
-                    top: 14,
+                    top: 22,
                     paddingTop: 0,
                     paddingBottom: 14,
-                    paddingLeft: 24,
+                    paddingLeft: 28,
                     paddingRight: 12,
                 }}>
                     {props.tower.title}
@@ -91,10 +91,6 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
                         </div>
                     </div>
                 </div>
-                <Rating style={{
-                    position: 'absolute', left: 44, top: 40, transform: 'scale(0.65, 0.65)',
-                    textAlign: 'center', borderRadius: 16
-                }} value={3} readOnly />
                 <IconButton style={{
                     position: 'absolute', right: 16, top: 16
                 }} onClick={() => {

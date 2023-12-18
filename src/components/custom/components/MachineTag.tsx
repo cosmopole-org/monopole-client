@@ -6,7 +6,7 @@ import SigmaAvatar from "../elements/SigmaAvatar"
 
 const MachineTag = (props: { machine: IMachine }) => {
     return (
-        <div style={{ position: 'relative', width: 112 + 8, height: 184, minWidth: 112 + 8, marginLeft: 8 }}>
+        <div style={{ position: 'relative', width: 112 + 8, height: 160, minWidth: 112 + 8, marginLeft: 8 }}>
             <Card elevation={0} style={{
                 marginLeft: 8, marginTop: 28, width: '100%', height: 'calc(100% - 28px)',
                 minWidth: '100%', backgroundColor: themeColor.get({noproxy: true})[100], borderRadius: 24
@@ -14,8 +14,7 @@ const MachineTag = (props: { machine: IMachine }) => {
                 <Typography variant={'body2'} style={{ marginTop: 56, width: 112 + 8, textAlign: 'center' }}>
                     {props.machine.name}
                 </Typography>
-                <Rating style={{ width: 112, textAlign: 'center', transform: 'scale(0.85, 0.85)' }} value={3} readOnly />
-                <Box style={{ width: '100%', textAlign: 'center' }}>
+                <Box style={{ width: '100%', textAlign: 'center', marginTop: 8 }}>
                     <Button style={{ borderRadius: 24, width: 'calc(100% - 16px)' }} variant="contained"
                         onClick={() => {
                             SigmaRouter.navigate('profile', { initialData: { machine: props.machine } })
