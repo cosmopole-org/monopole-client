@@ -28,10 +28,12 @@ const ChatFooter = (props: { style?: any, messages: Array<IMessage>, onVoiceReco
         <Paper style={props.style}>
             {
                 showVoiceRecorder ? (
-                    <VoiceRecorder onVoiceRecorded={(blob: any) => {
-                        setShowVoiceRecorder(false)
-                        props.onVoiceRecorded(blob)
-                    }} />
+                    <VoiceRecorder
+                        onCancel={() => setShowVoiceRecorder(false)}
+                        onVoiceRecorded={(blob: any) => {
+                            setShowVoiceRecorder(false)
+                            props.onVoiceRecorded(blob)
+                        }} />
                 ) : null
             }
             <div style={{ width: '100%', height: 'auto', display: 'flex' }}>
@@ -55,7 +57,7 @@ const ChatFooter = (props: { style?: any, messages: Array<IMessage>, onVoiceReco
                         }
                         setValue(e.target.value)
                     }} />
-                <IconButton onClick={() => setShowVoiceRecorder(!showVoiceRecorder)}><Mic /></IconButton>
+                <IconButton onClick={() => setShowVoiceRecorder(true)}><Mic /></IconButton>
                 <IconButton onClick={() => props.onWidgetsClicked()}><Description /></IconButton>
                 <IconButton disabled={(value.length === 0) || (value === props.pointedMessage?.data?.text)} style={{ marginRight: 8 }}
                     onClick={() => {

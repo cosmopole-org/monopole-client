@@ -3,7 +3,7 @@ import './index.css';
 import { LeftControlTypes, RightControlTypes, StatusThemes, switchColor, switchLeftControl, switchRightControl, switchTitle } from '../../sections/StatusBar';
 import { Drawer, Paper, Typography } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
-import { SigmaRouter, themeColor } from '../../../App';
+import { SigmaRouter, themeColor, themeColorName } from '../../../App';
 import SliderPage from '../../layouts/SliderPage';
 import { Message, People } from '@mui/icons-material';
 import RoomControl from '../../custom/components/RoomControl';
@@ -80,7 +80,13 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
     <SliderPage id={props.id}>
       <div style={{ width: '100%', height: '100%' }} ref={containerRef}>
         <div key={'room-background'} style={{ background: `url(${RoomWallpaper})`, width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} ref={wallpaperContainerRef} />
-        <div key={'room-background-overlay'} style={{ opacity: 0.65, backgroundColor: themeColor.get({ noproxy: true })[200], width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} />
+        <div key={'room-background-overlay'} style={{
+          opacity: themeColorName.get({ noproxy: true }) === 'night' ? 0.85 : 0.65,
+          backgroundColor: themeColorName.get({ noproxy: true }) === 'night' ?
+            themeColor.get({ noproxy: true })[500] :
+            themeColor.get({ noproxy: true })[200],
+          width: '100%', height: '100%', position: 'absolute', left: 0, top: 0
+        }} />
         <Desk show={true} room={props.room} />
         <Paper style={{
           borderRadius: '24px 24px 0px 0px', width: '100%', height: 48, backgroundColor: themeColor.get({ noproxy: true })[50],

@@ -1,5 +1,5 @@
 import { styled } from "@mui/material/styles";
-import { themeColor } from "../../../App"
+import { themeColor, themeColorName } from "../../../App"
 import { Box, Paper, Typography } from "@mui/material";
 import { useRef } from "react";
 import Chat from "../../tabs/Chat";
@@ -43,7 +43,13 @@ export default (props: { room: IRoom }) => {
                         activeTab.get({ noproxy: true }) !== 'files' ?
                             [
                                 <div key={'room-background'} style={{ borderRadius: '24px 24px 0px 0px', background: `url(${RoomWallpaper})`, width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} ref={wallpaperContainerRef} />,
-                                <div key={'room-background-overlay'} style={{ borderRadius: '24px 24px 0px 0px', opacity: 0.65, backgroundColor: themeColor.get({ noproxy: true })[200], width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} />
+                                <div key={'room-background-overlay'} style={{
+                                    opacity: themeColorName.get({ noproxy: true }) === 'night' ? 0.85 : 0.65,
+                                    backgroundColor: themeColorName.get({ noproxy: true }) === 'night' ?
+                                        themeColor.get({ noproxy: true })[500] :
+                                        themeColor.get({ noproxy: true })[200],
+                                    width: '100%', height: '100%', position: 'absolute', left: 0, top: 0
+                                }} />
                             ] :
                             [
                                 <div key={'room-background-blank'} style={{ borderRadius: '24px 24px 0px 0px', backgroundColor: themeColor.get({ noproxy: true })[100], width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} />
