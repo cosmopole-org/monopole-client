@@ -110,7 +110,7 @@ const StatusBar = () => {
                         ) : null
                 }
                 {
-                    SigmaRouter.topPath() === 'auth' ?
+                    SigmaRouter.topPath() === 'auth' || SigmaRouter.topPath() === 'audioPlayer' ?
                         null :
                         (
                             <IconButton size="small" style={{ width: 32, height: 32, borderRadius: '50%', position: 'absolute', top: 4, right: 8 }}

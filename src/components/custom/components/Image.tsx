@@ -11,6 +11,7 @@ const Image = (props: { downloadType?: string, tag: string, docId: string, isPre
     useEffect(() => {
         if (props.local) {
             if (imageRef.current) {
+                setError(false)
                 if (props.local.type.split('/')[0] === 'video') {
                     (imageRef.current as HTMLVideoElement).src = URL.createObjectURL(props.local)
                 } else {
@@ -24,6 +25,7 @@ const Image = (props: { downloadType?: string, tag: string, docId: string, isPre
                     if (imageRef.current) {
                         (imageRef.current as HTMLImageElement).src = url.current
                     }
+                    setError(false)
                 }
             })
             if (props.isPreview) {
@@ -45,6 +47,7 @@ const Image = (props: { downloadType?: string, tag: string, docId: string, isPre
                             (imageRef.current as HTMLImageElement).src = url.current
                         }
                         setShowLoading(false)
+                        setError(false)
                     }
                 })
             }

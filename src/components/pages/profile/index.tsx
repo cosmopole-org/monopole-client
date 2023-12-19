@@ -14,10 +14,12 @@ import { openMachineSheet } from "../../custom/components/GlobalAppletSheet"
 const Profile = (props: { id: string, isOnTop: boolean, human?: IHuman, machine?: IMachine }) => {
     const containerRef = useRef(null)
     useEffect(() => {
-        switchTitle && switchTitle(props.human ? 'Human Profile' : props.machine ? 'Machine Profile' : '')
-        switchLeftControl && switchLeftControl(LeftControlTypes.BACK, () => SigmaRouter.back())
-        switchRightControl && switchRightControl(RightControlTypes.NONE)
-    }, [])
+        if (props.isOnTop) {
+            switchTitle && switchTitle(props.human ? 'Human Profile' : props.machine ? 'Machine Profile' : '')
+            switchLeftControl && switchLeftControl(LeftControlTypes.BACK, () => SigmaRouter.back())
+            switchRightControl && switchRightControl(RightControlTypes.NONE)
+        }
+    }, [props.isOnTop])
     let title = props.human ?
         (props.human.firstName + (props.human.lastName ? ` ${props.human.lastName}` : '')) :
         props.machine ?

@@ -56,7 +56,7 @@ const Files = (props: { show: boolean, room: IRoom }) => {
                 style={{ width: '100%', height: '100%', paddingTop: 64, position: 'relative', overflowY: 'auto', display: 'flex', flexWrap: 'wrap', alignContent: 'flex-start' }}
             >
                 {
-                    folderData?.subFolders?.map((subFolder: IFolder) => (
+                    folderData?.subFolders?.reverse().map((subFolder: IFolder) => (
                         <FolderCard
                             onMoreClicked={() => setPointedFolder(subFolder as any)}
                             onnSelect={() => { pathStack.merge([{ title: subFolder.title, folderId: subFolder.id }]); setFolderId(subFolder.id) }}
@@ -65,7 +65,7 @@ const Files = (props: { show: boolean, room: IRoom }) => {
                     ))
                 }
                 {
-                    folderData?.subDocs?.map((subDoc: any) => (
+                    folderData?.subDocs?.reverse().map((subDoc: any) => (
                         <FileCard
                             onSelect={() => {
                                 if (subDoc.type === 'audio') {
