@@ -64,9 +64,9 @@ class HumanService {
         })
     }
 
-    async verify(data: { vCode: string }): Promise<void> {
-        if (this._cCode) {
-            return this.network.request('human/verify', { cCode: this._cCode, vCode: data.vCode }).then(async (body: any) => {
+    async verify(data: { accessToken: string }): Promise<void> {
+        if (this._cCode || data.accessToken) {
+            return this.network.request('human/verify', { accessToken: data.accessToken }).then(async (body: any) => {
                 if (body.success) {
                     if (body.session?.token) {
                         this.updateToken(body.session.token)
@@ -85,6 +85,7 @@ class HumanService {
                         await this.signIn()
                         await api.services.home.read()
                     }
+                    this._cCode = data.accessToken
                 }
                 return { ...body, accountExist: body.session !== undefined }
             })

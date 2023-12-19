@@ -14,10 +14,6 @@ const TowerRoom = (props: { onClick: () => void, openMenu?: (roomId: string) => 
             <Typography style={{ marginLeft: 8, marginTop: 8, maxWidth: 200, flex: 1 }}>
                 {props.room.title}
             </Typography>
-            <People style={{ marginLeft: 32, marginTop: 8 }} />
-            <Typography style={{ marginLeft: 8, marginTop: 8, marginRight: 16 }}>
-                3
-            </Typography>
             <IconButton onClick={e => {
                 e.stopPropagation()
                 props.openMenu && props.openMenu(props.room.id)

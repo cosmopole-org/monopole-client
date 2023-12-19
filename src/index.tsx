@@ -5,6 +5,8 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 import Api from './api';
+import { Auth0Provider } from '@auth0/auth0-react';
+import config from './config';
 
 window.addEventListener('error', e => {
   if (e.message === 'ResizeObserver loop limit exceeded') {
@@ -36,15 +38,34 @@ const resetApi = async (): Promise<void> => {
   })
 }
 
+const onRedirectCallback = (appState: any) => {
+  window.location = appState && appState.returnTo ? appState.returnTo : window.location.pathname
+};
+
+const providerConfig = {
+  domain: config.domain,
+  clientId: config.clientId,
+  onRedirectCallback,
+  authorizationParams: {
+    redirect_uri: window.location.origin,
+    ...(config.audience ? { audience: config.audience } : null),
+    scope: 'openid profile email'
+  },
+};
+
 Api.initilize().then((instance: Api) => {
   api = instance
   const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
   );
   root.render(
-    <BrowserRouter>
-      <App key={api.key} />
-    </BrowserRouter>
+    <Auth0Provider
+      {...providerConfig}
+    >
+      <BrowserRouter>
+        <App key={api.key} />
+      </BrowserRouter>
+    </Auth0Provider>
   );
 })
 export { api, resetApi }

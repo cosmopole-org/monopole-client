@@ -6,9 +6,11 @@ import SigmaSwitch from "../custom/elements/SigmaSwitch"
 import { api } from "../.."
 import { SigmaRouter, fixedNightColor, reconstructMaterialPalette, themeColor, themeColorName } from "../../App"
 import SigmaAvatar from "../custom/elements/SigmaAvatar"
+import { useAuth0 } from "@auth0/auth0-react"
 
 const Settings = (props: { isOnTop: boolean, show: boolean }) => {
     const containerRef = useRef(null)
+    const { logout } = useAuth0()
     const handleChange = (event: SelectChangeEvent) => {
         let colorFamily = {}
         if (event.target.value === 'night') {
@@ -105,6 +107,7 @@ const Settings = (props: { isOnTop: boolean, show: boolean }) => {
                 onClick={() => {
                     if (window.confirm('do you want to sign out ?')) {
                         api.services.human.signOut()
+                        logout()
                     }
                 }}
             >

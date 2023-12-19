@@ -78,7 +78,7 @@ const TowersList = (props: { towers: Array<any>, hasFocus: boolean, showRating: 
                     backgroundColor: themeColor.get({ noproxy: true })['plain']
                 }}
             >
-                <Paper style={{
+                <Paper elevation={0} style={{
                     width: '100%', height: 'auto', borderRadius: '24px 24px 0px 0px',
                     backgroundColor: themeColor.get({ noproxy: true })[50],
                 }}>

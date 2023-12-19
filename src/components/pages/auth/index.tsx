@@ -6,10 +6,11 @@ import { LeftControlTypes, RightControlTypes, StatusThemes, switchColor, switchL
 import { Button, Card, CircularProgress, InputBase } from '@mui/material';
 import { SigmaRouter, themeColor } from '../../../App';
 import { api } from '../../..';
+import { useAuth0 } from '@auth0/auth0-react';
 
 const Auth = (props: { id: string, isOnTop: boolean }) => {
     const [pending, setPending] = useState(false)
-    const [level, setLevel] = useState(0)
+    const [level, setLevel] = useState(2)
     const phoneRef = useRef('')
     const vCodeRef = useRef('')
     const firstNameRef = useRef('')
@@ -35,6 +36,7 @@ const Auth = (props: { id: string, isOnTop: boolean }) => {
                     transform: 'translate(-50%, -50%)', transition: 'translate .25s, top .25s'
                 }}>
                     <Card elevation={0} style={{
+                        display: 'none',
                         backgroundColor: themeColor.get({noproxy: true})[100], width: '90%', maxWidth: 400, height: 100, borderRadius: 24, padding: 16
                     }}>
                         <div style={{ width: '100%', height: 48, display: 'flex' }}>
@@ -73,6 +75,7 @@ const Auth = (props: { id: string, isOnTop: boolean }) => {
                         </Button>
                     </Card>
                     <Card elevation={0} style={{
+                        display: 'none',
                         backgroundColor: themeColor.get({noproxy: true})[100], width: '90%', maxWidth: 400, height: 100, borderRadius: 24, padding: 16, marginTop: 16
                     }}>
                         <InputBase disabled={level !== 1 || pending} placeholder={'Verification Code'} style={{
@@ -85,7 +88,7 @@ const Auth = (props: { id: string, isOnTop: boolean }) => {
                                 if (vCode.length > 0) {
                                     setPending(true)
                                     switchTitle && switchTitle('Completing Profile')
-                                    api.services.human.verify({ vCode }).then((res: any) => {
+                                    api.services.human.verify({ accessToken: '' }).then((res: any) => {
                                         if (res.accountExist) {
                                             switchTitle && switchTitle('Welcome to Sigma !')
                                             setLevel(3)
