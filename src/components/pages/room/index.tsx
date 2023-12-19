@@ -20,6 +20,7 @@ import MetaNonTouch, { metaNonTouchOpen } from './metaNonTouch';
 import MetaTouch from './metaTouch';
 import { useHookstate } from '@hookstate/core';
 import { api } from '../../..';
+import RoomWallpaper from '../../../resources/images/room.jpg';
 
 const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
   const containerRef: any = useRef(null)
@@ -78,7 +79,7 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
   return (
     <SliderPage id={props.id}>
       <div style={{ width: '100%', height: '100%' }} ref={containerRef}>
-        <div key={'room-background'} style={{ background: 'url(https://i.pinimg.com/564x/2a/cd/6e/2acd6e46cc2bdc218a9104a69c36868e.jpg)', width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} ref={wallpaperContainerRef} />
+        <div key={'room-background'} style={{ background: `url(${RoomWallpaper})`, width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} ref={wallpaperContainerRef} />
         <div key={'room-background-overlay'} style={{ opacity: 0.65, backgroundColor: themeColor.get({ noproxy: true })[200], width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} />
         <Desk show={true} room={props.room} />
         <Paper style={{

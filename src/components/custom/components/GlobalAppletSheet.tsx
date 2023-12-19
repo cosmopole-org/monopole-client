@@ -3,21 +3,20 @@ import { Card, SwipeableDrawer } from '@mui/material';
 import AppletHost from './AppletHost';
 import { themeColor } from '../../../App';
 import { api } from '../../..';
-import IRoom from '../../../api/models/room';
 
-let openAppletSheet = (room: IRoom, workerId: string) => { }
+let openMachineSheet = (machineId: string) => { }
 
-const AppletSheet = () => {
+const GlobalAppletSheet = () => {
     const [code, setCode] = React.useState(undefined)
     const [shown, setShown] = React.useState(false)
-    openAppletSheet = (room: IRoom, workerId: string) => {
-        api.services.worker.onMachinePacketDeliver('get/applet', (data: any) => {
-            if (data.workerId === workerId) {
+    openMachineSheet = (machineId: string) => {
+        api.services.worker.onMachinePacketDeliver('get/globalApplet', (data: any) => {
+            if (data.machineId === machineId) {
                 setCode(data.code)
             }
         })
         setShown(true)
-        api.services.worker.use({ towerId: room.towerId, roomId: room.id, workerId, packet: { tag: 'get/applet', colors: themeColor.get({ noproxy: true }) } })
+        api.services.worker.use({ machineId, packet: { tag: 'get/globalApplet', colors: themeColor.get({ noproxy: true }) } })
     }
     React.useEffect(() => {
         if (!shown) setCode(undefined)
@@ -38,7 +37,7 @@ const AppletSheet = () => {
                 <Card style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', width: 100, height: 6, borderRadius: 3, background: themeColor.get({ noproxy: true })[100], top: 12 }} />
                 <div style={{ width: '100%', height: 32 }} />
                 <AppletHost.Host
-                    appletKey='appletsheet'
+                    appletKey='global_appletsheet'
                     entry={code ? 'Test' : 'Dummy'}
                     code={code ? code : 'class Dummy { constructor() {} onMount() {} render() { return "" } }'}
                     index={1}
@@ -48,4 +47,4 @@ const AppletSheet = () => {
     );
 }
 
-export { AppletSheet, openAppletSheet }
+export { GlobalAppletSheet, openMachineSheet }

@@ -35,6 +35,7 @@ import { EffectCreative } from 'swiper/modules';
 import ManageHomeFolders from './components/forms/manageHomeFolders';
 import Explore from './components/pages/explore';
 import ChatPage from './components/pages/chat';
+import { GlobalAppletSheet } from './components/custom/components/GlobalAppletSheet';
 
 const useForceUpdate = () => {
     const [value, setValue] = useState(0); // integer state
@@ -361,6 +362,7 @@ function App() {
 
                     </div>
                 </div>
+                <GlobalAppletSheet />
             </div>
         </ThemeProvider>
     );

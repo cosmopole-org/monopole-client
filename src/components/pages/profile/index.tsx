@@ -9,6 +9,7 @@ import { ArrowForward, LocationCity, Message, SmartToy } from "@mui/icons-materi
 import SigmaAvatar from "../../custom/elements/SigmaAvatar"
 import ITower from "../../../api/models/tower"
 import { api } from "../../.."
+import { openMachineSheet } from "../../custom/components/GlobalAppletSheet"
 
 const Profile = (props: { id: string, isOnTop: boolean, human?: IHuman, machine?: IMachine }) => {
     const containerRef = useRef(null)
@@ -51,7 +52,9 @@ const Profile = (props: { id: string, isOnTop: boolean, human?: IHuman, machine?
                                 marginLeft: 16, width: 'calc(100% - 64px)', position: 'relative', marginTop: 16, paddingTop: 8, paddingBottom: 8
                             }}
                             onClick={() => {
-                                //openAppletSheet()
+                                if (props.machine) {
+                                    openMachineSheet(props.machine.id)
+                                }
                             }}
                         >
                             <IconButton>

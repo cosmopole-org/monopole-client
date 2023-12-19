@@ -8,6 +8,7 @@ import IRoom from "../../../api/models/room";
 import { SigmaTab, SigmaTabs } from "../../custom/elements/SigmaTabs";
 import { Description, Message } from "@mui/icons-material";
 import { hookstate, useHookstate } from "@hookstate/core";
+import RoomWallpaper from '../../../resources/images/room.jpg';
 
 export const metaActiveTab = hookstate('chat')
 
@@ -41,7 +42,7 @@ export default (props: { room: IRoom }) => {
                     {
                         activeTab.get({ noproxy: true }) !== 'files' ?
                             [
-                                <div key={'room-background'} style={{ borderRadius: '24px 24px 0px 0px', background: 'url(https://i.pinimg.com/564x/2a/cd/6e/2acd6e46cc2bdc218a9104a69c36868e.jpg)', width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} ref={wallpaperContainerRef} />,
+                                <div key={'room-background'} style={{ borderRadius: '24px 24px 0px 0px', background: `url(${RoomWallpaper})`, width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} ref={wallpaperContainerRef} />,
                                 <div key={'room-background-overlay'} style={{ borderRadius: '24px 24px 0px 0px', opacity: 0.65, backgroundColor: themeColor.get({ noproxy: true })[200], width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} />
                             ] :
                             [

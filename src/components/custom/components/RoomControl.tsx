@@ -21,10 +21,6 @@ const RoomControl = (props: { toggleEditMode: (v: boolean) => void, openToolbox:
                 <SigmaMenuItem onClick={() => { props.onClose(); props.openToolbox(); }} icon={Add} caption='Add new machine' />
                 <SigmaMenuItem onClick={() => { props.onClose(); props.toggleEditMode(!desktopEditMode.get({ noproxy: true })); }} icon={Edit} caption={desktopEditMode.get({ noproxy: true }) ? 'Stop edit Mode' : 'Start edit mode'} />
                 <Divider />
-                <SigmaMenuItem onClick={() => { props.onClose(); }} icon={KeyboardCommandKey} caption='Start the timer' />
-                <SigmaMenuItem onClick={() => { props.onClose(); }} icon={KeyboardCommandKey} caption='Create new whiteboard' />
-                <SigmaMenuItem onClick={() => { props.onClose(); }} icon={KeyboardCommandKey} caption='Start a call' />
-                <SigmaMenuItem onClick={() => { props.onClose(); }} icon={KeyboardCommandKey} caption='Upload new file' />
             </SwipeableDrawer>
         </React.Fragment >
     );

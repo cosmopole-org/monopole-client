@@ -60,8 +60,8 @@ class WorkerService {
         return this.network.request('worker/read', { towerId: data.towerId, roomId: data.roomId })
     }
 
-    async use(data: { towerId: string, roomId: string, workerId: string, packet: any }) {
-        return this.network.request('worker/use', { towerId: data.towerId, roomId: data.roomId, workerId: data.workerId, packet: data.packet })
+    async use(data: { towerId?: string, roomId?: string, workerId?: string, machineId?: string, packet: any }) {
+        return this.network.request('worker/use', { towerId: data.towerId, roomId: data.roomId, workerId: data.workerId, machineId: data.machineId, packet: data.packet })
     }    
 
     async deliver(data: { towerId: string, roomId: string, workerId: string, packet: any, humanId: string }) {
