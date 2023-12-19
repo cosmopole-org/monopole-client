@@ -7,6 +7,7 @@ const Image = (props: { downloadType?: string, tag: string, docId: string, isPre
     const imageRef = useRef(null)
     const url = useRef('')
     const [showLoading, setShowLoading] = useState(false)
+    const [error, setError] = useState(false)
     useEffect(() => {
         if (props.local) {
             if (imageRef.current) {
@@ -54,10 +55,14 @@ const Image = (props: { downloadType?: string, tag: string, docId: string, isPre
     }
     else if (props.local && props.local.type.split('/')[0] === 'video') {
         return <video ref={imageRef} style={{ ...props.style, filter: props.local ? 'blur(10px)' : undefined }} />
-    } else {
+    } else if (!error) {
         return (
-            <img ref={imageRef} src={url.current} style={{ ...props.style, filter: props.local ? 'blur(10px)' : undefined }} />
+            <img onError={() => {
+                setError(true)
+            }} ref={imageRef} src={url.current} style={{ ...props.style, filter: props.local ? 'blur(10px)' : undefined }} alt="" />
         )
+    } else {
+        return null
     }
 }
 

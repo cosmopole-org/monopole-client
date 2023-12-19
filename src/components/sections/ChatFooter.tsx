@@ -1,4 +1,4 @@
-import { InsertEmoticon, Send, Widgets } from "@mui/icons-material";
+import { Description, InsertEmoticon, Mic, Send, Widgets } from "@mui/icons-material";
 import { IconButton, InputBase, Paper, TextField, selectClasses } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import IMessage from "../../api/models/message";
@@ -6,13 +6,15 @@ import { themeColor, themeColorName } from "../../App";
 import Picker from "@emoji-mart/react"
 import pickerData from "@emoji-mart/data"
 import { setChatKeyboardOpen } from "../pages/room/metaTouch";
+import VoiceRecorder from "../custom/components/VoiceRecorder";
 
-const ChatFooter = (props: { style?: any, messages: Array<IMessage>, onWidgetsClicked: () => void, onMessageSubmit: (text: string) => void, pointedMessage: any, action: any }) => {
+const ChatFooter = (props: { style?: any, messages: Array<IMessage>, onVoiceRecorded: (blob: any) => void, onWidgetsClicked: () => void, onMessageSubmit: (text: string) => void, pointedMessage: any, action: any }) => {
     const [value, setValue] = useState(props.pointedMessage?.type === 'text' ? props.pointedMessage.data.text : '')
     const inputbaseRef = useRef(null)
     const [showEmoji, setShowEmoji] = useState(false)
     const valueBackup = useRef(value)
-    const [selectionStart, setSelectionStart] = useState();
+    const [selectionStart, setSelectionStart] = useState()
+    const [showVoiceRecorder, setShowVoiceRecorder] = useState(false)
     const updateSelectionStart = (e: any) => setSelectionStart(e.target.selectionStart);
     useEffect(() => {
         if (props.pointedMessage) {
@@ -24,6 +26,14 @@ const ChatFooter = (props: { style?: any, messages: Array<IMessage>, onWidgetsCl
     useEffect(() => setChatKeyboardOpen(showEmoji), [showEmoji])
     return (
         <Paper style={props.style}>
+            {
+                showVoiceRecorder ? (
+                    <VoiceRecorder onVoiceRecorded={(blob: any) => {
+                        setShowVoiceRecorder(false)
+                        props.onVoiceRecorded(blob)
+                    }} />
+                ) : null
+            }
             <div style={{ width: '100%', height: 'auto', display: 'flex' }}>
                 <IconButton onClick={() => setShowEmoji(!showEmoji)}><InsertEmoticon /></IconButton>
                 <InputBase
@@ -45,7 +55,8 @@ const ChatFooter = (props: { style?: any, messages: Array<IMessage>, onWidgetsCl
                         }
                         setValue(e.target.value)
                     }} />
-                <IconButton onClick={() => props.onWidgetsClicked()}><Widgets /></IconButton>
+                <IconButton onClick={() => setShowVoiceRecorder(!showVoiceRecorder)}><Mic /></IconButton>
+                <IconButton onClick={() => props.onWidgetsClicked()}><Description /></IconButton>
                 <IconButton disabled={(value.length === 0) || (value === props.pointedMessage?.data?.text)} style={{ marginRight: 8 }}
                     onClick={() => {
                         let text = value

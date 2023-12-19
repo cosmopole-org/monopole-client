@@ -4,6 +4,7 @@ import useSetTrackProgress from './useSetTrackProgress'
 import { api } from '../../../..'
 import IRoom from '../../../../api/models/room'
 import { getProgress, registerAudioProgressListener, seekAudioTo, unregisterAudioProgressListener } from '../../../pages/audioPlayer';
+import { themeColor } from '../../../../App';
 
 const pointCoordinates = (props: {
     index: number, pointWidth: number, pointMargin: number, canvasHeight: number, amplitude: any,
@@ -60,7 +61,9 @@ const paintCanvas = (props: {
 }
 
 const Waveform = (props: { docId: string, tag: string, room: IRoom, isPreview: boolean, style?: any }) => {
-    const [waveformData, setWaveformData] = useState([])
+    const [waveformData, setWaveformData] = useState([
+        3, 9, 5, 5, 1, 5, 7, -1, 5, 1, 3, 3, -1, 3, 3, 7, 1, 7, 3, 3, 3, -1, 3, 7, 3, 5, 5, 3, 5, 3, 3, 1, 3, 5, 5, 1, 1, 3, 3, 9, 5, 3, 7, 3, 1, 5, 7, 1, 3, 7, 5, 3, 3, 5, 7, -1, 1, 13, 3, 5, 3, 1, 5, 1, 3, 9, 7, 3, 5, 1, 3, 5, 1, 1, 3, 5, 3, 3, 5, 3, 3, 3, 3, 1, 3, 5, 3, 3, 5, 5, 7, 1, 1, 5, 1, 1, 3, 3, 3, 3
+    ])
     const [doc, setDoc]: [any, any] = useState(undefined)
     const [trackProgress, setTrackProgress] = useState(getProgress(props.docId) ? getProgress(props.docId) : 0)
     useEffect(() => {
@@ -155,16 +158,27 @@ const Waveform = (props: { docId: string, tag: string, room: IRoom, isPreview: b
 
     return (
         <div style={{ padding: 16 }}>
-            <canvas
-                style={{ ...props.style, height: canvasHeight, display: 'block' }}
-                ref={canvasRef}
-                height={canvasHeight}
-                width={waveformWidth}
-                onBlur={setDefaultX}
-                onMouseOut={setDefaultX}
-                onMouseMove={handleMouseMove}
-                onClick={seekTrack}
-            />
+            {
+                waveformData.length > 0 ? (
+                    <canvas
+                        style={{ ...props.style, height: canvasHeight, display: 'block' }}
+                        ref={canvasRef}
+                        height={canvasHeight}
+                        width={waveformWidth}
+                        onBlur={setDefaultX}
+                        onMouseOut={setDefaultX}
+                        onMouseMove={handleMouseMove}
+                        onClick={seekTrack}
+                    />
+                ) : (
+                    <div
+                        style={{
+                            width: 120, height: 0, position: 'absolute', left: 60, top: 40,
+                            borderStyle: 'dashed', borderColor: themeColor.get({ noproxy: true })[100], borderWidth: 2
+                        }}
+                    />
+                )
+            }
         </div>
     )
 }

@@ -119,43 +119,44 @@ const Chat = (props: { show: boolean, room: IRoom }) => {
             (document.getElementById('emojiPickerStyle') as HTMLStyleElement)?.sheet?.deleteRule(0)
         }
     }, [])
+    const uploadBlob = (file: any) => {
+        const key = Math.random().toString().substring(2)
+        let mimeType = file.type.split('/')
+        let fileType = mimeType[0]
+        let messageType = fileType === 'image' ? 'photo' : fileType
+        let draft = middleUtils.dummy.createDummyMessage(props.room.id, messageType, { docId: key }, { local: file, tag: key })
+        msgs.merge([draft])
+        setTimeout(chatUtils.scrollToChatEnd)
+        uploads[key] = {
+            fn: (data: { doc: any, towerId: string, roomId: string }) => {
+                api.services.messenger.create({
+                    towerId: data.towerId,
+                    roomId: data.roomId,
+                    message: { type: data.doc.type === 'image' ? 'photo' : data.doc.type, data: { docId: data.doc.id } }
+                }).then((body: any) => {
+                    let { message } = body
+                    draft.id = message.id
+                    draft.time = message.time
+                    draft.data.docId = data.doc.id
+                    draft.isDummy = false
+                    msgs.set([...msgs.get({ noproxy: true })])
+                })
+            },
+            roomId: props.room.id
+        }
+        api.services.file.upload({ towerId: props.room.towerId, roomId: props.room.id, file, folderId: props.room.id, tag: key }).then((doc: any) => {
+            notifyNewFileUploaded(doc)
+            let itemUpload = uploads[key]
+            if (itemUpload && (itemUpload.roomId === props.room.id)) {
+                itemUpload.fn({ doc, roomId: props.room.id, towerId: props.room.towerId })
+            }
+        })
+    }
     return (
         <div
             style={{ width: '100%', height: 'calc(100% - 32px - 16px)', position: 'absolute', left: props.show ? 0 : '-100%', paddingTop: 32 + 16 }}
         >
-            <Uploader folderId={props.room.id} inputFile={inputFile} room={props.room} onSelect={(file: any) => {
-                const key = Math.random().toString().substring(2)
-                let mimeType = file.type.split('/')
-                let fileType = mimeType[0]
-                let messageType = fileType === 'image' ? 'photo' : fileType
-                let draft = middleUtils.dummy.createDummyMessage(props.room.id, messageType, { docId: key }, { local: file, tag: key })
-                msgs.merge([draft])
-                setTimeout(chatUtils.scrollToChatEnd)
-                uploads[key] = {
-                    fn: (data: { doc: any, towerId: string, roomId: string }) => {
-                        api.services.messenger.create({
-                            towerId: data.towerId,
-                            roomId: data.roomId,
-                            message: { type: data.doc.type === 'image' ? 'photo' : data.doc.type, data: { docId: data.doc.id } }
-                        }).then((body: any) => {
-                            let { message } = body
-                            draft.id = message.id
-                            draft.time = message.time
-                            draft.data.docId = data.doc.id
-                            draft.isDummy = false
-                            msgs.set([...msgs.get({ noproxy: true })])
-                        })
-                    },
-                    roomId: props.room.id
-                }
-                api.services.file.upload({ towerId: props.room.towerId, roomId: props.room.id, file, folderId: props.room.id, tag: key }).then((doc: any) => {
-                    notifyNewFileUploaded(doc)
-                    let itemUpload = uploads[key]
-                    if (itemUpload && (itemUpload.roomId === props.room.id)) {
-                        itemUpload.fn({ doc, roomId: props.room.id, towerId: props.room.towerId })
-                    }
-                })
-            }} />
+            <Uploader folderId={props.room.id} inputFile={inputFile} room={props.room} onSelect={(file: any) => uploadBlob(file)} />
             {
                 <Messages room={props.room} messages={messagesList} onMessageSelect={(message: any) => {
                     setPointedMessage(message)
@@ -187,6 +188,7 @@ const Chat = (props: { show: boolean, room: IRoom }) => {
                         backgroundColor: themeColor.get({ noproxy: true })[100],
                         paddingTop: 2, marginTop: 8
                     }}
+                    onVoiceRecorded={(blob: any) => uploadBlob(blob)}
                     pointedMessage={pointedPostMessage}
                     action={action}
                     messages={messagesList}

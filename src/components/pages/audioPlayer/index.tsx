@@ -97,10 +97,17 @@ const loadAudio = async (docId: string, room: any) => {
     } catch (ex) { console.log(ex) }
     let l = await api.services.file.generateDownloadLink({ towerId: room.towerId, roomId: room.id, documentId: playingDocId });
     link = l;
-    audio = new Audio(link);
+    let a = new Audio(link);
+    a.autoplay = false;
+    a.loop = false;
+    audio = a
     audio.onloadedmetadata = () => {
       if (progress !== undefined) {
-        audio.currentTime = Math.floor(progress * audio.duration / 100);
+        try {
+          audio.currentTime = Math.floor(progress * audio.duration / 100);
+        } catch (ex) {
+          console.log(ex)
+        }
       }
       loading = false;
       resolve(true);
@@ -122,6 +129,10 @@ setInterval(() => {
     }
     if (audio.ended) {
       audio.currentTime = 0;
+      let callback = playListeners[playingDocId];
+      if (callback) {
+        callback();
+      }
       if (repeat) {
         try {
           audio.play().catch((ex: any) => console.log(ex));
@@ -130,11 +141,12 @@ setInterval(() => {
         let nextDocId = undefined;
         if (shuffle) {
           nextDocId = otherDocIds[Math.floor(Math.random() * otherDocIds.length)];
-        } else {
-          let currentIndex = otherDocIds.indexOf(playingDocId);
-          nextDocId = otherDocIds[currentIndex + 1]
-          if (nextDocId === undefined) nextDocId = otherDocIds[0]
         }
+        //  else {
+        //   let currentIndex = otherDocIds.indexOf(playingDocId);
+        //   nextDocId = otherDocIds[currentIndex + 1]
+        //   if (nextDocId === undefined) nextDocId = otherDocIds[0]
+        // }
         if (nextDocId !== undefined) {
           loadAudio(nextDocId, room).then(() => {
             try {

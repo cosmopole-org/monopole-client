@@ -1,30 +1,28 @@
-import { useEffect } from "react";
-import { useVoiceVisualizer, VoiceVisualizer } from "react-voice-visualizer";
 
-export function WaveSurferBox(props: { docId: string, roomId: string, graph: any }) {
-  const recorderControls = useVoiceVisualizer();
-    const {
-        // ... (Extracted controls and states, if necessary)
-        recordedBlob,
-        error,
-        audioRef,
-    } = recorderControls;
+import { useEffect } from 'react';
+import { AudioRecorder, useAudioRecorder } from 'react-audio-voice-recorder';
+import '../../../resources/styles/voicerecorder.css';
 
-    // Get the recorded audio blob
+export default function VoiceRecorder(props: { onVoiceRecorded: any }) {
+    const recorderControls = useAudioRecorder()
     useEffect(() => {
-        if (!recordedBlob) return;
-
-        console.log(recordedBlob);
-    }, [recordedBlob, error]);
-
-    // Get the error when it occurs
-    useEffect(() => {
-        if (!error) return;
-
-        console.error(error);
-    }, [error]);
-
+        recorderControls.startRecording()
+    }, [])
     return (
-        <VoiceVisualizer ref={audioRef} controls={recorderControls} />
-    );
+        <div>
+            <AudioRecorder
+                onRecordingComplete={(blob) => props.onVoiceRecorded(blob)}
+                recorderControls={recorderControls}
+                showVisualizer
+                audioTrackConstraints={{
+                    noiseSuppression: true,
+                    echoCancellation: true,
+                }}
+                classes={{
+                    AudioRecorderClass: 'voice-recorder'
+                }}
+                downloadFileExtension='mp3'
+            />
+        </div>
+    )
 }

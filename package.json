@@ -29,6 +29,7 @@
     "jquery": "^3.7.1",
     "lovefield": "^2.1.12",
     "react": "^17.0.0 || ^18.0.0",
+    "react-audio-voice-recorder": "^2.2.0",
     "react-dom": "^17.0.0 || ^18.0.0",
     "react-draggable": "^4.4.6",
     "react-freeze": "^1.0.3",
