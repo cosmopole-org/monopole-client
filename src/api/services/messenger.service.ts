@@ -4,6 +4,7 @@ import IMessage from "../models/message"
 import { none } from "@hookstate/core"
 import memoryUtils from "../utils/memory"
 import encodingUtils from "../utils/encoding"
+import ITower from "../models/tower"
 
 export let MessageTypes = {
     TEXT: "text",
@@ -54,15 +55,17 @@ class MessengerService {
         this.onMessageDeleted('messenger-service', (data: any) => {
             let { message } = data
             if (this.memory.messages[message.roomId]) {
-                //this.messageCountDict[data.roomId].set(this.messageCountDict[data.roomId].get({ noproxy: true }) - 1)
                 this.memory.messages[message.roomId][this.memory.messages[message.roomId].get({ noproxy: true }).findIndex((m: IMessage) => m.id === message.id)]?.set(none)
+                let tower: any = Object.values(this.memory.spaces.get({ noproxy: true })).find((tower: any) => tower.rooms[message.roomId] !== undefined)
+                if (tower) {
+                    this.roomUnseenCount({ towerId: tower.id, roomId: message.roomId })
+                }
             }
         })
 
         this.onMessageReceived('messenger-service', (data: any) => {
             let { message } = data
             this.check(message.roomId)
-            //this.messageCountDict[data.roomId].set(this.messageCountDict[data.roomId].get({ noproxy: true }) + 1)
             if ((message.type === MessageTypes.TEXT) && message.data.distributionMessage) {
                 (window as any).decrypt(message.roomId, message.authorId, message.data.text, message.data.distributionMessage, (decrypted: string) => {
                     message.data.text = decrypted
@@ -71,7 +74,10 @@ class MessengerService {
             } else {
                 this.memory.messages[message.roomId].merge([message])
             }
-
+            let tower: any = Object.values(this.memory.spaces.get({ noproxy: true })).find((tower: any) => tower.rooms[message.roomId] !== undefined)
+            if (tower) {
+                this.roomUnseenCount({ towerId: tower.id, roomId: message.roomId })
+            }
         })
 
         this.onMessageSeen('messenger-service', (data: any) => {
@@ -86,12 +92,12 @@ class MessengerService {
         })
     }
 
-    unseenMsgCount: { [id: string]: State<number> } = {}
+    unseenMsgCount: State<any> = hookstate({})
 
     check(roomId: string) {
         if (!this.memory.messages[roomId]) {
             this.memory.messages[roomId] = hookstate([])
-            this.unseenMsgCount[roomId] = hookstate(0)
+            this.unseenMsgCount.merge({ [roomId]: 0 })
         }
     }
 
@@ -99,10 +105,13 @@ class MessengerService {
         this.network.addUpdateListener('message/onCreate', (data: any) => {
             let { message } = data
             if ((message.type === MessageTypes.TEXT) && message.data.distributionMessage) {
-                (window as any).decrypt(message.roomId, message.authorId, message.data.text, message.data.distributionMessage, (decrypted: string) => {
-                    message.data.text = decrypted
-                    callback(data)
-                })
+                (window as any).decrypt(message.roomId, message.authorId,
+                    encodingUtils.b64.base64ToBytes(message.data.text),
+                    encodingUtils.b64.base64ToBytes(message.data.distributionMessage),
+                    (decrypted: string) => {
+                        message.data.text = decrypted
+                        callback(data)
+                    })
             } else {
                 callback(data)
             }
@@ -159,22 +168,20 @@ class MessengerService {
                                 data: { text: encodingUtils.b64.bytesToBase64(encrypted), distributionMessage: encodingUtils.b64.bytesToBase64(dm) }
                             }
                         }).then((body: any) => {
-                            //this.messageCountDict[data.roomId].set(this.messageCountDict[data.roomId].get({ noproxy: true }) + 1)
                             return body
                         }))
                     })
                 } else {
                     resolve(this.network.request('messenger/create', { towerId: data.towerId, roomId: data.roomId, message: data.message }).then((body: any) => {
-                        //this.messageCountDict[data.roomId].set(this.messageCountDict[data.roomId].get({ noproxy: true }) + 1)
                         return body
                     }))
                 }
             } else {
                 resolve(this.network.request('messenger/create', { towerId: data.towerId, roomId: data.roomId, message: data.message }).then((body: any) => {
-                    //this.messageCountDict[data.roomId].set(this.messageCountDict[data.roomId].get({ noproxy: true }) + 1)
                     return body
                 }))
             }
+            this.roomUnseenCount({ towerId: data.towerId, roomId: data.roomId })
         })
     }
 
@@ -185,7 +192,7 @@ class MessengerService {
     async remove(data: { towerId: string, roomId: string, messageId: string }): Promise<any> {
         return this.network.request('messenger/remove', { towerId: data.towerId, roomId: data.roomId, messageId: data.messageId }).then((body: any) => {
             this.memory.messages[data.roomId][this.memory.messages[data.roomId].get({ noproxy: true }).findIndex((m: IMessage) => m.id === data.messageId)]?.set(none)
-            //this.messageCountDict[data.roomId].set(this.messageCountDict[data.roomId].get({ noproxy: true }) - 1)
+            this.roomUnseenCount({ towerId: data.towerId, roomId: data.roomId })
             return body
         })
     }
@@ -196,6 +203,7 @@ class MessengerService {
             if (data.count === undefined || data.count > 1) {
                 this.memory.messages[data.roomId].set(body.messages)
             }
+            this.roomUnseenCount({ towerId: data.towerId, roomId: data.roomId })
             return body
         })
     }
@@ -229,8 +237,17 @@ class MessengerService {
             let { rooms } = body
             rooms.forEach((room: any) => {
                 this.check(room.id)
-                this.unseenMsgCount[room.id].set(room.unseenMsgCount)
+                this.unseenMsgCount.set({ [room.id]: room.unseenMsgCount })
             })
+            return body
+        })
+    }
+
+    async roomUnseenCount(data: { towerId: string, roomId: string }): Promise<any> {
+        return this.network.request('messenger/roomUnseenCount', { towerId: data.towerId, roomId: data.roomId }).then((body: any) => {
+            let { room } = body
+            this.check(room.id)
+            this.unseenMsgCount.set({ [room.id]: room.unseenMsgCount })
             return body
         })
     }

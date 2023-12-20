@@ -1,7 +1,7 @@
-import { BottomNavigation, BottomNavigationAction, Divider, Paper, Typography } from "@mui/material"
+import { Badge, BottomNavigation, BottomNavigationAction, Divider, Paper, Typography } from "@mui/material"
 import { themeColor } from "../../../App"
 
-const SigmaBottomNavigation = (props: { activeTab: number, items: Array<{ label: string, icon: any, afterDivider?: boolean }>, onSwitch: (index: number) => void, style?: any }) => {
+const SigmaBottomNavigation = (props: { activeTab: number, items: Array<{ label: string, icon: any, attachment?: number, afterDivider?: boolean }>, onSwitch: (index: number) => void, style?: any }) => {
     let children: Array<any> = []
     props.items.forEach((item, index) => {
         if (item.afterDivider) {
@@ -15,7 +15,16 @@ const SigmaBottomNavigation = (props: { activeTab: number, items: Array<{ label:
                 label={<Typography variant={'body2'} style={{ color: props.activeTab === index ? themeColor.get({ noproxy: true })['activeText'] : themeColor.get({ noproxy: true })['passiveText'] }}>{item.label}</Typography>}
                 icon={
                     <div style={{ backgroundColor: props.activeTab === index ? themeColor.get({ noproxy: true })[100] : 'transparent', width: 48, borderRadius: 24 }}>
-                        <IconComponent style={{ width: 24, height: 24, fill: props.activeTab === index ? themeColor.get({ noproxy: true })['activeText'] : themeColor.get({ noproxy: true })['passiveText'] }} />
+                        {
+                            item.attachment ?
+                                (
+                                    <Badge badgeContent={item.attachment} color={'primary'}>
+                                        <IconComponent style={{ width: 24, height: 24, fill: props.activeTab === index ? themeColor.get({ noproxy: true })['activeText'] : themeColor.get({ noproxy: true })['passiveText'] }} />
+                                    </Badge>
+                                ) : (
+                                    <IconComponent style={{ width: 24, height: 24, fill: props.activeTab === index ? themeColor.get({ noproxy: true })['activeText'] : themeColor.get({ noproxy: true })['passiveText'] }} />
+                                )
+                        }
                     </div>
                 }
             />

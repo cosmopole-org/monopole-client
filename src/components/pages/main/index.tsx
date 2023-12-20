@@ -14,9 +14,12 @@ import { api } from '../../..';
 import SigmaAvatar from '../../custom/elements/SigmaAvatar';
 import Inbox from '../../tabs/Inbox';
 import Chats from '../../tabs/Chats';
+import { useHookstate } from '@hookstate/core';
 
 const Main = (props: { id: string, isOnTop: boolean }) => {
     const navigate = useNavigate()
+    const chats = useHookstate(api.memory.chats).get({ noproxy: true })
+    const unseenCount = useHookstate(api.services.messenger.unseenMsgCount).get({ noproxy: true })
     const contentRef = useRef(null)
     const myUser = api.memory.humans.get({ noproxy: true })[api.memory.myHumanId.get({ noproxy: true })];
     const [value, setValue] = useState(0);
@@ -56,6 +59,14 @@ const Main = (props: { id: string, isOnTop: boolean }) => {
             updateTitle(value)
         }
     }, [props.isOnTop])
+    let unseenChatMessages = 0
+    Object.values(chats).forEach((chat: any) => {
+        unseenChatMessages += (
+            unseenCount[chat.roomId] ?
+                unseenCount[chat.roomId] :
+                0
+        )
+    })
     return (
         <SliderPage id={props.id}>
             <div style={{ position: 'relative', width: '100%', height: '100%', background: themeColor.get({ noproxy: true })[50] }}>
@@ -71,7 +82,7 @@ const Main = (props: { id: string, isOnTop: boolean }) => {
                     onSwitch={handleChangeIndex}
                     activeTab={value}
                     items={[
-                        { label: 'Chats', icon: Forum },
+                        { label: 'Chats', icon: Forum, attachment: unseenChatMessages },
                         { label: 'Towers', icon: LocationCity },
                         { label: 'Inbox', icon: InboxIcon },
                         { label: 'Settings', icon: () => <SigmaAvatar style={{ height: 32, width: 32, marginLeft: 8 }}>{myUser.firstName.substring(0, 1)}</SigmaAvatar> }

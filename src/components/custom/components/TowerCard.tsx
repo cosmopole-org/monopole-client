@@ -21,6 +21,7 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
     const lastMessage = messagesList ? messagesList[messagesList.length - 1] : undefined
     const backPatternColor0 = themeColor.get({ noproxy: true })[50];
     const backPatternColor1 = themeColor.get({ noproxy: true })[100];
+    const unseenCount = useHookstate(api.services.messenger.unseenMsgCount).get({ noproxy: true })[(Object.values(props.tower.rooms)[0] as any).id]
     if (props.showRating) {
         return (
             <Card elevation={0} style={{
@@ -202,36 +203,61 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
                             <Typography variant="caption" style={{ position: 'absolute', top: 10, right: 32, color: themeBasedTextColor.get({ noproxy: true }) }}>
                                 {lastMessage ? (utils.formatter.default.formatDate(lastMessage.time) + ' ' + utils.formatter.default.formatTime(lastMessage.time)) : '-'}
                             </Typography>
-                            {
-                                lastMessage ?
-                                    lastMessage.authorId !== api.memory.myHumanId.get({ noproxy: true }) ?
-                                        null :
-                                        lastMessage.seen ? (
-                                            <DoneAll
+                            <div style={{
+                                position: 'absolute',
+                                right: unseenCount === 0 ? 32 : 28,
+                                bottom: unseenCount === 0 ? 24 : 20,
+                                display: 'flex'
+                            }}>
+                                {
+                                    lastMessage ?
+                                        lastMessage.authorId !== api.memory.myHumanId.get({ noproxy: true }) ?
+                                            null :
+                                            lastMessage.seen ? (
+                                                <DoneAll
+                                                    style={{
+                                                        width: 16,
+                                                        height: 16,
+                                                        marginTop: 4,
+                                                        fill: themeBasedTextColor.get({ noproxy: true })
+                                                    }}
+                                                />
+                                            ) : (
+                                                <Done
+                                                    style={{
+                                                        width: 16,
+                                                        height: 16,
+                                                        marginTop: 4,
+                                                        fill: themeBasedTextColor.get({ noproxy: true })
+                                                    }}
+                                                />
+                                            ) :
+                                        null
+                                }
+                                {
+                                    lastMessage ?
+                                        unseenCount === 0 ?
+                                            null :
+                                            <Typography
+                                                variant="caption"
                                                 style={{
-                                                    width: 16,
-                                                    height: 16,
-                                                    position: 'absolute',
-                                                    right: 32,
-                                                    bottom: 24,
-                                                    fill: themeBasedTextColor.get({ noproxy: true })
+                                                    marginLeft: 4,
+                                                    width: 'auto',
+                                                    height: 'auto',
+                                                    minWidth: 20,
+                                                    minHeight: 20,
+                                                    padding: 2,
+                                                    borderRadius: '50%',
+                                                    color: themeBasedTextColor.get({ noproxy: true }),
+                                                    backgroundColor: themeColor.get({ noproxy: true })[200],
+                                                    textAlign: 'center'
                                                 }}
-                                            />
-                                        ) : (
-                                            <Done
-                                                style={{
-                                                    width: 16,
-                                                    height: 16,
-                                                    marginLeft: 2,
-                                                    position: 'absolute',
-                                                    right: 32,
-                                                    bottom: 24,
-                                                    fill: themeBasedTextColor.get({ noproxy: true })
-                                                }}
-                                            />
-                                        ) :
-                                    null
-                            }
+                                            >
+                                                {unseenCount}
+                                            </Typography> :
+                                        null
+                                }
+                            </div>
                         </div>
                     </div>
                 </div>

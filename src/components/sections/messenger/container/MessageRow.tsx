@@ -5,7 +5,7 @@ import {
 import SigmaAvatar from "../../../custom/elements/SigmaAvatar";
 import IMessage from "../../../../api/models/message";
 
-const MessageRow = (props: { message: IMessage, side: string, children: any, lastOfSection?: boolean, firstOfSection?: boolean }) => {
+const MessageRow = (props: { message: any, side: string, children: any, lastOfSection?: boolean, firstOfSection?: boolean }) => {
     return (
         <Fade in={true}>
             <div
@@ -23,7 +23,7 @@ const MessageRow = (props: { message: IMessage, side: string, children: any, las
                 {
                     (props.side === 'left' && props.lastOfSection) ? (
                         <SigmaAvatar style={{ marginRight: -4, marginTop: 'auto', marginBottom: 0, width: 32, height: 32 }}>
-                            A
+                            {props.message.author.firstName.substring(0, 1)}
                         </SigmaAvatar>
                     ) : (
                         <div style={{ marginTop: 'auto', marginBottom: 0, width: 42, height: 42 }}>

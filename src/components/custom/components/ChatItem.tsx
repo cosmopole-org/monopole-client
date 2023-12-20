@@ -12,6 +12,7 @@ const ChatItem = (props: { chat: any, style?: any, onMoreClicked?: () => void })
     const messagesList = useHookstate(api.memory.messages[mainRoom.id]).get({ noproxy: true })
     const ids = props.chat.id.split('-')
     const myHumanId = useHookstate(api.memory.myHumanId).get({ noproxy: true })
+    const unseenCount = useHookstate(api.services.messenger.unseenMsgCount).get({ noproxy: true })[props.chat.roomId]
     const peerId = ids[0] === myHumanId ? ids[1] : ids[0]
     const humans = useHookstate(api.memory.humans).get({ noproxy: true })
     const peer = humans[peerId]
@@ -43,8 +44,8 @@ const ChatItem = (props: { chat: any, style?: any, onMoreClicked?: () => void })
             </Typography>
             <div style={{
                 position: 'absolute',
-                right: api.services.messenger.unseenMsgCount[props.chat.roomId].get({ noproxy: true }) === 0 ? 16 : 12,
-                bottom: api.services.messenger.unseenMsgCount[props.chat.roomId].get({ noproxy: true }) === 0 ? 16 : 12,
+                right: unseenCount === 0 ? 16 : 12,
+                bottom: unseenCount === 0 ? 16 : 12,
                 display: 'flex'
             }}>
                 {
@@ -74,7 +75,7 @@ const ChatItem = (props: { chat: any, style?: any, onMoreClicked?: () => void })
                 }
                 {
                     lastMessage ?
-                    api.services.messenger.unseenMsgCount[props.chat.roomId].get({ noproxy: true }) === 0 ?
+                        unseenCount === 0 ?
                             null :
                             <Typography
                                 variant="caption"
@@ -84,14 +85,14 @@ const ChatItem = (props: { chat: any, style?: any, onMoreClicked?: () => void })
                                     height: 'auto',
                                     minWidth: 20,
                                     minHeight: 20,
-                                    paddingLeft: 4,
-                                    paddingTop: 4,
+                                    padding: 2,
                                     borderRadius: '50%',
                                     color: themeBasedTextColor.get({ noproxy: true }),
-                                    backgroundColor: themeColor.get({ noproxy: true })[200]
+                                    backgroundColor: themeColor.get({ noproxy: true })[200],
+                                    textAlign: 'center'
                                 }}
                             >
-                                {api.services.messenger.unseenMsgCount[props.chat.roomId].get({ noproxy: true })}
+                                {unseenCount}
                             </Typography> :
                         null
                 }
