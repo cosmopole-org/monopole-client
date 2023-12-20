@@ -1,6 +1,6 @@
 import { Card, IconButton, Rating, Typography } from "@mui/material"
 import SigmaBadgeButton from "../elements/SigmaBadgeButton"
-import { AllOut, ArrowForward, LocationCity, MoreVert } from "@mui/icons-material"
+import { AllOut, ArrowForward, Done, DoneAll, LocationCity, MoreVert } from "@mui/icons-material"
 import { SigmaRouter, themeBasedTextColor, themeColor } from "../../../App"
 import SigmaAvatar from "../elements/SigmaAvatar"
 import { api } from "../../.."
@@ -202,6 +202,36 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
                             <Typography variant="caption" style={{ position: 'absolute', top: 10, right: 32, color: themeBasedTextColor.get({ noproxy: true }) }}>
                                 {lastMessage ? (utils.formatter.default.formatDate(lastMessage.time) + ' ' + utils.formatter.default.formatTime(lastMessage.time)) : '-'}
                             </Typography>
+                            {
+                                lastMessage ?
+                                    lastMessage.authorId !== api.memory.myHumanId.get({ noproxy: true }) ?
+                                        null :
+                                        lastMessage.seen ? (
+                                            <DoneAll
+                                                style={{
+                                                    width: 16,
+                                                    height: 16,
+                                                    position: 'absolute',
+                                                    right: 32,
+                                                    bottom: 24,
+                                                    fill: themeBasedTextColor.get({ noproxy: true })
+                                                }}
+                                            />
+                                        ) : (
+                                            <Done
+                                                style={{
+                                                    width: 16,
+                                                    height: 16,
+                                                    marginLeft: 2,
+                                                    position: 'absolute',
+                                                    right: 32,
+                                                    bottom: 24,
+                                                    fill: themeBasedTextColor.get({ noproxy: true })
+                                                }}
+                                            />
+                                        ) :
+                                    null
+                            }
                         </div>
                     </div>
                 </div>

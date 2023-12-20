@@ -11,7 +11,8 @@ interface IMessage {
         stickerId?: string,
     },
     meta: any,
-    isDummy?: boolean
+    isDummy?: boolean,
+    seen: boolean
 }
 
 export default IMessage

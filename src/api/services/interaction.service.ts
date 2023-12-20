@@ -87,6 +87,26 @@ class InteractionService {
             })
         }
     }
+
+    async read(): Promise<any> {
+        return this.network.request('interaction/read', {}).then(async (body: any) => {
+            let { chats } = body
+            let chatsDict: { [id: string]: any } = {}
+            let myId = this.memory.myHumanId.get({ noproxy: true })
+            let spaces = this.memory.spaces.get({ noproxy: true })
+            chats.forEach((chat: any) => {
+                chatsDict[chat.peer1Id === myId ? chat.peer2Id : chat.peer1Id] = chat
+                chat.tower = spaces[chat.towerId]
+                chat.room = Object.values(chat.tower.rooms)[0]
+            });
+            this.memory.chats.set(chatsDict)
+            let peers = chats.map((chat: any) => chat.peer)
+            this.storage.factories.human?.createBatch(peers)
+            this.memory.humans.set(memoryUtils.humans.prepareHumans(peers, { ...this.memory.humans.get({ noproxy: true }) }))
+            this.memory.known.humans.set(memoryUtils.humans.prepareHumans(peers, { ...this.memory.known.humans.get({ noproxy: true }) }))
+            return body
+        })
+    }
 }
 
 export default InteractionService

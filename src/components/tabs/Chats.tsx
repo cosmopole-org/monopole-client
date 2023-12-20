@@ -1,14 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import useSearchBar from "../hooks/useSearchBar."
-import useMachines from "../hooks/useMachines"
-import useTowersList from "../hooks/useTowersList"
 import { statusbarHeight } from "../sections/StatusBar"
 import SearchBar from "../custom/components/SearchBar"
-import MachineBar from "../sections/MachineBar"
 import { api } from "../.."
-import ITower from "../../api/models/tower"
-import TowerMoreMenu from "../custom/components/TowerMoreMenu"
-import IMachine from "../../api/models/machine"
 import FriendBar from "../sections/FriendBar"
 import { useHookstate } from "@hookstate/core"
 import useChatsList from "../hooks/useChatsList"
@@ -50,7 +44,8 @@ const Chats = (props: { isOnTop: boolean, show: boolean }) => {
         },
         184 + 28,
         true,
-        props.show
+        props.show,
+        chats
     )
     useEffect(() => {
         FriendsBarHandler.collapseCallback(savedSCrollTop > 16, 0)

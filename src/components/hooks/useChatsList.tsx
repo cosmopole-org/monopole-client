@@ -10,24 +10,26 @@ const useChatsList = (
     overridenStyle: any,
     bottomSpace: number,
     showRating: boolean,
-    hasFocus: boolean
+    hasFocus: boolean,
+    chats: any
 ) => {
     const chatsContainerRef = useRef(null)
     return {
         Component: () => (
             <ChatsList
-                hasFocus={hasFocus}
-                showRating={showRating}
-                bottomSpace={bottomSpace}
-                overridenStyle={overridenStyle}
-                defaultSCrollTop={savedSCrollTop}
-                onScroll={onScroll}
-                chatsContainerRef={chatsContainerRef}
-                onCollapsibleBarStateChange={onCollapsibleBarStateChange}
-                showTowerMoreMenu={showTowerMoreMenu}
-            />
+                chats={chats}
+                hasFocus={ hasFocus }
+                showRating={ showRating }
+                bottomSpace={ bottomSpace }
+                overridenStyle={ overridenStyle }
+                defaultSCrollTop={ savedSCrollTop }
+                onScroll={ onScroll }
+                chatsContainerRef={ chatsContainerRef }
+                onCollapsibleBarStateChange={ onCollapsibleBarStateChange }
+                showTowerMoreMenu={ showTowerMoreMenu }
+        />
         ),
-        chatsContainerRef
+chatsContainerRef
     }
 }
 

@@ -31,13 +31,14 @@ const Chat = (props: { show: boolean, room: IRoom }) => {
     let msgs = useHookstate(api.memory.messages[props.room.id])
     let messagesList = msgs.get({ noproxy: true })
     useEffect(() => {
-        api.services.messenger.onMessageReceived('chat', (data: any) => {
+        let receiver = api.services.messenger.onMessageReceived('chat', (data: any) => {
             let { message } = data
             if (props.room.id === message.roomId) {
                 setTimeout(chatUtils.scrollToChatEnd)
+                api.services.messenger.read({ towerId: props.room.towerId, roomId: props.room.id, offset: 0, count: 1 })
             }
         })
-        api.services.messenger.onMessageEdited('chat', (data: any) => {
+        let editor = api.services.messenger.onMessageEdited('chat', (data: any) => {
             let { message } = data
             if (props.room.id === message.roomId) {
                 if (message.type === MessageTypes.TEXT) {
@@ -59,6 +60,10 @@ const Chat = (props: { show: boolean, room: IRoom }) => {
             }
         })
         api.services.messenger.read({ towerId: props.room.towerId, roomId: props.room.id })
+        return () => {
+            receiver.unregister()
+            editor.unregister()
+        }
     }, [])
     const onMessageSubmit = useCallback((text: string) => {
         let message: IMessage;

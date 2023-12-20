@@ -6,6 +6,7 @@ import {
     Typography
 } from "@mui/material";
 import {
+    Done,
     DoneAll, History, Pause, PlayArrow
 } from "@mui/icons-material";
 import './bubble.css'
@@ -237,16 +238,27 @@ const AudioMessage = (props: { otherDocIds: Array<string | undefined>, room: IRo
                                                 fill: props.side === 'left' ? themeColor.get({ noproxy: true })['activeText'] : '#fff'
                                             }}
                                         />
-                                    ) : (
-                                        <DoneAll
-                                            style={{
-                                                width: 16,
-                                                height: 16,
-                                                marginLeft: 2,
-                                                fill: props.side === 'left' ? themeColor.get({ noproxy: true })['activeText'] : '#fff'
-                                            }}
-                                        />
-                                    )
+                                    ) : props.message.authorId !== api.memory.myHumanId.get({ noproxy: true }) ?
+                                        null :
+                                        props.message.seen ? (
+                                            <DoneAll
+                                                style={{
+                                                    width: 16,
+                                                    height: 16,
+                                                    marginLeft: 2,
+                                                    fill: props.side === 'left' ? themeColor.get({ noproxy: true })['activeText'] : '#fff'
+                                                }}
+                                            />
+                                        ) : (
+                                            <Done
+                                                style={{
+                                                    width: 16,
+                                                    height: 16,
+                                                    marginLeft: 2,
+                                                    fill: props.side === 'left' ? themeColor.get({ noproxy: true })['activeText'] : '#fff'
+                                                }}
+                                            />
+                                        )
                                 }
                             </div>
                         )

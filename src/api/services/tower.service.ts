@@ -2,6 +2,7 @@ import { State } from "@hookstate/core"
 import { DatabaseDriver, NetworkDriver } from "../drivers"
 import memoryUtils from "../utils/memory"
 import { api } from "../.."
+import ITower from "../models/tower"
 
 class TowerService {
 
@@ -102,14 +103,22 @@ class TowerService {
     }
 
     async read(): Promise<any> {
-        return this.network.request('tower/read', { }).then(async (body: any) => {
-            let { tower, room } = body
-            tower.folderId = '-'
-            await this.storage.factories.tower?.create(tower)
-            await this.storage.factories.room?.create(room)
-            let newSpaces = memoryUtils.spaces.prepareSpaces([tower], [room], { ...this.memory.spaces.get({ noproxy: true }) })
+        return this.network.request('tower/read', {}).then(async (body: any) => {
+            let { towers, rooms } = body
+            let localTowers = this.memory.spaces.get({ noproxy: true })
+            towers.forEach((tower: ITower) => {
+                if (localTowers[tower.id] && localTowers[tower.id].folderId) {
+                    tower.folderId = localTowers.folderId
+                } else {
+                    tower.folderId = '-'
+                }
+            });
+            rooms.forEach((room: any) => api.services.messenger.check(room.id));
+            await this.storage.factories.tower?.createBatch(towers)
+            await this.storage.factories.room?.createBatch(rooms)
+            let newSpaces = memoryUtils.spaces.prepareSpaces(towers, rooms, { ...this.memory.spaces.get({ noproxy: true }) })
             this.memory.spaces.set(newSpaces)
-            let newKnownSpaces = memoryUtils.spaces.prepareSpaces([tower], [room], { ...this.memory.known.spaces.get({ noproxy: true }) })
+            let newKnownSpaces = memoryUtils.spaces.prepareSpaces(towers, rooms, { ...this.memory.known.spaces.get({ noproxy: true }) })
             this.memory.known.spaces.set(newKnownSpaces)
         })
     }

@@ -1,10 +1,11 @@
 
-import { Card, Typography } from "@mui/material"
+import { Card, Paper, Typography } from "@mui/material"
 import { SigmaRouter, themeBasedTextColor, themeColor } from "../../../App"
 import SigmaAvatar from "../elements/SigmaAvatar"
 import { useHookstate } from "@hookstate/core"
 import { api } from "../../.."
 import utils from "../../utils"
+import { Done, DoneAll } from "@mui/icons-material"
 
 const ChatItem = (props: { chat: any, style?: any, onMoreClicked?: () => void }) => {
     const mainRoom: any = Object.values(props.chat.tower.rooms)[0]
@@ -34,12 +35,67 @@ const ChatItem = (props: { chat: any, style?: any, onMoreClicked?: () => void })
                     {peer.firstName + ' ' + peer.lastName}
                 </Typography>
                 <Typography variant="body2" style={{ color: themeBasedTextColor.get({ noproxy: true }) }}>
-                    {lastMessage ? lastMessage.type === 'text' ? lastMessage.data.text : ['photo', 'audio', 'video'].includes(lastMessage.type) ? lastMessage.type  : `unsupported message type` : `Empty chat`}
+                    {lastMessage ? lastMessage.type === 'text' ? lastMessage.data.text : ['photo', 'audio', 'video'].includes(lastMessage.type) ? lastMessage.type : `unsupported message type` : `Empty chat`}
                 </Typography>
             </div>
             <Typography variant="caption" style={{ position: 'absolute', top: 16, right: 16, color: themeBasedTextColor.get({ noproxy: true }) }}>
                 {lastMessage ? (utils.formatter.default.formatDate(lastMessage.time) + ' ' + utils.formatter.default.formatTime(lastMessage.time)) : '-'}
             </Typography>
+            <div style={{
+                position: 'absolute',
+                right: api.services.messenger.unseenMsgCount[props.chat.roomId].get({ noproxy: true }) === 0 ? 16 : 12,
+                bottom: api.services.messenger.unseenMsgCount[props.chat.roomId].get({ noproxy: true }) === 0 ? 16 : 12,
+                display: 'flex'
+            }}>
+                {
+                    lastMessage ?
+                        lastMessage.authorId !== myHumanId ?
+                            null :
+                            lastMessage.seen ? (
+                                <DoneAll
+                                    style={{
+                                        width: 16,
+                                        height: 16,
+                                        marginTop: 4,
+                                        fill: themeBasedTextColor.get({ noproxy: true })
+                                    }}
+                                />
+                            ) : (
+                                <Done
+                                    style={{
+                                        width: 16,
+                                        height: 16,
+                                        marginTop: 4,
+                                        fill: themeBasedTextColor.get({ noproxy: true })
+                                    }}
+                                />
+                            ) :
+                        null
+                }
+                {
+                    lastMessage ?
+                    api.services.messenger.unseenMsgCount[props.chat.roomId].get({ noproxy: true }) === 0 ?
+                            null :
+                            <Typography
+                                variant="caption"
+                                style={{
+                                    marginLeft: 4,
+                                    width: 'auto',
+                                    height: 'auto',
+                                    minWidth: 20,
+                                    minHeight: 20,
+                                    paddingLeft: 4,
+                                    paddingTop: 4,
+                                    borderRadius: '50%',
+                                    color: themeBasedTextColor.get({ noproxy: true }),
+                                    backgroundColor: themeColor.get({ noproxy: true })[200]
+                                }}
+                            >
+                                {api.services.messenger.unseenMsgCount[props.chat.roomId].get({ noproxy: true })}
+                            </Typography> :
+                        null
+                }
+            </div>
         </div >
     )
 }

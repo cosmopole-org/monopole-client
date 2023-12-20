@@ -54,6 +54,7 @@ class MessengerService {
         this.onMessageDeleted('messenger-service', (data: any) => {
             let { message } = data
             if (this.memory.messages[message.roomId]) {
+                //this.messageCountDict[data.roomId].set(this.messageCountDict[data.roomId].get({ noproxy: true }) - 1)
                 this.memory.messages[message.roomId][this.memory.messages[message.roomId].get({ noproxy: true }).findIndex((m: IMessage) => m.id === message.id)]?.set(none)
             }
         })
@@ -61,12 +62,37 @@ class MessengerService {
         this.onMessageReceived('messenger-service', (data: any) => {
             let { message } = data
             this.check(message.roomId)
-            this.memory.messages[message.roomId].merge([message])
+            //this.messageCountDict[data.roomId].set(this.messageCountDict[data.roomId].get({ noproxy: true }) + 1)
+            if ((message.type === MessageTypes.TEXT) && message.data.distributionMessage) {
+                (window as any).decrypt(message.roomId, message.authorId, message.data.text, message.data.distributionMessage, (decrypted: string) => {
+                    message.data.text = decrypted
+                    this.memory.messages[message.roomId].merge([message])
+                })
+            } else {
+                this.memory.messages[message.roomId].merge([message])
+            }
+
+        })
+
+        this.onMessageSeen('messenger-service', (data: any) => {
+            let { messageId, roomId } = data
+            this.check(roomId)
+            let index: number = this.memory.messages[roomId].get({ noproxy: true }).findIndex((msg: IMessage) => msg.id === messageId)
+            let message = this.memory.messages[roomId].get({ noproxy: true })[index]
+            if (message) {
+                message.seen = true
+            }
+            this.memory.messages[roomId].merge({ index: message })
         })
     }
 
+    unseenMsgCount: { [id: string]: State<number> } = {}
+
     check(roomId: string) {
-        if (!this.memory.messages[roomId]) this.memory.messages[roomId] = hookstate([])
+        if (!this.memory.messages[roomId]) {
+            this.memory.messages[roomId] = hookstate([])
+            this.unseenMsgCount[roomId] = hookstate(0)
+        }
     }
 
     onMessageReceived(tag: string, callback: (data: any) => void) {
@@ -81,6 +107,9 @@ class MessengerService {
                 callback(data)
             }
         }, tag)
+        return {
+            unregister: () => this.network.removeUpdateListener('message/onCreate', tag)
+        }
     }
 
     onMessageEdited(tag: string, callback: (data: any) => void) {
@@ -101,10 +130,19 @@ class MessengerService {
                 callback(data)
             }
         }, tag)
+        return {
+            unregister: () => this.network.removeUpdateListener('message/onUpdate', tag)
+        }
     }
 
     private onMessageDeleted(tag: string, callback: (data: any) => void) {
         this.network.addUpdateListener('message/onRemove', (data: any) => {
+            callback(data)
+        }, tag)
+    }
+
+    private onMessageSeen(tag: string, callback: (data: any) => void) {
+        this.network.addUpdateListener('message/onSeen', (data: any) => {
             callback(data)
         }, tag)
     }
@@ -120,13 +158,22 @@ class MessengerService {
                                 type: data.message.type,
                                 data: { text: encodingUtils.b64.bytesToBase64(encrypted), distributionMessage: encodingUtils.b64.bytesToBase64(dm) }
                             }
+                        }).then((body: any) => {
+                            //this.messageCountDict[data.roomId].set(this.messageCountDict[data.roomId].get({ noproxy: true }) + 1)
+                            return body
                         }))
                     })
                 } else {
-                    resolve(this.network.request('messenger/create', { towerId: data.towerId, roomId: data.roomId, message: data.message }))
+                    resolve(this.network.request('messenger/create', { towerId: data.towerId, roomId: data.roomId, message: data.message }).then((body: any) => {
+                        //this.messageCountDict[data.roomId].set(this.messageCountDict[data.roomId].get({ noproxy: true }) + 1)
+                        return body
+                    }))
                 }
             } else {
-                resolve(this.network.request('messenger/create', { towerId: data.towerId, roomId: data.roomId, message: data.message }))
+                resolve(this.network.request('messenger/create', { towerId: data.towerId, roomId: data.roomId, message: data.message }).then((body: any) => {
+                    //this.messageCountDict[data.roomId].set(this.messageCountDict[data.roomId].get({ noproxy: true }) + 1)
+                    return body
+                }))
             }
         })
     }
@@ -138,6 +185,7 @@ class MessengerService {
     async remove(data: { towerId: string, roomId: string, messageId: string }): Promise<any> {
         return this.network.request('messenger/remove', { towerId: data.towerId, roomId: data.roomId, messageId: data.messageId }).then((body: any) => {
             this.memory.messages[data.roomId][this.memory.messages[data.roomId].get({ noproxy: true }).findIndex((m: IMessage) => m.id === data.messageId)]?.set(none)
+            //this.messageCountDict[data.roomId].set(this.messageCountDict[data.roomId].get({ noproxy: true }) - 1)
             return body
         })
     }
@@ -145,7 +193,9 @@ class MessengerService {
     async read(data: { towerId: string, roomId: string, offset?: number, count?: number }): Promise<any> {
         return this.network.request('messenger/read', { towerId: data.towerId, roomId: data.roomId, offset: data.offset, count: data.count }).then((body: any) => {
             this.check(data.roomId)
-            this.memory.messages[data.roomId].set(body.messages)
+            if (data.count === undefined || data.count > 1) {
+                this.memory.messages[data.roomId].set(body.messages)
+            }
             return body
         })
     }
@@ -170,6 +220,17 @@ class MessengerService {
                 .map((msg: any) => msg.author)
             this.storage.factories.human?.createBatch(authors)
             this.memory.humans.set(memoryUtils.humans.prepareHumans(authors, { ...this.memory.humans.get({ noproxy: true }) }))
+            return body
+        })
+    }
+
+    async unssenCount(): Promise<any> {
+        return this.network.request('messenger/unseenCount', {}).then((body: any) => {
+            let { rooms } = body
+            rooms.forEach((room: any) => {
+                this.check(room.id)
+                this.unseenMsgCount[room.id].set(room.unseenMsgCount)
+            })
             return body
         })
     }

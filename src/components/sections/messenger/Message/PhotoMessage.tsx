@@ -5,6 +5,7 @@ import {
     Typography
 } from "@mui/material";
 import {
+    Done,
     DoneAll, History
 } from "@mui/icons-material";
 import './bubble.css'
@@ -117,16 +118,27 @@ const PhotoMessage = (props: { otherDocIds: Array<string | undefined>, room: IRo
                                                 fill: '#fff'
                                             }}
                                         />
-                                    ) : (
-                                        <DoneAll
-                                            style={{
-                                                width: 16,
-                                                height: 16,
-                                                marginLeft: 2,
-                                                fill: '#fff'
-                                            }}
-                                        />
-                                    )
+                                    ) : props.message.authorId !== api.memory.myHumanId.get({ noproxy: true }) ?
+                                        null :
+                                        props.message.seen ? (
+                                            <DoneAll
+                                                style={{
+                                                    width: 16,
+                                                    height: 16,
+                                                    marginLeft: 2,
+                                                    fill: '#fff'
+                                                }}
+                                            />
+                                        ) : (
+                                            <Done
+                                                style={{
+                                                    width: 16,
+                                                    height: 16,
+                                                    marginLeft: 2,
+                                                    fill: '#fff'
+                                                }}
+                                            />
+                                        )
                                 }
                             </div>
                         )

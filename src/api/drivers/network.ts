@@ -37,6 +37,11 @@ class NetworkDriver {
         this.updateListeners[key][tag !== undefined ? tag : Math.random()] = callback
     }
 
+    removeUpdateListener(key: string, tag: string) {
+        if (!this.updateListeners[key]) this.updateListeners[key] = {}
+        delete this.updateListeners[key][tag]
+    }
+
     request(path: string, body: any): Promise<any> {
         console.log('requesting', path, body)
         return new Promise((resolve, reject) => {

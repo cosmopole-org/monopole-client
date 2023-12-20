@@ -4,11 +4,13 @@ import {
     Typography
 } from "@mui/material";
 import {
+    Done,
     DoneAll, History
 } from "@mui/icons-material";
 import './bubble.css'
 import { themeColor } from "../../../../App";
 import IMessage from "../../../../api/models/message";
+import { api } from "../../../..";
 
 const TextMessage = (props: { message: IMessage, side?: string, lastOfSection?: boolean, firstOfSection?: boolean, isQuote?: boolean }) => {
     return (
@@ -80,16 +82,27 @@ const TextMessage = (props: { message: IMessage, side?: string, lastOfSection?: 
                                                 fill: props.side === 'left' ? themeColor.get({ noproxy: true })['activeText'] : '#fff'
                                             }}
                                         />
-                                    ) : (
-                                        <DoneAll
-                                            style={{
-                                                width: 16,
-                                                height: 16,
-                                                marginLeft: 2,
-                                                fill: props.side === 'left' ? themeColor.get({ noproxy: true })['activeText'] : '#fff'
-                                            }}
-                                        />
-                                    )
+                                    ) : props.message.authorId !== api.memory.myHumanId.get({ noproxy: true }) ?
+                                        null :
+                                        props.message.seen ? (
+                                            <DoneAll
+                                                style={{
+                                                    width: 16,
+                                                    height: 16,
+                                                    marginLeft: 2,
+                                                    fill: props.side === 'left' ? themeColor.get({ noproxy: true })['activeText'] : '#fff'
+                                                }}
+                                            />
+                                        ) : (
+                                            <Done
+                                                style={{
+                                                    width: 16,
+                                                    height: 16,
+                                                    marginLeft: 2,
+                                                    fill: props.side === 'left' ? themeColor.get({ noproxy: true })['activeText'] : '#fff'
+                                                }}
+                                            />
+                                        )
                                 }
                             </div>
                         )

@@ -38,7 +38,13 @@ const ChatPage = (props: { room: IRoom, id: string, isOnTop: boolean }) => {
         <SliderPage id={props.id}>
             <div style={{ width: '100%', height: '100%', position: 'relative' }}>
                 <div key={'room-background'} style={{ background: 'url(https://i.pinimg.com/564x/2a/cd/6e/2acd6e46cc2bdc218a9104a69c36868e.jpg)', width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} />
-                <div key={'room-background-overlay'} style={{ opacity: 0.65, backgroundColor: themeColor.get({ noproxy: true })[200], width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} />
+                <div key={'room-background-overlay'} style={{
+                    opacity: themeColorName.get({ noproxy: true }) === 'night' ? 0.85 : 0.65,
+                    backgroundColor: themeColorName.get({ noproxy: true }) === 'night' ?
+                        themeColor.get({ noproxy: true })[500] :
+                        themeColor.get({ noproxy: true })[200],
+                    width: '100%', height: '100%', position: 'absolute', left: 0, top: 0
+                }} />
                 <Chat show={true} room={props.room} />
                 <AppBar>
 
