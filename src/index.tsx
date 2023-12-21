@@ -25,6 +25,31 @@ window.addEventListener('error', e => {
   }
 });
 
+let subscription: any = undefined;
+
+export let subscribeToNotification = async (token?: string | null) => {
+  if (token) {
+    await fetch(`${config.GATEWAY_ADDRESS}/subscribeToNotification`, {
+      method: "POST",
+      body: JSON.stringify(subscription),
+      headers: {
+        "Content-Type": "application/json",
+        "token": token
+      }
+    })
+  }
+}
+
+async function registerServiceWorker() {
+  const register = await navigator.serviceWorker.register('./worker.js', {
+    scope: '/'
+  });
+  subscription = await register.pushManager.subscribe({
+    userVisibleOnly: true,
+    applicationServerKey: config.publicVapidKey,
+  });
+}
+
 (window as any).install();
 
 let api: Api;
@@ -52,6 +77,8 @@ const providerConfig = {
     scope: 'openid profile email'
   },
 };
+
+registerServiceWorker()
 
 Api.initilize().then((instance: Api) => {
   api = instance

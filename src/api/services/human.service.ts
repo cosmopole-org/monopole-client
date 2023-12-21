@@ -3,7 +3,7 @@ import { State } from "@hookstate/core"
 import { DatabaseDriver, NetworkDriver } from "../drivers"
 import memoryUtils from "../utils/memory"
 import { AppUtils } from "../../App"
-import { api } from "../.."
+import { api, subscribeToNotification } from "../.."
 
 class HumanService {
 
@@ -136,6 +136,7 @@ class HumanService {
                 api.services.messenger.unssenCount()
                 api.services.interaction.read()
                 api.services.invite.read()
+                await subscribeToNotification(this._token)
                 return body
             })
         } else {
