@@ -26,12 +26,15 @@ const lightWallpapers = [
     'https://i.pinimg.com/564x/ca/1b/be/ca1bbeb87e3ab7c32c7846df9cdef545.jpg'
 ]
 
-let cachedActiveTab: string | undefined = undefined
+let cachedActiveTab: string | undefined = undefined, cachedPageType: string = 'home'
 
 const TowersList = (props: { towers?: Array<any>, humans?: Array<any>, hasFocus: boolean, showRating: boolean, bottomSpace: number, overridenStyle: any, defaultSCrollTop?: number, onScroll: (scrollTop: number) => void, towersContainerRef: any, onCollapsibleBarStateChange: (dy: number, v: boolean, collapsibleScrollTop: number) => void, showTowerMoreMenu?: (towerId: string) => void }) => {
     const lastScrollRef = useRef(props.defaultSCrollTop !== undefined ? props.defaultSCrollTop : 0)
-    if (!cachedActiveTab) cachedActiveTab = props.showRating ? 'towers' : 'all'
-    const [activeTab, setActiveTab] = useState(cachedActiveTab)
+    if (!cachedActiveTab || ((cachedPageType === 'home' && props.showRating) || (cachedPageType === 'explore' && !props.showRating))) {
+        cachedPageType = props.showRating ? 'explore' : 'home'
+        cachedActiveTab = props.showRating ? 'towers' : 'all'
+    }
+    const [activeTab, setActiveTab] = useState(cachedActiveTab ? cachedActiveTab : 'all')
     const homeFolders = useHookstate(api.memory.homeFolders)
     let folders = [{ id: 'all', title: 'all' }, ...homeFolders.get({ noproxy: true })]
     let wallpapers = themeColorName.get({ noproxy: true }) === 'night' ? darkWallpapers : lightWallpapers
