@@ -38,6 +38,32 @@ class TowerService {
         this.storage = storage
         this.network = network
         this.memory = memory
+
+        this.onTowerUpdated('tower-service', async (data: any) => {
+            let { tower } = data
+            let oldTower = this.memory.spaces.get({ noproxy: true })[tower.id]
+            tower.folderId = oldTower.folderId
+            await this.storage.factories.tower?.update(tower)
+            this.memory.spaces.set(memoryUtils.spaces.transformTower(tower, this.memory.spaces.get({ noproxy: true })))
+        })
+
+        this.onTowerRemoved('tower-service', async (data: any) => {
+            let { tower } = data
+            await this.storage.factories.tower?.remove(tower.id)
+            this.memory.spaces.set(memoryUtils.spaces.removeTower(tower.id, { ...this.memory.spaces.get({ noproxy: true }) }))
+        })
+    }
+
+    private onTowerUpdated(tag: string, callback: (data: any) => void) {
+        this.network.addUpdateListener('tower/onUpdate', (data: any) => {
+            callback(data)
+        }, tag)
+    }
+
+    private onTowerRemoved(tag: string, callback: (data: any) => void) {
+        this.network.addUpdateListener('tower/onRemove', (data: any) => {
+            callback(data)
+        }, tag)
     }
 
     async create(data: { title: string, avatarId?: string, isPublic?: boolean }): Promise<void> {

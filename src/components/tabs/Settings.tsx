@@ -42,18 +42,6 @@ const Settings = (props: { isOnTop: boolean, show: boolean }) => {
                     <Edit />
                 </IconButton>
             </Card>
-            <Card elevation={0} style={{
-                paddingLeft: 16, paddingRight: 16, backgroundColor: themeColor.get({ noproxy: true })[100], borderRadius: 24, height: 'auto', display: 'flex',
-                marginLeft: 16, width: 'calc(100% - 64px)', position: 'relative', marginTop: 16, paddingTop: 8, paddingBottom: 8
-            }}>
-                <IconButton>
-                    <DarkMode />
-                </IconButton>
-                <Typography style={{ flex: 1, marginTop: 8 }}>
-                    Dark Theme
-                </Typography>
-                <SigmaSwitch />
-            </Card>
             <Card
                 elevation={0}
                 style={{

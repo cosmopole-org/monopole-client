@@ -22,7 +22,7 @@ const pointCoordinates = (props: {
 
 const paintCanvas = (props: {
     canvasRef: any, waveformData: any, canvasHeight: number, pointWidth: number, pointMargin: number,
-    playingPoint: any, hoverXCoord: any,
+    playingPoint: any, hoverXCoord: any
 }) => {
     let {
         canvasRef, waveformData, canvasHeight, pointWidth, pointMargin,
@@ -49,11 +49,11 @@ const paintCanvas = (props: {
                 const withinHover = hoverXCoord >= coordinates[0]
                 const alreadyPlayed = i < playingPoint
                 if (withinHover) {
-                    ctx.fillStyle = alreadyPlayed ? '#fff' : '#ddd'
+                    ctx.fillStyle = alreadyPlayed ? '#ddd' : '#ccc'
                 } else if (alreadyPlayed) {
-                    ctx.fillStyle = '#fff'
-                } else {
                     ctx.fillStyle = '#ddd'
+                } else {
+                    ctx.fillStyle = '#ccc'
                 }
                 ctx.fill()
             })
@@ -116,7 +116,7 @@ const Waveform = (props: { docId: string, tag: string, room: IRoom, isPreview: b
             pointWidth,
             pointMargin,
             playingPoint,
-            hoverXCoord,
+            hoverXCoord
         })
     }, [playingPoint, doc, waveformData])
 

@@ -1,4 +1,4 @@
-import { Card, IconButton, Rating, Typography } from "@mui/material"
+import { Badge, Card, IconButton, Rating, Typography } from "@mui/material"
 import SigmaBadgeButton from "../elements/SigmaBadgeButton"
 import { AllOut, ArrowForward, Done, DoneAll, LocationCity, MoreVert } from "@mui/icons-material"
 import { SigmaRouter, themeBasedTextColor, themeColor } from "../../../App"
@@ -21,7 +21,7 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
     const lastMessage = messagesList ? messagesList[messagesList.length - 1] : undefined
     const backPatternColor0 = themeColor.get({ noproxy: true })[50];
     const backPatternColor1 = themeColor.get({ noproxy: true })[100];
-    const unseenCount = useHookstate(api.services.messenger.unseenMsgCount).get({ noproxy: true })[(Object.values(props.tower.rooms)[0] as any).id]
+    const unseenMsgCount = useHookstate(api.services.messenger.unseenMsgCount).get({ noproxy: true })
     if (props.showRating) {
         return (
             <Card elevation={0} style={{
@@ -122,6 +122,15 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
             </Card>
         )
     } else {
+        const unseenCount = unseenMsgCount[(Object.values(props.tower.rooms)[0] as any).id]
+        let unseenRoomMessages = 0
+        Object.values(props.tower.rooms).forEach((room: any) => {
+            unseenRoomMessages += (
+                unseenMsgCount[room.id] ?
+                    unseenMsgCount[room.id] :
+                    0
+            )
+        })
         return (
             <Card elevation={0} style={{
                 ...props.style, position: 'relative', width: 'calc(100% - 32px)', padding: 16, height: 168,
@@ -137,17 +146,36 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
                                 radial-gradient(circle at 0% 50%, transparent 20%, ${backPatternColor1} 21%, ${backPatternColor1} 34%, transparent 35%, transparent) 0 -50px`,
                     backgroundSize: `75px 100px`
                 }} />
-                <Typography variant={'h6'} style={{
-                    position: 'absolute',
-                    left: 40,
-                    top: 22,
-                    paddingTop: 2,
-                    paddingBottom: 2,
-                    paddingLeft: 32,
-                    paddingRight: 12
-                }}>
-                    {props.tower.title}
-                </Typography>
+                {
+                    unseenRoomMessages ? (
+                        <Badge badgeContent={unseenRoomMessages} style={{
+                            position: 'absolute',
+                            left: 40,
+                            top: 22,
+                        }}>
+                            <Typography variant={'h6'} style={{
+                                paddingTop: 2,
+                                paddingBottom: 2,
+                                paddingLeft: 32,
+                                paddingRight: 12
+                            }}>
+                                {props.tower.title}
+                            </Typography>
+                        </Badge>
+                    ) : (
+                        <Typography variant={'h6'} style={{
+                            position: 'absolute',
+                            left: 40,
+                            top: 22,
+                            paddingTop: 2,
+                            paddingBottom: 2,
+                            paddingLeft: 32,
+                            paddingRight: 12
+                        }}>
+                            {props.tower.title}
+                        </Typography>
+                    )
+                }
                 <SigmaAvatar style={{
                     width: 48, height: 48, position: 'absolute', left: 16, top: 16
                 }}>
@@ -236,7 +264,7 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
                                 }
                                 {
                                     lastMessage ?
-                                        unseenCount === 0 ?
+                                        !unseenCount ?
                                             null :
                                             <Typography
                                                 variant="caption"

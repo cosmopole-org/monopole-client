@@ -135,6 +135,7 @@ class HumanService {
                 api.services.messenger.lastMessages()
                 api.services.messenger.unssenCount()
                 api.services.interaction.read()
+                api.services.invite.read()
                 return body
             })
         } else {

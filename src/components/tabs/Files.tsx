@@ -45,9 +45,11 @@ const Files = (props: { show: boolean, room: IRoom }) => {
             style={{ width: '100%', height: 'calc(100% - 32px - 16px)', position: 'absolute', left: props.show ? 0 : '-100%', paddingTop: 32 + 16 }}
         >
             <Uploader folderId={folderId} inputFile={inputFile} room={props.room} onSelect={(file: any) => {
+                setLoading(true)
                 api.services.file.upload({ towerId: props.room.towerId, roomId: props.room.id, file, folderId }).then((doc: any) => {
                     folderData.subDocIds.push(doc.id)
                     folderData.subDocs.push(doc)
+                    setLoading(false)
                     setFolderData({ ...folderData })
                 })
             }} />

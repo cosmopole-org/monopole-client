@@ -4,7 +4,7 @@ import { themeColor } from "../../../App"
 import SigmaAvatar from "../elements/SigmaAvatar"
 import { api } from "../../.."
 
-const InviteCard = (props: { invite: any, style?: any, onInviteResolve: () => void }) => {
+const InviteCard = (props: { invite: any, style?: any, onInviteResolve?: () => void }) => {
     return (
         <Card elevation={0} style={{ ...props.style, position: 'relative', width: 'calc(100% - 32px)', padding: 16, height: 120, backgroundColor: themeColor.get({ noproxy: true })[50], borderRadius: 24 }}>
             <SigmaAvatar style={{ width: 48, height: 48 }}>
@@ -16,12 +16,12 @@ const InviteCard = (props: { invite: any, style?: any, onInviteResolve: () => vo
             <div style={{ display: 'flex', marginTop: 16 }}>
                 <SigmaBadgeButton caption='Accept' onClick={() => {
                     api.services.invite.accept({ towerId: props.invite.towerId, inviteId: props.invite.id }).then((body: any) => {
-                        props.onInviteResolve()
+                        props.onInviteResolve && props.onInviteResolve()
                     })
                 }} />
                 <SigmaBadgeButton style={{ marginLeft: 8 }} caption='Decline' onClick={() => {
                     api.services.invite.decline({ towerId: props.invite.towerId, inviteId: props.invite.id }).then((body: any) => {
-                        props.onInviteResolve()
+                        props.onInviteResolve && props.onInviteResolve()
                     })
                 }} />
             </div>

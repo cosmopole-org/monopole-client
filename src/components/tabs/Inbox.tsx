@@ -8,18 +8,12 @@ import TimelineOppositeContent, {
 } from '@mui/lab/TimelineOppositeContent';
 import InviteCard from "../custom/components/InviteCard"
 import Notififtaions from '../../resources/images/notifications.png'
+import { useHookstate } from "@hookstate/core"
 
 const Inbox = (props: { isOnTop: boolean, show: boolean }) => {
     const containerRef = useRef(null)
     const headerRef = useRef(null)
-    const [invites, setInvites] = useState([])
-    useEffect(() => {
-        if (props.show) {
-            api.services.invite.read({}).then((body: any) => {
-                setInvites(body.invites)
-            })
-        }
-    }, [props.show])
+    const invites = useHookstate(api.services.invite.invites).get({ noproxy: true })
     return (
         <div ref={containerRef} style={{ backgroundColor: '#fff', overflowY: 'auto', position: 'relative', width: '100%', height: '100%', zIndex: 2 }}
             onScroll={() => {
@@ -56,7 +50,7 @@ const Inbox = (props: { isOnTop: boolean, show: boolean }) => {
                                 }}>
                                     <img src={Notififtaions} alt={'notifications placeholder'} style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
                                 </Card>
-                                <Typography variant="h6" style={{ textAlign: 'center', paddingTop: 216, color: themeColor.get({noproxy: true})['activeText'] }}>
+                                <Typography variant="h6" style={{ textAlign: 'center', paddingTop: 216, color: themeColor.get({ noproxy: true })['activeText'] }}>
                                     No Notifications
                                 </Typography>
                             </div>
@@ -77,9 +71,6 @@ const Inbox = (props: { isOnTop: boolean, show: boolean }) => {
                                             return (
                                                 <InviteCard
                                                     style={{ marginTop: 16 }}
-                                                    onInviteResolve={() => {
-                                                        setInvites([...invites.filter((i: any) => i.id !== invite.id)])
-                                                    }}
                                                     invite={invite}
                                                     key={`inbox-invite-item-${invite.id}`}
                                                 />

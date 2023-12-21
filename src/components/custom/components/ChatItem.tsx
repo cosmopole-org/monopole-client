@@ -75,7 +75,7 @@ const ChatItem = (props: { chat: any, style?: any, onMoreClicked?: () => void })
                 }
                 {
                     lastMessage ?
-                        unseenCount === 0 ?
+                        !unseenCount ?
                             null :
                             <Typography
                                 variant="caption"
