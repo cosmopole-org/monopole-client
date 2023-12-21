@@ -18,10 +18,12 @@ const prepareSpaces = (towers: Array<any>, rooms: Array<any>, memory: any) => {
 
 const transformTower = (tower: ITower, spaces: any) => {
     let oldTower = spaces[tower.id]
-    oldTower.title = tower.title
-    oldTower.avatarId = tower.avatarId
-    oldTower.isPublic = tower.isPublic
-    oldTower.secret = tower.secret
+    if (oldTower) {
+        oldTower.title = tower.title
+        oldTower.avatarId = tower.avatarId
+        oldTower.isPublic = tower.isPublic
+        oldTower.secret = tower.secret
+    }
     return spaces
 }
 
@@ -33,11 +35,13 @@ const prepareRoom = (room: IRoom, spaces: any) => {
 
 const transformRoom = (room: IRoom, spaces: any) => {
     let oldRoom = spaces[room.towerId].rooms[room.id]
-    oldRoom.title = room.title
-    oldRoom.avatarId = room.avatarId
-    oldRoom.isPublic = room.isPublic
-    oldRoom.secret = room.secret
-    oldRoom.towerId = room.towerId
+    if (oldRoom) {
+        oldRoom.title = room.title
+        oldRoom.avatarId = room.avatarId
+        oldRoom.isPublic = room.isPublic
+        oldRoom.secret = room.secret
+        oldRoom.towerId = room.towerId
+    }
     return spaces
 }
 

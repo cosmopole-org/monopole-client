@@ -26,7 +26,7 @@ import Gallery from './components/pages/gallery';
 import VideoPlayer from './components/pages/videoPlayer';
 import AudioPlayer from './components/pages/audioPlayer';
 import { api, resetApi } from '.';
-import { Paper, Typography } from '@mui/material';
+import { Avatar, Paper, Typography } from '@mui/material';
 import { History } from '@mui/icons-material';
 import 'swiper/css';
 import 'swiper/css/effect-creative';
@@ -36,6 +36,10 @@ import ManageHomeFolders from './components/forms/manageHomeFolders';
 import Explore from './components/pages/explore';
 import ChatPage from './components/pages/chat';
 import { GlobalAppletSheet } from './components/custom/components/GlobalAppletSheet';
+import toast, { Toaster } from 'react-hot-toast';
+import SigmaAvatar from './components/custom/elements/SigmaAvatar';
+import ITower from './api/models/tower';
+import IRoom from './api/models/room';
 
 const useForceUpdate = () => {
     const [value, setValue] = useState(0); // integer state
@@ -44,6 +48,35 @@ const useForceUpdate = () => {
 
 let forceUpdate = () => { };
 const currentRoute = hookstate('')
+
+export let Toasts = {
+    showMessageToast: (message: any, tower: ITower, room: IRoom, onClick: any) => toast((t) => (
+        <div onClick={() => {
+            toast.dismiss(t.id)
+            onClick()
+        }}>
+            <Typography variant='caption'>{tower.title + '/' + room.title}</Typography>
+            <div style={{ display: 'flex' }}>
+                <SigmaAvatar style={{ width: 32, height: 32 }}>
+                    {message.author.firstName.substring(0, 1)}
+                </SigmaAvatar>
+                <Typography style={{ marginLeft: 8, marginTop: 4 }}>
+                    {`${message.author.firstName}: ${message.type === 'text' ? message.data.text :
+                        ['photo', 'audio', 'video'].includes(message.type) ? message.type :
+                            ''
+                        }`
+                    }
+                </Typography>
+            </div>
+        </div>
+    ), {
+        style: {
+            border: `1px solid ${themeColor.get({ noproxy: true })[500]}`,
+            backgroundColor: themeColor.get({ noproxy: true })[50],
+            color: themeBasedTextColor.get({ noproxy: true })
+        }
+    })
+}
 
 export const fixedNightColor = {
     '500': '#092635',
@@ -232,6 +265,9 @@ export let SigmaRouter = {
             }
         }
     },
+    topInitData: () => {
+        return historyStack[historyStack.length - 1]?.initialData
+    },
     topPath: () => {
         return historyStack[historyStack.length - 1]?.path
     },
@@ -363,6 +399,9 @@ function App() {
                     </div>
                 </div>
                 <GlobalAppletSheet />
+                <div style={{ position: 'absolute', zIndex: 99999 }}>
+                    <Toaster />
+                </div>
             </div>
         </ThemeProvider>
     );

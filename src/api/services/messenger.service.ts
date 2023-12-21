@@ -5,6 +5,9 @@ import { none } from "@hookstate/core"
 import memoryUtils from "../utils/memory"
 import encodingUtils from "../utils/encoding"
 import ITower from "../models/tower"
+import { SigmaRouter, Toasts } from "../../App"
+import IRoom from "../models/room"
+import { api } from "../.."
 
 export let MessageTypes = {
     TEXT: "text",
@@ -77,6 +80,20 @@ class MessengerService {
             let tower: any = Object.values(this.memory.spaces.get({ noproxy: true })).find((tower: any) => tower.rooms[message.roomId] !== undefined)
             if (tower) {
                 this.roomUnseenCount({ towerId: tower.id, roomId: message.roomId })
+            }
+            if (
+                (SigmaRouter.topPath() === 'room' || SigmaRouter.topPath() === 'chat')
+                && (SigmaRouter.topInitData() as any).room?.id === message.roomId
+            ) {
+                // do nothing
+            } else {
+                Toasts.showMessageToast(message, tower, tower.rooms[message.roomId], () => {
+                    if (Object.values(api.memory.chats.get({ noproxy: true })).find(chat => chat.roomId === message.roomId)) {
+                        SigmaRouter.navigate('chat', { initialData: { room: tower.rooms[message.roomId] } })
+                    } else {
+                        SigmaRouter.navigate('room', { initialData: { room: tower.rooms[message.roomId] } });
+                    }
+                })
             }
         })
 

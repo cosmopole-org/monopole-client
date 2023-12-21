@@ -41,8 +41,6 @@ class TowerService {
 
         this.onTowerUpdated('tower-service', async (data: any) => {
             let { tower } = data
-            let oldTower = this.memory.spaces.get({ noproxy: true })[tower.id]
-            tower.folderId = oldTower.folderId
             await this.storage.factories.tower?.update(tower)
             this.memory.spaces.set(memoryUtils.spaces.transformTower(tower, this.memory.spaces.get({ noproxy: true })))
         })

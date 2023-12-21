@@ -2,14 +2,34 @@
 const PRECACHE = 'precache-v1';
 const RUNTIME = 'runtime';
 
+async function checkClientIsVisible() {
+    const windowClients = await clients.matchAll({
+        type: "window",
+        includeUncontrolled: true,
+    });
+
+    for (var i = 0; i < windowClients.length; i++) {
+        if (windowClients[i].visibilityState === "visible") {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
 self.addEventListener('push', function (e) {
     const data = e.data.json();
-    self.registration.showNotification(
-        data.title,
-        {
-            body: data.body,
+    checkClientIsVisible().then(isOpen => {
+        if (!isOpen) {
+            self.registration.showNotification(
+                data.title,
+                {
+                    body: data.body,
+                }
+            );
         }
-    );
+    })
 })
 
 self.addEventListener('install', event => {
