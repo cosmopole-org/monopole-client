@@ -4,10 +4,11 @@ import TowerCard from "./TowerCard"
 import { statusbarHeight } from "../../sections/StatusBar"
 import { SigmaRouter, themeColor, themeColorName } from "../../../App"
 import { SigmaTab, SigmaTabs } from "../elements/SigmaTabs"
-import { Add, AllInbox, AllOut, Edit, FamilyRestroom, Folder, Games, Work } from "@mui/icons-material"
+import { Add, AllInbox, AllOut, Edit, FamilyRestroom, Folder, Games, LocationCity, People, Work } from "@mui/icons-material"
 import { api } from "../../.."
 import SigmaFab from "../elements/SigmaFab"
 import { useHookstate } from "@hookstate/core"
+import HumanTag from "./HumanTag"
 
 const darkWallpapers = [
     'https://i.pinimg.com/564x/85/38/d0/8538d0c0cc4ef43eaaccfca3060ad2db.jpg',
@@ -25,13 +26,16 @@ const lightWallpapers = [
     'https://i.pinimg.com/564x/ca/1b/be/ca1bbeb87e3ab7c32c7846df9cdef545.jpg'
 ]
 
-const TowersList = (props: { towers: Array<any>, hasFocus: boolean, showRating: boolean, bottomSpace: number, overridenStyle: any, defaultSCrollTop?: number, onScroll: (scrollTop: number) => void, towersContainerRef: any, onCollapsibleBarStateChange: (dy: number, v: boolean, collapsibleScrollTop: number) => void, showTowerMoreMenu?: (towerId: string) => void }) => {
+let cachedActiveTab: string | undefined = undefined
+
+const TowersList = (props: { towers?: Array<any>, humans?: Array<any>, hasFocus: boolean, showRating: boolean, bottomSpace: number, overridenStyle: any, defaultSCrollTop?: number, onScroll: (scrollTop: number) => void, towersContainerRef: any, onCollapsibleBarStateChange: (dy: number, v: boolean, collapsibleScrollTop: number) => void, showTowerMoreMenu?: (towerId: string) => void }) => {
     const lastScrollRef = useRef(props.defaultSCrollTop !== undefined ? props.defaultSCrollTop : 0)
-    const [activeTab, setActiveTab] = useState('all')
+    if (!cachedActiveTab) cachedActiveTab = props.showRating ? 'towers' : 'all'
+    const [activeTab, setActiveTab] = useState(cachedActiveTab)
     const homeFolders = useHookstate(api.memory.homeFolders)
     let folders = [{ id: 'all', title: 'all' }, ...homeFolders.get({ noproxy: true })]
     let wallpapers = themeColorName.get({ noproxy: true }) === 'night' ? darkWallpapers : lightWallpapers
-    props.towers.forEach(t => {
+    props.towers?.forEach(t => {
         if (t.wallpaper === undefined) {
             t.wallpaper = wallpapers[Math.floor(Math.random() * wallpapers.length)]
         }
@@ -83,12 +87,30 @@ const TowersList = (props: { towers: Array<any>, hasFocus: boolean, showRating: 
                     backgroundColor: themeColor.get({ noproxy: true })[50],
                 }}>
                     {
-                        props.showRating ? null : (
-                            <SigmaTabs variant={'scrollable'} value={activeTab} onChange={(e: any, val: string) => { setActiveTab(val); }}
+                        props.showRating ? (
+                            <SigmaTabs value={activeTab} onChange={(e: any, val: string) => { cachedActiveTab = val; setActiveTab(val); }}
+                                style={{
+                                    width: '100%',
+                                    height: 48,
+                                    borderRadius: '24px 24px 0px 0px',
+                                    backgroundColor: '#fff'
+                                }}
+                            >
+                                <SigmaTab
+                                    value={'towers'}
+                                    icon={<><LocationCity style={{ marginRight: 4 }} />Towers</>}
+                                />
+                                <SigmaTab
+                                    value={'people'}
+                                    icon={<><People style={{ marginRight: 4 }} />People</>}
+                                />
+                            </SigmaTabs>
+                        ) : (
+                            <SigmaTabs variant={'scrollable'} value={activeTab} onChange={(e: any, val: string) => { cachedActiveTab = val; setActiveTab(val); }}
                                 style={{
                                     width: 'calc(100% - 16px)',
                                     height: 48,
-                                    borderRadius: '24px 24px 0px 0px'
+                                    borderRadius: '24px 24px 0px 0px',
                                 }}
                             >
                                 {
@@ -116,11 +138,31 @@ const TowersList = (props: { towers: Array<any>, hasFocus: boolean, showRating: 
                 }
                 <div style={{ width: 'calc(100% - 32px)', height: 'auto', paddingLeft: 16, paddingRight: 16, paddingTop: 8 }}>
                     {
-                        props.towers.filter(tower => ((tower.folderId === activeTab) || (activeTab === 'all'))).map((tower: any) => (
-                            <TowerCard tower={tower} key={`tower-card-${tower.id}`} showRating={props.showRating} style={{ marginTop: 16 }} onMoreClicked={() => {
-                                props.showTowerMoreMenu && props.showTowerMoreMenu(tower)
-                            }} />
-                        ))
+                        props.showRating ?
+                            activeTab === 'towers' ?
+                                props.towers?.map((tower: any) => (
+                                    <TowerCard tower={tower} key={`tower-card-${tower.id}`} showRating={props.showRating} style={{ marginTop: 16 }} onMoreClicked={() => {
+                                        props.showTowerMoreMenu && props.showTowerMoreMenu(tower)
+                                    }} />
+                                )) : (
+                                    <div style={{
+                                        width: '100%', height: '100%', overflowY: 'auto', display: 'flex', flexWrap: 'wrap',
+                                        textAlign: 'center', justifyContent: 'center', alignItems: 'center', alignContent: 'flex-start'
+                                    }}>
+                                        {
+                                            props.humans?.map((human: any) => (
+                                                <HumanTag key={human.id} caption={'View'} human={human} inExplore onClick={() => {
+                                                    SigmaRouter.navigate('profile', { initialData: { human } })
+                                                }} />
+                                            ))
+                                        }
+                                    </div>
+                                )
+                            : props.towers?.filter(tower => ((tower.folderId === activeTab) || (activeTab === 'all'))).map((tower: any) => (
+                                <TowerCard tower={tower} key={`tower-card-${tower.id}`} showRating={props.showRating} style={{ marginTop: 16 }} onMoreClicked={() => {
+                                    props.showTowerMoreMenu && props.showTowerMoreMenu(tower)
+                                }} />
+                            ))
                     }
                 </div>
                 <div style={{ width: '100%', height: props.bottomSpace }} />

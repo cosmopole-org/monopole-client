@@ -157,8 +157,8 @@ class HumanService {
         return this.network.request('human/readById', { targetHumanId: data.targetHumanId })
     }
 
-    async search(data: { query: string, offset?: number, count?: number }): Promise<void> {
-        return this.network.request('human/search', { token: this._token })
+    async search(data: { query: string, offset?: number, count?: number }): Promise<any> {
+        return this.network.request('human/search', { query: data.query, offset: data.offset, count: data.count })
     }
 }
 

@@ -4,7 +4,7 @@ import { SigmaRouter, themeColor } from "../../../App"
 import SigmaAvatar from "../elements/SigmaAvatar"
 import SigmaFab from "../elements/SigmaFab"
 
-const HumanTag = (props: { onClick?: () => void, human: any, caption: string }) => {
+const HumanTag = (props: { onClick?: () => void, human: any, caption: string, inExplore?: boolean }) => {
     return (
         <div
             style={{
@@ -12,7 +12,7 @@ const HumanTag = (props: { onClick?: () => void, human: any, caption: string }) 
             }}>
             <Card elevation={0} style={{
                 position: 'absolute', left: 8, top: 40, width: 'calc(100% - 16px)', height: 'calc(100% - 40px)',
-                backgroundColor: themeColor.get({ noproxy: true })[100], borderRadius: 24
+                backgroundColor: themeColor.get({ noproxy: true })[props.inExplore ? 50 : 100], borderRadius: 24
             }}>
                 <Typography variant={'body1'} style={{ marginTop: 56, width: '100%', textAlign: 'center' }}>
                     {props.human.firstName}

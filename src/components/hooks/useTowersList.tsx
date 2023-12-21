@@ -10,7 +10,8 @@ const useTowersList = (
     bottomSpace: number,
     showRating: boolean,
     hasFocus: boolean,
-    towers: Array<any>
+    towers: Array<any>,
+    humans?: Array<any>
 ) => {
     const towersContainerRef = useRef(null)
     return {
@@ -26,6 +27,7 @@ const useTowersList = (
                 onCollapsibleBarStateChange={onCollapsibleBarStateChange}
                 showTowerMoreMenu={showTowerMoreMenu}
                 towers={towers}
+                humans={humans}
             />
         ),
         towersContainerRef
