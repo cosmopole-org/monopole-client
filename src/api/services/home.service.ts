@@ -3,9 +3,9 @@ import { DatabaseDriver, NetworkDriver } from "../drivers"
 import { api } from "../.."
 import ITower from "../models/tower"
 import IHomeFolder from "../models/homefolder"
+import IHuman from "../models/human"
 
 class HomeService {
-
 
     storage: DatabaseDriver
     network: NetworkDriver
@@ -41,6 +41,18 @@ class HomeService {
         this.storage = storage
         this.network = network
         this.memory = memory
+        setInterval(() => this.lastSeens(), 1000)
+    }
+
+    lastSeensDict: State<any> = hookstate({})
+
+    async lastSeens(): Promise<void> {
+        let humanIds = Object.values(this.memory.known.humans.get({ noproxy: true })).map((human: any) => human.id)
+        return this.network.request('home/lastSeens', { humanIds }).then(async (body: any) => {
+            let { lastSeens } = body
+            this.lastSeensDict.set(lastSeens)
+            return body
+        })
     }
 
     async moveTowerToFolder(data: { towerId: string, homeFolderId: string }): Promise<void> {

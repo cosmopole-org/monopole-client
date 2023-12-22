@@ -1,5 +1,5 @@
 
-import { Card, Paper, Typography } from "@mui/material"
+import { Badge, Card, Paper, Typography } from "@mui/material"
 import { SigmaRouter, themeBasedTextColor, themeColor } from "../../../App"
 import SigmaAvatar from "../elements/SigmaAvatar"
 import { useHookstate } from "@hookstate/core"
@@ -15,6 +15,7 @@ const ChatItem = (props: { chat: any, style?: any, onMoreClicked?: () => void })
     const unseenCount = useHookstate(api.services.messenger.unseenMsgCount).get({ noproxy: true })[props.chat.roomId]
     const peerId = ids[0] === myHumanId ? ids[1] : ids[0]
     const humans = useHookstate(api.memory.humans).get({ noproxy: true })
+    const isOnline = useHookstate(api.services.home.lastSeensDict).get({ noproxy: true })[peerId]
     const peer = humans[peerId]
     if (!peer) {
         return null
@@ -26,11 +27,13 @@ const ChatItem = (props: { chat: any, style?: any, onMoreClicked?: () => void })
     return (
         <div style={{ ...props.style, borderRadius: 24, paddingTop: 8, paddingLeft: 8, display: 'flex', position: 'relative', width: '100%', height: 64, backgroundColor: themeColor.get({ noproxy: true })[100] }}
             onClick={() => {
-                SigmaRouter.navigate('chat', { initialData: { room: mainRoom } })
+                SigmaRouter.navigate('chat', { initialData: { room: mainRoom, humanId: peerId } })
             }}>
-            <SigmaAvatar style={{ width: 56, height: 56 }}>
-                {(peer.firstName + ' ' + peer.lastName).substring(0, 1)}
-            </SigmaAvatar>
+            <Badge color="secondary" overlap="circular" variant="dot" invisible={isOnline !== -1}>
+                <SigmaAvatar style={{ width: 56, height: 56 }}>
+                    {(peer.firstName + ' ' + peer.lastName).substring(0, 1)}
+                </SigmaAvatar>
+            </Badge>
             <div style={{ width: '100%', height: '100%', marginLeft: 8, paddingTop: 4 }}>
                 <Typography variant='body1' style={{ fontWeight: 'bold', color: themeBasedTextColor.get({ noproxy: true }) }}>
                     {peer.firstName + ' ' + peer.lastName}

@@ -1,7 +1,10 @@
 import { ArrowBack, Close, Dashboard, Explore, Feed, Home, KeyboardCommandKey, MusicNote, Notifications, Settings, Wallet } from "@mui/icons-material"
-import { IconButton, Paper, Typography } from "@mui/material"
+import { Badge, IconButton, Paper, Typography } from "@mui/material"
 import { useState } from "react"
-import { SigmaRouter, themeBasedTextColor, themeColor } from "../../App"
+import { SigmaRouter, themeBasedTextColor, themeColor, themeColorName } from "../../App"
+import SigmaAvatar from "../custom/elements/SigmaAvatar"
+import { api } from "../.."
+import { useHookstate } from "@hookstate/core"
 
 const statusbarHeight = () => 40
 const LeftControlTypes = {
@@ -15,7 +18,8 @@ const RightControlTypes = {
     NONE: 0,
     COMMANDS: 1,
     SETTINGS: 2,
-    EXPLORE: 3
+    EXPLORE: 3,
+    AVATAR: 4
 }
 const StatusThemes = {
     LIGHT: 0,
@@ -27,6 +31,8 @@ let switchLeftControl: ((type: number, functionality?: () => void) => void) | un
 let switchRightControl: ((type: number, functionality?: () => void) => void) | undefined = undefined
 let switchTitle: ((title: string) => void) | undefined = undefined
 let switchColor: ((color: string, theme: number) => void) | undefined = undefined
+let showAvatar: ((humanId: string) => void) | undefined = undefined
+let avatarHumanId: string | undefined = undefined
 
 const StatusBar = () => {
     const [leftControlType, setLeftControlType] = useState(LeftControlTypes.NOTIFICATIONS)
@@ -40,10 +46,14 @@ const StatusBar = () => {
         setRightControlType(type)
         rightControlFunctionality = functionality
     }
-    switchTitle = (title: string) => setTitle(title)
-    switchColor = (color: string, theme: number) => {
-
+    showAvatar = (humanId: string) => {
+        avatarHumanId = humanId
+        setRightControlType(RightControlTypes.AVATAR)
+        rightControlFunctionality = undefined
     }
+    switchTitle = (title: string) => setTitle(title)
+    switchColor = (color: string, theme: number) => { }
+    const isOnline = useHookstate(api.services.home.lastSeensDict).get({ noproxy: true })
     return SigmaRouter.topPath() === 'splash' ?
         null : (
             <Paper
@@ -94,7 +104,13 @@ const StatusBar = () => {
                         (
                             <IconButton
                                 onClick={() => {
-                                    rightControlFunctionality && rightControlFunctionality()
+                                    if (rightControlType === RightControlTypes.AVATAR) {
+                                        if (avatarHumanId) {
+                                            SigmaRouter.navigate('profile', { initialData: { human: api.memory.known.humans.get({ noproxy: true })[avatarHumanId] } })
+                                        }
+                                    } else {
+                                        rightControlFunctionality && rightControlFunctionality()
+                                    }
                                 }}
                                 size="small" style={{ width: 32, height: 32, borderRadius: '50%', position: 'absolute', top: 4, right: 8 + 32 + 8 }}>
                                 {
@@ -104,6 +120,12 @@ const StatusBar = () => {
                                         <Settings style={{ color: themeBasedTextColor.get({ noproxy: true }) }} />
                                     ) : rightControlType === RightControlTypes.EXPLORE ? (
                                         <Explore style={{ color: themeBasedTextColor.get({ noproxy: true }) }} />
+                                    ) : rightControlType === RightControlTypes.AVATAR && avatarHumanId ? (
+                                        <Badge color="secondary" overlap="circular" variant="dot" invisible={isOnline[avatarHumanId] !== -1}>
+                                            <SigmaAvatar style={{ width: 24, height: 24, backgroundColor: themeColor.get({ noproxy: true })[100] }}>
+                                                {api.memory.known.humans.get({ noproxy: true })[avatarHumanId].firstName.substring(0, 1)}
+                                            </SigmaAvatar>
+                                        </Badge>
                                     ) : null
                                 }
                             </IconButton>
@@ -126,4 +148,4 @@ const StatusBar = () => {
         )
 }
 
-export { StatusBar as Component, statusbarHeight, switchLeftControl, LeftControlTypes, switchRightControl, RightControlTypes, switchTitle, switchColor, StatusThemes }
+export { StatusBar as Component, showAvatar, statusbarHeight, switchLeftControl, LeftControlTypes, switchRightControl, RightControlTypes, switchTitle, switchColor, StatusThemes }

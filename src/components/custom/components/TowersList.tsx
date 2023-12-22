@@ -96,7 +96,7 @@ const TowersList = (props: { towers?: Array<any>, humans?: Array<any>, hasFocus:
                                     width: '100%',
                                     height: 48,
                                     borderRadius: '24px 24px 0px 0px',
-                                    backgroundColor: '#fff'
+                                    backgroundColor: themeColor.get({ noproxy: true })[100]
                                 }}
                             >
                                 <SigmaTab

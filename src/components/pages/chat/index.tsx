@@ -21,16 +21,16 @@ import { notifyNewFileUploaded } from "../../tabs/Files"
 import formatter from "../../utils/formatter"
 import Chat from "../../tabs/Chat"
 import SliderPage from "../../layouts/SliderPage"
-import { LeftControlTypes, RightControlTypes, switchLeftControl, switchRightControl, switchTitle } from "../../sections/StatusBar"
+import { LeftControlTypes, RightControlTypes, showAvatar, switchLeftControl, switchRightControl, switchTitle } from "../../sections/StatusBar"
 
-const ChatPage = (props: { room: IRoom, id: string, isOnTop: boolean }) => {
+const ChatPage = (props: { room: IRoom, humanId: string, id: string, isOnTop: boolean }) => {
     const close = () => {
         SigmaRouter.back()
     }
     useEffect(() => {
         if (props.isOnTop) {
             switchLeftControl && switchLeftControl(LeftControlTypes.BACK, close)
-            switchRightControl && switchRightControl(RightControlTypes.NONE)
+            showAvatar && showAvatar(props.humanId)
             switchTitle && switchTitle('Chat')
         }
     }, [props.isOnTop])

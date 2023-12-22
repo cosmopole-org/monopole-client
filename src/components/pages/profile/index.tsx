@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react"
-import { Card, IconButton, Typography } from "@mui/material"
+import { Badge, Card, IconButton, Typography } from "@mui/material"
 import { LeftControlTypes, RightControlTypes, switchLeftControl, switchRightControl, switchTitle } from "../../sections/StatusBar"
 import { SigmaRouter, themeColor } from "../../../App"
 import SliderPage from "../../layouts/SliderPage"
@@ -10,6 +10,8 @@ import SigmaAvatar from "../../custom/elements/SigmaAvatar"
 import ITower from "../../../api/models/tower"
 import { api } from "../../.."
 import { openMachineSheet } from "../../custom/components/GlobalAppletSheet"
+import { useHookstate } from "@hookstate/core"
+import utils from "../../utils"
 
 const Profile = (props: { id: string, isOnTop: boolean, human?: IHuman, machine?: IMachine }) => {
     const containerRef = useRef(null)
@@ -20,6 +22,14 @@ const Profile = (props: { id: string, isOnTop: boolean, human?: IHuman, machine?
             switchRightControl && switchRightControl(RightControlTypes.NONE)
         }
     }, [props.isOnTop])
+    const isOnlines: any = useHookstate(props.human ? api.services.home.lastSeensDict : undefined).get({ noproxy: true })
+    let isOnline = false, lastSeen = 0;
+    if (props.human) {
+        lastSeen = isOnlines[props.human.id]
+        if (isOnlines) {
+            isOnline = isOnlines[props.human.id] === -1
+        }
+    }
     let title = props.human ?
         (props.human.firstName + (props.human.lastName ? ` ${props.human.lastName}` : '')) :
         props.machine ?
@@ -38,12 +48,23 @@ const Profile = (props: { id: string, isOnTop: boolean, human?: IHuman, machine?
                     padding: 16, backgroundColor: themeColor.get({ noproxy: true })[100], borderRadius: 24, height: 'auto',
                     marginLeft: 16, width: 'calc(100% - 64px)', paddingTop: 32, position: 'relative'
                 }}>
-                    <SigmaAvatar style={{ width: 112, height: 112, margin: '0 auto' }}>
-                        {titleShort}
-                    </SigmaAvatar>
+
+                    <Badge color="secondary" overlap="circular" variant="dot" invisible={!isOnline} style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
+                        <SigmaAvatar style={{ width: 112, height: 112 }}>
+                            {titleShort}
+                        </SigmaAvatar>
+                    </Badge>
+                    <div style={{ width: '100%', height: 112 }} />
                     <Typography variant={'h6'} style={{ width: '100%', textAlign: 'center', marginTop: 16 }}>
                         {title}
                     </Typography>
+                    {
+                        lastSeen > 0 ? (
+                            <Typography variant={'body1'} style={{ width: '100%', textAlign: 'center', marginTop: 16 }}>
+                                {utils.formatter.default.formatDate(lastSeen) + ' ' + utils.formatter.default.formatTime(lastSeen)}
+                            </Typography>
+                        ) : null
+                    }
                 </Card>
                 {
                     props.machine ? (
@@ -84,7 +105,7 @@ const Profile = (props: { id: string, isOnTop: boolean, human?: IHuman, machine?
                                 if (props.human) {
                                     api.services.interaction.interact({ peerId: props.human.id }).then((body: any) => {
                                         let { chat, room, tower } = body
-                                        SigmaRouter.navigate('chat', { initialData: { room } })
+                                        SigmaRouter.navigate('chat', { initialData: { room, humanId: props.human?.id } })
                                     })
                                 }
                             }}

@@ -89,7 +89,7 @@ class MessengerService {
             } else {
                 Toasts.showMessageToast(message, tower, tower.rooms[message.roomId], () => {
                     if (Object.values(api.memory.chats.get({ noproxy: true })).find(chat => chat.roomId === message.roomId)) {
-                        SigmaRouter.navigate('chat', { initialData: { room: tower.rooms[message.roomId] } })
+                        SigmaRouter.navigate('chat', { initialData: { room: tower.rooms[message.roomId], humanId: message.authorId } })
                     } else {
                         SigmaRouter.navigate('room', { initialData: { room: tower.rooms[message.roomId] } });
                     }

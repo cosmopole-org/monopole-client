@@ -1,11 +1,15 @@
 
 import {
+    Badge,
     Fade,
 } from "@mui/material";
 import SigmaAvatar from "../../../custom/elements/SigmaAvatar";
 import IMessage from "../../../../api/models/message";
+import { useHookstate } from "@hookstate/core";
+import { api } from "../../../..";
 
 const MessageRow = (props: { message: any, side: string, children: any, lastOfSection?: boolean, firstOfSection?: boolean }) => {
+    const isOnline = useHookstate(api.services.home.lastSeensDict).get({ noproxy: true })[props.message.authorId]
     return (
         <Fade in={true}>
             <div
@@ -22,9 +26,12 @@ const MessageRow = (props: { message: any, side: string, children: any, lastOfSe
             >
                 {
                     (props.side === 'left' && props.lastOfSection) ? (
-                        <SigmaAvatar style={{ marginRight: -4, marginTop: 'auto', marginBottom: 0, width: 32, height: 32 }}>
-                            {props.message.author.firstName.substring(0, 1)}
-                        </SigmaAvatar>
+                        <Badge color="secondary" overlap="circular" variant="dot" invisible={isOnline !== -1} style={{ marginTop: 'auto', marginBottom: 0 }}>
+                            <SigmaAvatar style={{ marginRight: -4, width: 32, height: 32 }}>
+                                {props.message.author.firstName.substring(0, 1)}
+                            </SigmaAvatar>
+                        </Badge>
+
                     ) : (
                         <div style={{ marginTop: 'auto', marginBottom: 0, width: 42, height: 42 }}>
 

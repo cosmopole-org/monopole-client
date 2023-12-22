@@ -141,7 +141,7 @@ let theme = createTheme({
             main: themeColor.get({ noproxy: true })[200],
         },
         secondary: {
-            main: colors.purple[200],
+            main: tempThemeColorName === 'night' ? '#fff' : colors.purple[200],
         },
         background: {
             paper: tempThemeColorName === 'night' ? fixedNightColor[100] : '#fff'
@@ -190,7 +190,7 @@ export let reconstructMaterialPalette = (name: string, color: any) => {
                 main: color[200],
             },
             secondary: {
-                main: colors.purple[200],
+                main: name === 'night' ? '#fff' : colors.purple[200],
             },
             background: {
                 paper: color[50]
