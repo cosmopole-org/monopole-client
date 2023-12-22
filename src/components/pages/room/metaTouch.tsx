@@ -14,7 +14,7 @@ export let setChatKeyboardOpen = (open: boolean) => {
     recalculateMetaCoverHeight()
 }
 
-export default (props: { room: IRoom, onClose: () => void }) => {
+export default (props: { room: IRoom, onClose: () => void, needToCloseRecorder?: boolean }) => {
     const metaRef = useRef(null)
     const top = useRef(window.innerHeight)
     const updateTop = (newVal: number) => {
@@ -54,7 +54,7 @@ export default (props: { room: IRoom, onClose: () => void }) => {
             }}
         >
             <div style={{ width: '100%', height: '100%', position: 'relative' }}>
-                <MetaContent room={props.room} />
+                <MetaContent room={props.room} needToCloseRecorder={props.needToCloseRecorder} />
                 <div
                     ref={touchRef}
                     style={{ width: '100%', height: `calc(100% - ${isChatKeyboardOpen ? emojiPadHeight : 0}px)`, position: 'absolute', left: 0, top: 0, zIndex: 2 }}

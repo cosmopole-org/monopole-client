@@ -22,7 +22,7 @@ import formatter from "../utils/formatter"
 
 const uploads: { [id: string]: { fn: (data: { doc: any, towerId: string, roomId: string }) => void, roomId: string } } = {}
 
-const Chat = (props: { show: boolean, room: IRoom }) => {
+const Chat = (props: { show: boolean, room: IRoom, needToCloseRecorder?: boolean }) => {
     const inputFile = useRef(null)
     api.services.messenger.check(props.room.id)
     const [pointedPostMessage, setPointedPostMessage] = useState(undefined)
@@ -103,7 +103,7 @@ const Chat = (props: { show: boolean, room: IRoom }) => {
                 msgs.set([...msgs.get({ noproxy: true })])
             })
         }
-    }, [setPointedPostMessage, setPointedMessage, pointedPostMessage, msgs, messagesList])
+    }, [setPointedPostMessage, setPointedMessage, pointedPostMessage, pointedMessage, msgs, messagesList])
     const onWidgetsClicked = useCallback(() => {
         inputFile.current && (inputFile.current as HTMLElement).click();
     }, [setPointedPostMessage, setPointedMessage, pointedPostMessage, msgs, messagesList])
@@ -173,7 +173,7 @@ const Chat = (props: { show: boolean, room: IRoom }) => {
                 {
                     pointedPostMessage !== undefined ? (
                         <Paper style={{
-                            width: '100%', height: 48, borderRadius: 0, position: 'relative'
+                            width: '100%', height: 48, borderRadius: 0, position: 'relative', marginBottom: 16
                         }}>
                             <Quote room={props.room} messageType={(pointedPostMessage as IMessage).type} message={pointedPostMessage} />
                             <SigmaFab variant={'extended'} size={'small'} onClick={() => { setPointedPostMessage(undefined) }} style={{
@@ -186,6 +186,7 @@ const Chat = (props: { show: boolean, room: IRoom }) => {
                     ) : null
                 }
                 <ChatFooter
+                    needToCloseRecorder={props.needToCloseRecorder}
                     style={{
                         borderRadius: 0, width: '100%',
                         minHeight: 56, height: 'auto',

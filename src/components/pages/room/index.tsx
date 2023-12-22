@@ -28,6 +28,7 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
   const [showMachineBox, setShowMachineBox] = useState(false)
   const wallpaperContainerRef = useRef(null)
   const isMetaOpen = useRef(false);
+  const [needToCloseRecorder, setNeedToCloseRecorder] = useState(false)
   const messagesList = useHookstate(api.memory.messages[props.room.id]).get({ noproxy: true })
   const updateMetaState = (state: boolean) => {
     isMetaOpen.current = state;
@@ -38,6 +39,7 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
     }
   }
   const close = () => {
+    setNeedToCloseRecorder(true)
     SigmaRouter.back()
   }
   const closeMeta = (closedItself: boolean) => {
@@ -119,9 +121,9 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
         <Shadow onClick={() => closeMeta(false)} />
         {
           utils.screen.isTouchDevice() ? (
-            <MetaTouch room={props.room} onClose={() => { closeMeta(true); showRoomShadow.set(false); }} />
+            <MetaTouch room={props.room} needToCloseRecorder={needToCloseRecorder} onClose={() => { closeMeta(true); showRoomShadow.set(false); }} />
           ) : (
-            <MetaNonTouch container={containerRef.current} room={props.room} onClose={() => { closeMeta(true); }} />
+            <MetaNonTouch container={containerRef.current} needToCloseRecorder={needToCloseRecorder} room={props.room} onClose={() => { closeMeta(true); }} />
           )
         }
         <RoomControl

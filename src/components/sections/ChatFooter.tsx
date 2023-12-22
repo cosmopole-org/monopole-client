@@ -8,7 +8,7 @@ import pickerData from "@emoji-mart/data"
 import { setChatKeyboardOpen } from "../pages/room/metaTouch";
 import VoiceRecorder from "../custom/components/VoiceRecorder";
 
-const ChatFooter = (props: { style?: any, messages: Array<IMessage>, onVoiceRecorded: (blob: any) => void, onWidgetsClicked: () => void, onMessageSubmit: (text: string) => void, pointedMessage: any, action: any }) => {
+const ChatFooter = (props: { needToCloseRecorder?: boolean, style?: any, messages: Array<IMessage>, onVoiceRecorded: (blob: any) => void, onWidgetsClicked: () => void, onMessageSubmit: (text: string) => void, pointedMessage: any, action: any }) => {
     const [value, setValue] = useState(props.pointedMessage?.type === 'text' ? props.pointedMessage.data.text : '')
     const inputbaseRef = useRef(null)
     const [showEmoji, setShowEmoji] = useState(false)
@@ -24,11 +24,16 @@ const ChatFooter = (props: { style?: any, messages: Array<IMessage>, onVoiceReco
         }
     }, [props.pointedMessage])
     useEffect(() => setChatKeyboardOpen(showEmoji), [showEmoji])
+    console.log(props.pointedMessage)
     return (
         <Paper style={props.style}>
             {
                 showVoiceRecorder ? (
                     <VoiceRecorder
+                        closed={props.needToCloseRecorder}
+                        style={{
+                            height: 40
+                        }}
                         onCancel={() => setShowVoiceRecorder(false)}
                         onVoiceRecorded={(blob: any) => {
                             setShowVoiceRecorder(false)
@@ -36,7 +41,7 @@ const ChatFooter = (props: { style?: any, messages: Array<IMessage>, onVoiceReco
                         }} />
                 ) : null
             }
-            <div style={{ width: '100%', height: 'auto', display: 'flex', paddingTop: props.pointedMessage ? 16 : 0 }}>
+            <div style={{ width: '100%', height: 'auto', display: 'flex', paddingTop: 0 }}>
                 <IconButton onClick={() => setShowEmoji(!showEmoji)}><InsertEmoticon /></IconButton>
                 <InputBase
                     onMouseUp={updateSelectionStart}
@@ -45,8 +50,8 @@ const ChatFooter = (props: { style?: any, messages: Array<IMessage>, onVoiceReco
                     placeholder="type your message..."
                     style={{
                         flex: 1, height: 'auto', borderRadius: 16, paddingLeft: 8, paddingRight: 8,
-                        border: 'none', minHeight: 32,
-                        paddingTop: 8, marginTop: 8, marginBottom: 8,
+                        border: 'none', minHeight: 32, marginTop: 8,
+                        paddingTop: 8, marginBottom: 8,
                         backgroundColor: themeColorName.get({ noproxy: true }) === 'night' ?
                             themeColor.get({ noproxy: true })['plain'] :
                             themeColor.get({ noproxy: true })[50],

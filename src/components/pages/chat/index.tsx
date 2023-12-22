@@ -24,7 +24,9 @@ import SliderPage from "../../layouts/SliderPage"
 import { LeftControlTypes, RightControlTypes, showAvatar, switchLeftControl, switchRightControl, switchTitle } from "../../sections/StatusBar"
 
 const ChatPage = (props: { room: IRoom, humanId: string, id: string, isOnTop: boolean }) => {
+    const [needToCloseRecorder, setNeedToCloseRecorder] = useState(false)
     const close = () => {
+        setNeedToCloseRecorder(true)
         SigmaRouter.back()
     }
     useEffect(() => {
@@ -45,7 +47,7 @@ const ChatPage = (props: { room: IRoom, humanId: string, id: string, isOnTop: bo
                         themeColor.get({ noproxy: true })[200],
                     width: '100%', height: '100%', position: 'absolute', left: 0, top: 0
                 }} />
-                <Chat show={true} room={props.room} />
+                <Chat show={true} room={props.room} needToCloseRecorder={needToCloseRecorder} />
                 <AppBar>
 
                 </AppBar>

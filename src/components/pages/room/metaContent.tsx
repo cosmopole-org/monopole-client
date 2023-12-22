@@ -12,7 +12,7 @@ import RoomWallpaper from '../../../resources/images/room.jpg';
 
 export const metaActiveTab = hookstate('chat')
 
-export default (props: { room: IRoom }) => {
+export default (props: { room: IRoom, needToCloseRecorder?: boolean }) => {
     const wallpaperContainerRef = useRef(null);
     const activeTab = useHookstate(metaActiveTab);
     const Puller = styled(Box)(({ theme }) => ({
@@ -56,7 +56,7 @@ export default (props: { room: IRoom }) => {
                             ]
                     }
                     <div style={{ width: '100%', height: `100%` }}>
-                        <Chat show={activeTab.get({ noproxy: true }) === 'chat'} room={props.room} />
+                        <Chat show={activeTab.get({ noproxy: true }) === 'chat'} room={props.room} needToCloseRecorder={props.needToCloseRecorder} />
                         <Files show={activeTab.get({ noproxy: true }) === 'files'} room={props.room} />
                     </div>
                     <Paper

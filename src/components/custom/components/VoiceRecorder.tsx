@@ -2,17 +2,29 @@
 import { useEffect, useRef } from 'react';
 import { AudioRecorder, useAudioRecorder } from 'react-audio-voice-recorder';
 import '../../../resources/styles/voicerecorder.css';
-import { Button, IconButton } from '@mui/material';
-import { Delete } from '@mui/icons-material';
+import { IconButton } from '@mui/material';
+import {  Delete } from '@mui/icons-material';
 
-export default function VoiceRecorder(props: { onVoiceRecorded: any, onCancel?: any }) {
+export default function VoiceRecorder(props: { onVoiceRecorded: any, onCancel?: any, style?: any, closed?: boolean }) {
     const recorderControls = useAudioRecorder()
     const shouldSendRef = useRef(true);
     useEffect(() => {
         recorderControls.startRecording()
     }, [])
+    useEffect(() => {
+        if (props.closed) {
+            shouldSendRef.current = false;
+            recorderControls.stopRecording();
+        }
+    }, [props.closed])
     return (
-        <div>
+        <div style={{ position: 'relative', display: 'flex', paddingTop: 16 }}>
+            <IconButton onClick={() => {
+                shouldSendRef.current = false;
+                recorderControls.stopRecording();
+            }}>
+                <Delete />
+            </IconButton>
             <AudioRecorder
                 onRecordingComplete={(blob) => {
                     if (shouldSendRef.current) {
@@ -31,12 +43,6 @@ export default function VoiceRecorder(props: { onVoiceRecorded: any, onCancel?: 
                     AudioRecorderClass: 'voice-recorder'
                 }}
             />
-            <IconButton style={{position: 'absolute', left: 8, top: 16}} onClick={() => {
-                shouldSendRef.current = false;
-                recorderControls.stopRecording();
-            }}>
-                <Delete />
-            </IconButton>
         </div >
     )
 }
