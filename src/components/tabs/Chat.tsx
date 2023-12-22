@@ -173,12 +173,11 @@ const Chat = (props: { show: boolean, room: IRoom }) => {
                 {
                     pointedPostMessage !== undefined ? (
                         <Paper style={{
-                            width: '100%', height: 48, borderRadius: 0, position: 'relative',
-                            backgroundColor: themeColor.get({ noproxy: true })[50]
+                            width: '100%', height: 48, borderRadius: 0, position: 'relative'
                         }}>
                             <Quote room={props.room} messageType={(pointedPostMessage as IMessage).type} message={pointedPostMessage} />
                             <SigmaFab variant={'extended'} size={'small'} onClick={() => { setPointedPostMessage(undefined) }} style={{
-                                position: 'absolute', right: 12, bottom: 10
+                                position: 'absolute', right: 12, bottom: 0
                             }}>
                                 Cancel
                                 <Close />
@@ -190,8 +189,7 @@ const Chat = (props: { show: boolean, room: IRoom }) => {
                     style={{
                         borderRadius: 0, width: '100%',
                         minHeight: 56, height: 'auto',
-                        backgroundColor: themeColor.get({ noproxy: true })[100],
-                        paddingTop: 2
+                        backgroundColor: themeColor.get({ noproxy: true })[100]
                     }}
                     onVoiceRecorded={(blob: any) => uploadBlob(blob)}
                     pointedMessage={pointedPostMessage}

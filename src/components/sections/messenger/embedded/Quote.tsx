@@ -10,7 +10,7 @@ import { themeBasedTextColor, themeColor } from "../../../../App"
 
 const Quote = (props: { message: IMessage, messageType: string, room: IRoom }) => {
     return (
-        <div style={{ width: '100%', height: '100%', position: 'relative', backgroundColor: themeColor.get({ noproxy: true })[100], paddingLeft: 16, paddingBottom: 16, marginTop: 'auto' }}>
+        <div style={{ width: '100%', height: '100%', position: 'relative', backgroundColor: themeColor.get({ noproxy: true })[50], paddingLeft: 16, paddingBottom: 16, marginTop: 'auto' }}>
             <Typography
                 variant={"caption"}
                 style={{

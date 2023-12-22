@@ -36,7 +36,7 @@ const ChatFooter = (props: { style?: any, messages: Array<IMessage>, onVoiceReco
                         }} />
                 ) : null
             }
-            <div style={{ width: '100%', height: 'auto', display: 'flex' }}>
+            <div style={{ width: '100%', height: 'auto', display: 'flex', paddingTop: props.pointedMessage ? 16 : 0 }}>
                 <IconButton onClick={() => setShowEmoji(!showEmoji)}><InsertEmoticon /></IconButton>
                 <InputBase
                     onMouseUp={updateSelectionStart}
