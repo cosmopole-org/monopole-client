@@ -10,7 +10,7 @@ import { themeBasedTextColor, themeColor } from "../../../../App"
 
 const Quote = (props: { message: IMessage, messageType: string, room: IRoom }) => {
     return (
-        <div style={{ width: '100%', height: '100%', position: 'relative', backgroundColor: themeColor.get({ noproxy: true })[100], paddingLeft: 16, marginBottom: 0, marginTop: 'auto' }}>
+        <div style={{ width: '100%', height: '100%', position: 'relative', backgroundColor: themeColor.get({ noproxy: true })[100], paddingLeft: 16, paddingBottom: 16, marginTop: 'auto' }}>
             <Typography
                 variant={"caption"}
                 style={{
@@ -23,8 +23,8 @@ const Quote = (props: { message: IMessage, messageType: string, room: IRoom }) =
             <Typography
                 style={{
                     textAlign: "left", wordWrap: 'break-word', textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap', overflow: 'hidden',
-                    display: 'flex', wordBreak: 'break-word', fontSize: 14, height: 'auto', paddingBottom: 16,
+                    whiteSpace: 'nowrap', overflow: 'hidden', width: 'calc(100% - 128px)',
+                    display: 'flex', fontSize: 14, height: 'auto', paddingBottom: 8,
                     color: themeBasedTextColor.get({ noproxy: true })
                 }}
             >
