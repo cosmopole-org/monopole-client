@@ -25,7 +25,7 @@ const ChatItem = (props: { chat: any, style?: any, onMoreClicked?: () => void })
         return null
     }
     return (
-        <div style={{ ...props.style, borderRadius: 24, paddingTop: 8, paddingLeft: 8, display: 'flex', position: 'relative', width: '100%', height: 64, backgroundColor: themeColor.get({ noproxy: true })[100] }}
+        <div style={{ ...props.style, borderRadius: 24, paddingTop: 8, paddingLeft: 8, display: 'flex', position: 'relative', width: 'calc(100% - 8px)', height: 64, backgroundColor: themeColor.get({ noproxy: true })[100] }}
             onClick={() => {
                 SigmaRouter.navigate('chat', { initialData: { room: mainRoom, humanId: peerId } })
             }}>

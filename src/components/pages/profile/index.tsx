@@ -60,7 +60,7 @@ const Profile = (props: { id: string, isOnTop: boolean, human?: IHuman, machine?
                     </Typography>
                     {
                         lastSeen > 0 ? (
-                            <Typography variant={'body1'} style={{ width: '100%', textAlign: 'center', marginTop: 16 }}>
+                            <Typography variant={'body1'} style={{ width: '100%', textAlign: 'center', marginTop: 8 }}>
                                 {utils.formatter.default.formatDate(lastSeen) + ' ' + utils.formatter.default.formatTime(lastSeen)}
                             </Typography>
                         ) : null
