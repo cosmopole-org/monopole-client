@@ -3,8 +3,9 @@ import { Edit } from '@mui/icons-material';
 import { Card, Drawer } from '@mui/material';
 import SigmaMenuItem from '../elements/SigmaMenuItem';
 import { themeColor } from '../../../App';
+import IMessage from '../../../api/models/message';
 
-const MessageMenu = (props: { shown: boolean, onClose: () => void, onEdit: () => void, onDelete: () => void }) => {
+const MessageMenu = (props: { shown: boolean, message: IMessage, onClose: () => void, onEdit: () => void, onDelete: () => void }) => {
     return (
         <React.Fragment>
             <Drawer anchor='bottom' open={props.shown} onClose={() => props.onClose()}
@@ -14,16 +15,20 @@ const MessageMenu = (props: { shown: boolean, onClose: () => void, onEdit: () =>
                     }
                 }}
             >
-                <Card style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', width: 100, height: 6, borderRadius: 3, background: themeColor.get({noproxy: true})[50], top: 12 }} />
+                <Card style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', width: 100, height: 6, borderRadius: 3, background: themeColor.get({ noproxy: true })[50], top: 12 }} />
                 <div style={{ width: '100%', height: 32 }} />
-                <SigmaMenuItem
-                    onClick={() => {
-                        props.onEdit();
-                        props.onClose();
-                    }}
-                    icon={Edit}
-                    caption='Edit Message'
-                />
+                {
+                    props.message?.type === 'text' ? (
+                        <SigmaMenuItem
+                            onClick={() => {
+                                props.onEdit();
+                                props.onClose();
+                            }}
+                            icon={Edit}
+                            caption='Edit Message'
+                        />
+                    ) : null
+                }
                 <SigmaMenuItem
                     onClick={() => {
                         props.onDelete();

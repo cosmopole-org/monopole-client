@@ -176,9 +176,9 @@ const Chat = (props: { show: boolean, room: IRoom }) => {
                             width: '100%', height: 48, borderRadius: 0, position: 'relative',
                             backgroundColor: themeColor.get({ noproxy: true })[50]
                         }}>
-                            <Quote messageType={(pointedPostMessage as IMessage).type} message={pointedPostMessage} />
+                            <Quote room={props.room} messageType={(pointedPostMessage as IMessage).type} message={pointedPostMessage} />
                             <SigmaFab variant={'extended'} size={'small'} onClick={() => { setPointedPostMessage(undefined) }} style={{
-                                position: 'absolute', right: 12, bottom: 4
+                                position: 'absolute', right: 12, bottom: 10
                             }}>
                                 Cancel
                                 <Close />
@@ -191,7 +191,7 @@ const Chat = (props: { show: boolean, room: IRoom }) => {
                         borderRadius: 0, width: '100%',
                         minHeight: 56, height: 'auto',
                         backgroundColor: themeColor.get({ noproxy: true })[100],
-                        paddingTop: 2, marginTop: 8
+                        paddingTop: 2
                     }}
                     onVoiceRecorded={(blob: any) => uploadBlob(blob)}
                     pointedMessage={pointedPostMessage}
@@ -201,7 +201,7 @@ const Chat = (props: { show: boolean, room: IRoom }) => {
                     onWidgetsClicked={onWidgetsClicked}
                 />
             </div>
-            <MessageMenu onClose={() => setPointedMessage(undefined)} shown={pointedMessage !== undefined}
+            <MessageMenu message={pointedMessage} onClose={() => setPointedMessage(undefined)} shown={pointedMessage !== undefined}
                 onEdit={() => {
                     setPointedPostMessage(pointedMessage)
                     setAction('edit')

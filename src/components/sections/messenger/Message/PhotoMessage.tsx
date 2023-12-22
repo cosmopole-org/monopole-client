@@ -25,7 +25,7 @@ const PhotoMessage = (props: { otherDocIds: Array<string | undefined>, room: IRo
                 SigmaRouter.navigate('gallery', { initialData: { docId: props.message.data.docId, room: props.room, otherDocIds: props.otherDocIds }, overPrevious: true })
             }}
             style={{
-                height: 'calc(100% - 12px)',
+                height: props.isQuote ? '100%' : 'calc(100% - 12px)',
                 width: 220,
                 minWidth: 220,
                 borderRadius: props.isQuote ? 0 :
@@ -45,27 +45,34 @@ const PhotoMessage = (props: { otherDocIds: Array<string | undefined>, room: IRo
         >
             <div style={{ width: 'auto', height: '100%', position: 'relative' }}>
                 {
-                    props.message.data.docId ? (
-                        <Image
-                            local={props.message.isDummy ? props.message.meta.local : undefined}
-                            style={{
-                                height: '100%',
-                                width: '100%',
-                                borderRadius: props.isQuote ? 0 :
-                                    props.side === 'left' ?
-                                        `${props.firstOfSection ? 24 : 8}px 24px 24px 8px` :
-                                        `24px ${props.firstOfSection ? 24 : 8}px 8px 24px`,
-                                position: 'absolute',
-                                left: 0,
-                                top: 0
-                            }}
-                            docId={props.message.data.docId}
-                            room={props.room}
-                            tag={`${props.room.id}-${props.message.id}`}
-                            isPreview
-                            key={`message-doc-photo-${props.message.id}`}
-                        />
-                    ) : null
+                    props.isQuote ? (
+                        <Typography
+                            style={{ textAlign: "right", flex: 1, fontSize: 14, color: '#fff' }}
+                        >
+                            Photo
+                        </Typography>
+                    ) :
+                        props.message.data.docId ? (
+                            <Image
+                                local={props.message.isDummy ? props.message.meta.local : undefined}
+                                style={{
+                                    height: '100%',
+                                    width: '100%',
+                                    borderRadius: props.isQuote ? 0 :
+                                        props.side === 'left' ?
+                                            `${props.firstOfSection ? 24 : 8}px 24px 24px 8px` :
+                                            `24px ${props.firstOfSection ? 24 : 8}px 8px 24px`,
+                                    position: 'absolute',
+                                    left: 0,
+                                    top: 0
+                                }}
+                                docId={props.message.data.docId}
+                                room={props.room}
+                                tag={`${props.room.id}-${props.message.id}`}
+                                isPreview
+                                key={`message-doc-photo-${props.message.id}`}
+                            />
+                        ) : null
                 }
                 {
                     props.message.isDummy ?

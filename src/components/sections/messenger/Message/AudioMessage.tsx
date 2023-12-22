@@ -37,7 +37,7 @@ const AudioMessage = (props: { otherDocIds: Array<string | undefined>, room: IRo
         <Paper
             className={props.isQuote ? '' : (props.side === 'right' ? "bubble" : "bubble2") + (props.lastOfSection ? (" " + props.side) : "")}
             style={{
-                height: 'calc(100% - 16px)',
+                height: props.isQuote ? '100%' : 'calc(100% - 12px)',
                 width: 200,
                 minWidth: 200,
                 borderRadius: props.isQuote ? 0 :

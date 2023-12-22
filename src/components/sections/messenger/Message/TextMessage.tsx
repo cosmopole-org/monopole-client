@@ -16,7 +16,7 @@ const TextMessage = (props: { message: IMessage, side?: string, lastOfSection?: 
     return (
         <Paper
             style={{
-                height: 'calc(100% - 20px)',
+                height: props.isQuote ? '100%' : 'calc(100% - 20px)',
                 width: 'auto',
                 minWidth: 100,
                 borderRadius: props.isQuote ? 0 :

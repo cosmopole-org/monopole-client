@@ -22,7 +22,7 @@ const VideoMessage = (props: { room: IRoom, message: IMessage, side?: string, la
     return (
         <Paper
             style={{
-                height: 'calc(100% - 12px)',
+                height: props.isQuote ? '100%' : 'calc(100% - 12px)',
                 width: 220,
                 minWidth: 220,
                 borderRadius: props.isQuote ? 0 :

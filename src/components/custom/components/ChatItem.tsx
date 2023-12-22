@@ -38,7 +38,12 @@ const ChatItem = (props: { chat: any, style?: any, onMoreClicked?: () => void })
                 <Typography variant='body1' style={{ fontWeight: 'bold', color: themeBasedTextColor.get({ noproxy: true }) }}>
                     {peer.firstName + ' ' + peer.lastName}
                 </Typography>
-                <Typography variant="body2" style={{ color: themeBasedTextColor.get({ noproxy: true }) }}>
+                <Typography variant="body2" style={{
+                    maxWidth: 'calc(100% - 112px)',
+                    color: themeBasedTextColor.get({ noproxy: true }),
+                    wordWrap: 'break-word', textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap', overflow: 'hidden'
+                }}>
                     {lastMessage ? lastMessage.type === 'text' ? lastMessage.data.text : ['photo', 'audio', 'video'].includes(lastMessage.type) ? lastMessage.type : `unsupported message type` : `Empty chat`}
                 </Typography>
             </div>
