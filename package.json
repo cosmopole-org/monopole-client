@@ -28,6 +28,7 @@
     "emoji-mart": "^5.5.2",
     "jquery": "^3.7.1",
     "lovefield": "^2.1.12",
+    "peerjs": "^1.5.2",
     "react": "^17.0.0 || ^18.0.0",
     "react-audio-voice-recorder": "^2.2.0",
     "react-dom": "^17.0.0 || ^18.0.0",

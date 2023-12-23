@@ -40,6 +40,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import SigmaAvatar from './components/custom/elements/SigmaAvatar';
 import ITower from './api/models/tower';
 import IRoom from './api/models/room';
+import Call from './components/pages/call';
 
 const useForceUpdate = () => {
     const [value, setValue] = useState(0); // integer state
@@ -223,6 +224,7 @@ let pages: { [id: string]: any } = {
     'audioPlayer': AudioPlayer,
     'explore': Explore,
     'chat': ChatPage,
+    'call': Call,
     // forms
     'createTower': CreateTower,
     'createRoom': CreateRoom,

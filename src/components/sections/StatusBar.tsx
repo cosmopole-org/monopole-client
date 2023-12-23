@@ -1,4 +1,4 @@
-import { ArrowBack, Close, Dashboard, Explore, Feed, Home, KeyboardCommandKey, MusicNote, Notifications, Settings, Wallet } from "@mui/icons-material"
+import { ArrowBack, Call, Close, Dashboard, Explore, Feed, Home, KeyboardCommandKey, MusicNote, Notifications, Settings, Wallet } from "@mui/icons-material"
 import { Badge, IconButton, Paper, Typography } from "@mui/material"
 import { useState } from "react"
 import { SigmaRouter, themeBasedTextColor, themeColor, themeColorName } from "../../App"
@@ -19,7 +19,8 @@ const RightControlTypes = {
     COMMANDS: 1,
     SETTINGS: 2,
     EXPLORE: 3,
-    AVATAR: 4
+    AVATAR: 4,
+    CALL: 5
 }
 const StatusThemes = {
     LIGHT: 0,
@@ -48,8 +49,6 @@ const StatusBar = () => {
     }
     showAvatar = (humanId: string) => {
         avatarHumanId = humanId
-        setRightControlType(RightControlTypes.AVATAR)
-        rightControlFunctionality = undefined
     }
     switchTitle = (title: string) => setTitle(title)
     switchColor = (color: string, theme: number) => { }
@@ -96,8 +95,20 @@ const StatusBar = () => {
                             </IconButton>
                         )
                 }
+                {
+                    ((SigmaRouter.topPath() === 'chat') && avatarHumanId) ?
+                        (
+                            <IconButton size={'small'} style={{ width: 32, height: 32, borderRadius: '50%', position: 'absolute', top: 4, left: 8 + 32 }}>
+                                <Badge color="secondary" overlap="circular" variant="dot" invisible={isOnline[avatarHumanId] !== -1}>
+                                    <SigmaAvatar style={{ width: 24, height: 24, backgroundColor: themeColor.get({ noproxy: true })[100] }}>
+                                        {api.memory.known.humans.get({ noproxy: true })[avatarHumanId].firstName.substring(0, 1)}
+                                    </SigmaAvatar>
+                                </Badge>
+                            </IconButton>
+                        ) : null
+                }
                 <Typography variant={'body1'} style={{ color: themeBasedTextColor.get({ noproxy: true }), position: 'absolute', left: '50%', top: 8, transform: 'translateX(-50%)', display: 'flex' }}>
-                    {title}
+                    {((SigmaRouter.topPath() === 'chat') && avatarHumanId) ? api.memory.known.humans.get({ noproxy: true })[avatarHumanId].firstName : title}
                 </Typography>
                 {
                     rightControlType !== RightControlTypes.NONE ?
@@ -114,18 +125,12 @@ const StatusBar = () => {
                                 }}
                                 size="small" style={{ width: 32, height: 32, borderRadius: '50%', position: 'absolute', top: 4, right: 8 + 32 + 8 }}>
                                 {
-                                    rightControlType === RightControlTypes.COMMANDS ? (
-                                        <KeyboardCommandKey style={{ color: themeBasedTextColor.get({ noproxy: true }) }} />
+                                    rightControlType === RightControlTypes.CALL ? (
+                                        <Call style={{ color: themeBasedTextColor.get({ noproxy: true }) }} />
                                     ) : rightControlType === RightControlTypes.SETTINGS ? (
                                         <Settings style={{ color: themeBasedTextColor.get({ noproxy: true }) }} />
                                     ) : rightControlType === RightControlTypes.EXPLORE ? (
                                         <Explore style={{ color: themeBasedTextColor.get({ noproxy: true }) }} />
-                                    ) : rightControlType === RightControlTypes.AVATAR && avatarHumanId ? (
-                                        <Badge color="secondary" overlap="circular" variant="dot" invisible={isOnline[avatarHumanId] !== -1}>
-                                            <SigmaAvatar style={{ width: 24, height: 24, backgroundColor: themeColor.get({ noproxy: true })[100] }}>
-                                                {api.memory.known.humans.get({ noproxy: true })[avatarHumanId].firstName.substring(0, 1)}
-                                            </SigmaAvatar>
-                                        </Badge>
                                     ) : null
                                 }
                             </IconButton>

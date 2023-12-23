@@ -43,6 +43,7 @@ class Api {
         file: Services.FileService,
         home: Services.HomeService,
         interaction: Services.InteractionService,
+        call: Services.CallService
     }
     memory: {
         myHumanId: State<any>,
@@ -95,7 +96,8 @@ class Api {
             messenger: new Services.MessengerService(this.storage, this.network, this.memory),
             file: new Services.FileService(this.storage, this.network, this.cache, this.memory),
             home: new Services.HomeService(this.storage, this.network, this.memory),
-            interaction: new Services.InteractionService(this.storage, this.network, this.memory)
+            interaction: new Services.InteractionService(this.storage, this.network, this.memory),
+            call: new Services.CallService(this.storage, this.network, this.memory)
         }
     }
 }

@@ -5,7 +5,7 @@ import { Drawer, Paper, Typography } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { SigmaRouter, themeColor, themeColorName } from '../../../App';
 import SliderPage from '../../layouts/SliderPage';
-import { Message, People } from '@mui/icons-material';
+import { Call, KeyboardCommandKey, Message, People } from '@mui/icons-material';
 import RoomControl from '../../custom/components/RoomControl';
 import Desk, { addWidgetToSDesktop, desktopEditMode } from '../../tabs/Desk';
 import IRoom from '../../../api/models/room';
@@ -55,13 +55,13 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
   }
   const onMetaOpen = () => {
     switchLeftControl && switchLeftControl(LeftControlTypes.CLOSE, () => { closeMeta(false); showRoomShadow.set(false); })
-    switchRightControl && switchRightControl(RightControlTypes.COMMANDS, () => setShowRoomControl(true))
+    switchRightControl && switchRightControl(RightControlTypes.CALL, () => SigmaRouter.navigate('call'))
     switchTitle && switchTitle(props.room.title)
     switchColor && switchColor(themeColor.get({ noproxy: true })[500], StatusThemes.DARK)
   }
   const onMetaClose = () => {
     switchLeftControl && switchLeftControl(LeftControlTypes.BACK, close)
-    switchRightControl && switchRightControl(RightControlTypes.COMMANDS, () => setShowRoomControl(true))
+    switchRightControl && switchRightControl(RightControlTypes.CALL, () => SigmaRouter.navigate('call'))
     switchTitle && switchTitle(props.room.title)
     switchColor && switchColor(themeColor.get({ noproxy: true })[500], StatusThemes.DARK)
   }
@@ -112,11 +112,16 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
             </Typography>
           </div>
         </Paper>
-        <SigmaFab style={{ position: 'absolute', right: 16, bottom: 16, zIndex: 1 }} onClick={() => {
+        <SigmaFab size={'medium'} style={{ position: 'absolute', right: 16, bottom: 16, zIndex: 1 }} onClick={() => {
           openMeta()
         }}
         >
           <People />
+        </SigmaFab>
+        <SigmaFab size={'medium'} style={{ position: 'absolute', bottom: 16, right: 16 + 56, zIndex: 1 }} onClick={() => {
+          setShowRoomControl(true)
+        }}>
+          <KeyboardCommandKey />
         </SigmaFab>
         <Shadow onClick={() => closeMeta(false)} />
         {

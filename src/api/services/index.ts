@@ -9,6 +9,7 @@ import MessengerService from "./messenger.service"
 import FileService from "./file.service"
 import HomeService from "./home.service"
 import InteractionService from './interaction.service'
+import CallService from "./call.service"
 
 export {
     HumanService,
@@ -20,5 +21,6 @@ export {
     MessengerService,
     FileService,
     HomeService,
-    InteractionService
+    InteractionService,
+    CallService
 }
