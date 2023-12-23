@@ -374,7 +374,7 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
                 if (once === false) {
                     once = true;
                     peer = new Peer(myHumanId, {
-                        host: `${config.GATEWAY_ADDRESS}/peerjs`,
+                        host: config.PEERJS_ADDRESS,
                         port: 443,
                         path: '/myapp',
                         config: { iceServers: ICE_SERVERS }
@@ -553,7 +553,7 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
             }, 500);
         }
 
-        //viewCallPage(props.room)
+        viewCallPage(props.room)
 
         return () => {
             if (timerInterval) {
