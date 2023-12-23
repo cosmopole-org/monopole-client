@@ -71,7 +71,16 @@ const Files = (props: { show: boolean, room: IRoom }) => {
                         <FileCard
                             onSelect={() => {
                                 if (subDoc.type === 'audio') {
-                                    SigmaRouter.navigate('audioPlayer', { initialData: { doc: subDoc } })
+                                    SigmaRouter.navigate('audioPlayer', {
+                                        initialData: {
+                                            room: props.room,
+                                            docId: subDoc.id,
+                                            otherDocIds:
+                                                folderData.subDocs
+                                                    .filter((doc: any) => doc.type === 'audio')
+                                                    .map((doc: any) => doc.id)
+                                        }
+                                    })
                                 } else if (subDoc.type === 'image') {
                                     SigmaRouter.navigate('gallery', {
                                         initialData: {
