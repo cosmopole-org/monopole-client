@@ -8,20 +8,20 @@ const SearchBar = (props: { containerRef: any, placeHolder: string, onSearch?: (
     const [searchText, setSearchText] = useState('')
     return (
         <Paper
-        elevation={0}
+            elevation={0}
             ref={props.containerRef}
             style={{
                 width: 'calc(100% - 32px)',
                 height: 40,
                 position: 'absolute',
                 left: 16,
-                top: 16 + statusbarHeight() + 24,
-                backgroundColor: themeColor.get({noproxy: true})[100],
+                top: 16 + statusbarHeight() + 8,
+                backgroundColor: themeColor.get({ noproxy: true })[100],
                 backdropFilter: 'blur(10px)',
                 borderRadius: 20,
                 display: 'flex',
                 zIndex: 0,
-                border: `1px solid ${themeColor.get({noproxy: true})['plain']}`
+                border: `1px solid ${themeColor.get({ noproxy: true })['plain']}`
             }}>
             <IconButton>
                 <Search />

@@ -1,14 +1,16 @@
 import { Box, Card, Grid, Paper, Typography } from "@mui/material"
 import { themeColor } from "../../../App"
 import { LeftControlTypes, RightControlTypes, StatusThemes, statusbarHeight, switchColor, switchLeftControl, switchRightControl, switchTitle } from "../../sections/StatusBar"
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Peer } from "peerjs";
-import { useHookstate } from "@hookstate/core";
+import { State, hookstate, useHookstate } from "@hookstate/core";
 import { api } from "../../..";
 import config from "../../../config";
 import SigmaAvatar from "../../custom/elements/SigmaAvatar";
 import IHuman from "../../../api/models/human";
 import IRoom from "../../../api/models/room";
+import SigmaFab from "../../custom/elements/SigmaFab";
+import { Camera, Mic, ScreenShare, Videocam } from "@mui/icons-material";
 
 let navigator = window.navigator as any
 
@@ -61,7 +63,25 @@ function millisToMinutesAndSeconds(millis: number) {
 
 export let viewCallPage = (room: IRoom) => { }
 
+const updaters: { [id: string]: State<any> } = {}
+
+const Block = (props: { userId: string }) => {
+    const updater = useHookstate(updaters[props.userId]).get({ noproxy: true })
+    let videoStream = videoStreams[props.userId]
+    const videoRef = useRef(null)
+    useEffect(() => {
+        if (videoRef.current) {
+            (videoRef.current as HTMLVideoElement).srcObject = videoStream
+        }
+    }, [updater])
+    return (
+        <video autoPlay ref={videoRef} style={{ width: '100%', height: '100%' }} />
+    )
+}
+
 const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom }) => {
+
+    const triggerBlock = (userId: string) => updaters[userId].set(Math.random())
 
     const [_, setTrigger] = useState(Math.random())
     const forceUpdate = () => setTrigger(Math.random())
@@ -153,7 +173,7 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
                         callWithVideoStream(conn.peer);
                     }
                 });
-                forceUpdate();
+                triggerBlock(myHumanId)
             },
             function () {
                 console.log('Access denied for video/video')
@@ -174,7 +194,7 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
         delete videoStreams[myHumanId];
         let meVideo = document.getElementById('me-video')
         if (meVideo) (meVideo as HTMLVideoElement).srcObject = null;
-        forceUpdate();
+        triggerBlock(myHumanId)
         api.services.call.turnVideoOff();
     }
 
@@ -375,8 +395,8 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
                     once = true;
                     peer = new Peer(myHumanId, {
                         host: config.PEERJS_ADDRESS,
-                        port: 443,
-                        path: '/myapp',
+                        port: 3001,
+                        path: '/peerjs',
                         config: { iceServers: ICE_SERVERS }
                     });
                     peer.on("connection", (conn) => {
@@ -429,6 +449,7 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
                             let { humanId } = data
                             console.log(humanId, 'joined');
                             if (humanId !== myHumanId) {
+                                updaters[humanId] = hookstate(Math.random())
                                 users[humanId] = true;
                                 forceUpdate();
                                 connections[humanId] = peer.connect(humanId);
@@ -480,6 +501,7 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
                                 delete screenStreams[humanId];
                                 delete audioStreams[humanId];
                                 delete users[humanId];
+                                delete updaters[humanId];
                                 forceUpdate();
                             }
                         });
@@ -491,6 +513,7 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
                 api.services.call.joinCall({ towerId, roomId }).then((body: any) => {
                     let { userIds } = body
                     userIds.forEach((userId: any) => {
+                        updaters[userId] = hookstate(Math.random())
                         users[userId] = true
                         if (userId !== myHumanId) {
                             console.log('connecting to', userId);
@@ -570,7 +593,7 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
                 paddingTop: statusbarHeight() + 32
             }}>
                 {
-                    Object.values(users).map(() => {
+                    Object.keys(users).map(userId => {
                         return (
                             <Paper
                                 style={{
@@ -580,12 +603,25 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
                                     backgroundColor: themeColor.get({ noproxy: true })[100]
                                 }}
                                 elevation={0}
-                            />
+                            >
+                                <Block userId={userId} />
+                            </Paper>
                         )
                     })
                 }
                 <div style={{ width: '100%', height: statusbarHeight() + 48 }} />
             </div>
+            <Paper style={{ paddingTop: 8, paddingBottom: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', width: '100%', height: 72, borderRadius: 0, position: 'absolute', left: 0, bottom: 0 }}>
+                <SigmaFab style={{ marginRight: 8 }} onClick={toggleScreen}>
+                    <ScreenShare />
+                </SigmaFab>
+                <SigmaFab style={{ marginLeft: 8, marginRight: 8 }} onClick={toggleAudio}>
+                    <Mic />
+                </SigmaFab>
+                <SigmaFab style={{ marginLeft: 8 }} onClick={toggleVideo}>
+                    <Videocam />
+                </SigmaFab>
+            </Paper>
         </div>
     )
 }
