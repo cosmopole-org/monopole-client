@@ -132,6 +132,7 @@ class HumanService {
         if (this._token) {
             return this.network.request('human/signIn', { token: this._token }).then(async (body: any) => {
                 await api.services.tower.read()
+                api.services.home.read()
                 api.services.messenger.lastMessages()
                 api.services.messenger.unssenCount()
                 api.services.interaction.read()
