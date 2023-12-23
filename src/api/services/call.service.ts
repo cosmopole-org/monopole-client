@@ -38,13 +38,13 @@ class CallService {
     }
 
     onPeerJoinedCall(tag: string, callback: any) {
-        this.network.addUpdateListener('call/onPeerJoinedCall', (data: any) => {
+        this.network.addUpdateListener('call/onJoin', (data: any) => {
             callback(data)
         }, tag)
     }
 
     onPeerLeftCall(tag: string, callback: any) {
-        this.network.addUpdateListener('call/onPeerLeftCall', (data: any) => {
+        this.network.addUpdateListener('call/onLeave', (data: any) => {
             callback(data)
         }, tag)
     }
