@@ -37,6 +37,36 @@ class CallService {
         this.network = network
     }
 
+    onPeerJoinedCall(tag: string, callback: any) {
+        this.network.addUpdateListener('call/onPeerJoinedCall', (data: any) => {
+            callback(data)
+        }, tag)
+    }
+
+    onPeerLeftCall(tag: string, callback: any) {
+        this.network.addUpdateListener('call/onPeerLeftCall', (data: any) => {
+            callback(data)
+        }, tag)
+    }
+
+    onPeerTurnedVideoOff(tag: string, callback: any) {
+        this.network.addUpdateListener('call/onVideoTurnOff', (data: any) => {
+            callback(data)
+        }, tag)
+    }
+
+    onPeerTurnedAudioOff(tag: string, callback: any) {
+        this.network.addUpdateListener('call/onAudioTurnOff', (data: any) => {
+            callback(data)
+        }, tag)
+    }
+
+    onPeerTurnedScreenOff(tag: string, callback: any) {
+        this.network.addUpdateListener('call/onScreenTurnOff', (data: any) => {
+            callback(data)
+        }, tag)
+    }
+
     async getIceServers(): Promise<void> {
         return this.network.request('call/getIceServers', { })
     }

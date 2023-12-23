@@ -41,7 +41,7 @@ class HomeService {
         this.storage = storage
         this.network = network
         this.memory = memory
-        setInterval(() => this.lastSeens(), 1000)
+        setInterval(() => this.lastSeens(), 3000)
     }
 
     lastSeensDict: State<any> = hookstate({})

@@ -2,7 +2,7 @@
 // settingup ####################################################
 
 let local = false;
-let GATEWAY_ADDRESS = local ? 'http://localhost:3001' : 'https://monopole.iran.liara.run';
+let GATEWAY_ADDRESS = local ? 'http://localhost:3001' : 'https://monopole.liara.run';
 let AUDEIENCE = "https://dev-5dkibhg6w6hcq22l.us.auth0.com/api/v2/";
 let AUTH0_DOMAIN = "dev-5dkibhg6w6hcq22l.us.auth0.com";
 let AUTH0_CLIENTID = "WEnXZJhgyFhRUPrhfkBUwSlj8BbEizhi";

@@ -98,7 +98,12 @@ const StatusBar = () => {
                 {
                     ((SigmaRouter.topPath() === 'chat') && avatarHumanId) ?
                         (
-                            <IconButton size={'small'} style={{ width: 32, height: 32, borderRadius: '50%', position: 'absolute', top: 4, left: 8 + 32 }}>
+                            <IconButton size={'small'} style={{ width: 32, height: 32, borderRadius: '50%', position: 'absolute', top: 4, left: 8 + 32 }}
+                                onClick={() => {
+                                    if (avatarHumanId) {
+                                        SigmaRouter.navigate('profile', { initialData: { human: api.memory.known.humans.get({ noproxy: true })[avatarHumanId] } })
+                                    }
+                                }}>
                                 <Badge color="secondary" overlap="circular" variant="dot" invisible={isOnline[avatarHumanId] !== -1}>
                                     <SigmaAvatar style={{ width: 24, height: 24, backgroundColor: themeColor.get({ noproxy: true })[100] }}>
                                         {api.memory.known.humans.get({ noproxy: true })[avatarHumanId].firstName.substring(0, 1)}
@@ -107,7 +112,14 @@ const StatusBar = () => {
                             </IconButton>
                         ) : null
                 }
-                <Typography variant={'body1'} style={{ color: themeBasedTextColor.get({ noproxy: true }), position: 'absolute', left: '50%', top: 8, transform: 'translateX(-50%)', display: 'flex' }}>
+                <Typography
+                    variant={'body1'} style={{ color: themeBasedTextColor.get({ noproxy: true }), position: 'absolute', left: '50%', top: 8, transform: 'translateX(-50%)', display: 'flex' }}
+                    onClick={() => {
+                        if ((SigmaRouter.topPath() === 'chat') && avatarHumanId) {
+                            SigmaRouter.navigate('profile', { initialData: { human: api.memory.known.humans.get({ noproxy: true })[avatarHumanId] } })
+                        }
+                    }}
+                >
                     {((SigmaRouter.topPath() === 'chat') && avatarHumanId) ? api.memory.known.humans.get({ noproxy: true })[avatarHumanId].firstName : title}
                 </Typography>
                 {
@@ -149,7 +161,7 @@ const StatusBar = () => {
                             </IconButton>
                         )
                 }
-            </Paper>
+            </Paper >
         )
 }
 

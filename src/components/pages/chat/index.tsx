@@ -33,7 +33,7 @@ const ChatPage = (props: { room: IRoom, humanId: string, id: string, isOnTop: bo
         if (props.isOnTop) {
             showAvatar && showAvatar(props.humanId)
             switchLeftControl && switchLeftControl(LeftControlTypes.BACK, close)
-            switchRightControl && switchRightControl(RightControlTypes.CALL, () => SigmaRouter.navigate('call'))
+            switchRightControl && switchRightControl(RightControlTypes.CALL, () => SigmaRouter.navigate('call', { initialData: { room: props.room } }))
             switchTitle && switchTitle('Chat')
         }
     }, [props.isOnTop])

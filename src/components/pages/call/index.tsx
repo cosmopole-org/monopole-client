@@ -7,6 +7,8 @@ import { useHookstate } from "@hookstate/core";
 import { api } from "../../..";
 import config from "../../../config";
 import SigmaAvatar from "../../custom/elements/SigmaAvatar";
+import IHuman from "../../../api/models/human";
+import IRoom from "../../../api/models/room";
 
 let navigator = window.navigator as any
 
@@ -45,6 +47,11 @@ let startTime: any = undefined;
 let extOpen = false;
 let timerInterval: any = undefined;
 let once = false;
+let users: { [id: string]: any } = {}
+let videoOn = false
+let audioOn = false
+let screenOn = false
+let bigUserId = undefined
 
 function millisToMinutesAndSeconds(millis: number) {
     var minutes = Math.floor(millis / 60000);
@@ -52,23 +59,17 @@ function millisToMinutesAndSeconds(millis: number) {
     return (minutes < 10 ? '0' : '') + minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
 }
 
-export let viewCallPage = (human: any, space: any) => { }
+export let viewCallPage = (room: IRoom) => { }
 
-const Call = (props: { id: string, isOnTop: boolean }) => {
-
-    const [users, setUsers] = useState({})
-    const [videoOn, setVideoOn] = useState(false)
-    const [audioOn, setAudioOn] = useState(false)
-    const [screenOn, setScreenOn] = useState(false)
-    const [bigUserId, setBigUserId] = useState(undefined)
+const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom }) => {
 
     const [_, setTrigger] = useState(Math.random())
     const forceUpdate = () => setTrigger(Math.random())
 
     const myHumanId = useHookstate(api.memory.myHumanId).get({ noproxy: true })
 
-    const spaceRef = React.useRef();
-    const userRef = React.useRef();
+    const spaceRef: any = React.useRef();
+    const userRef: any = React.useRef();
     const [timer, setTimer] = React.useState('00:00');
     const [open, setOpen] = React.useState(false);
     const [maximizeBtnHidden, setMaximizeBtnHidden] = React.useState(false);
@@ -113,7 +114,7 @@ const Call = (props: { id: string, isOnTop: boolean }) => {
         Object.values(connections).forEach((connection: any) => {
             connection.close();
         });
-        setUsers({})
+        users = {}
         connections = {};
         videoInCalls = {};
         screenInCalls = {};
@@ -124,9 +125,9 @@ const Call = (props: { id: string, isOnTop: boolean }) => {
         endVideo();
         endScreen();
         endAudio();
-        setVideoOn(false)
-        setAudioOn(false)
-        setScreenOn(false)
+        videoOn = false
+        audioOn = false
+        screenOn = false
         myVideoStream = undefined; myScreenStream = undefined; myAudioStream = undefined;
         videoStreams = {}; screenStreams = {}; audioStreams = {};
         //Bus.publish(uiEvents.STOP_ALL_FLOATING_VIDEOS, {});
@@ -144,7 +145,7 @@ const Call = (props: { id: string, isOnTop: boolean }) => {
                 console.log('Access granted to video/video');
                 myVideoStream = stream;
                 videoStreams[myHumanId] = stream;
-                setVideoOn(true);
+                videoOn = true;
                 let meVideo = document.getElementById('me-video')
                 if (meVideo) (meVideo as HTMLVideoElement).srcObject = myVideoStream;
                 Object.values(connections).forEach(conn => {
@@ -169,7 +170,7 @@ const Call = (props: { id: string, isOnTop: boolean }) => {
                 track.stop();
             });
         }
-        setVideoOn(false);
+        videoOn = false;
         delete videoStreams[myHumanId];
         let meVideo = document.getElementById('me-video')
         if (meVideo) (meVideo as HTMLVideoElement).srcObject = null;
@@ -196,7 +197,7 @@ const Call = (props: { id: string, isOnTop: boolean }) => {
             console.log('Access granted to screen/screen');
             myScreenStream = stream;
             screenStreams[myHumanId] = stream;
-            setScreenOn(true);
+            screenOn = true;
             let meVideo = document.getElementById('me-screen')
             if (meVideo) (meVideo as HTMLVideoElement).srcObject = myScreenStream;
             Object.values(connections).forEach(conn => {
@@ -220,7 +221,7 @@ const Call = (props: { id: string, isOnTop: boolean }) => {
                 track.stop()
             });
         }
-        setScreenOn(false);
+        screenOn = false;
         delete screenStreams[myHumanId];
         api.services.call.turnScreenOff();
     }
@@ -318,7 +319,7 @@ const Call = (props: { id: string, isOnTop: boolean }) => {
                 console.log('Access granted to audio/audio');
                 myAudioStream = stream;
                 audioStreams[myHumanId] = stream;
-                setAudioOn(true);
+                audioOn = true;
                 Object.values(connections).forEach(conn => {
                     if (conn) {
                         callWithAudioStream(conn.peer);
@@ -340,7 +341,7 @@ const Call = (props: { id: string, isOnTop: boolean }) => {
                 track.stop();
             });
         }
-        setAudioOn(false);
+        audioOn = false;
         delete audioStreams[myHumanId];
         api.services.call.turnAudioOff();
     }
@@ -424,68 +425,73 @@ const Call = (props: { id: string, isOnTop: boolean }) => {
                     });
                     peer.on('open', () => {
                         console.log('connection to peer server opened');
-                        // wireKeeper.listen(updates.ON_USER_JOIN, ({ userId }) => {
-                        //     console.log(userId, 'joined');
-                        //     if (userId !== Memory.startTrx().temp.me.id) {
-                        //         users[userId] = true;
-                        //         forceUpdate();
-                        //         connections[userId] = peer.connect(userId);
-                        //     }
-                        // });
-                        // wireKeeper.listen(updates.ON_VIDEO_TURN_OFF, ({ userId }) => {
-                        //     if (userId !== Memory.data().me.id) {
-                        //         console.log(userId, 'turned off video');
-                        //         delete videoStreams[userId];
-                        //         forceUpdate();
-                        //     }
-                        // });
-                        // wireKeeper.listen(updates.ON_SCREEN_TURN_OFF, ({ userId }) => {
-                        //     if (userId !== Memory.data().me.id) {
-                        //         console.log(userId, 'turned off screen');
-                        //         delete screenStreams[userId];
-                        //         forceUpdate();
-                        //     }
-                        // });
-                        // wireKeeper.listen(updates.ON_AUDIO_TURN_OFF, ({ userId }) => {
-                        //     if (userId !== Memory.data().me.id) {
-                        //         console.log(userId, 'turned off audio');
-                        //         delete audioStreams[userId];
-                        //         forceUpdate();
-                        //     }
-                        // });
-                        // wireKeeper.listen(updates.ON_USER_LEAVE, ({ userId }) => {
-                        //     console.log(userId, 'left');
-                        //     if (userId !== Memory.startTrx().temp.me.id) {
-                        //         connections[userId]?.close();
-                        //         delete connections[userId];
-                        //         videoInCalls[userId]?.close();
-                        //         delete videoInCalls[userId];
-                        //         screenInCalls[userId]?.close();
-                        //         delete screenInCalls[userId];
-                        //         audioInCalls[userId]?.close();
-                        //         delete audioInCalls[userId];
-                        //         videoOutCalls[userId]?.close();
-                        //         delete videoOutCalls[userId];
-                        //         screenOutCalls[userId]?.close();
-                        //         delete screenOutCalls[userId];
-                        //         audioOutCalls[userId]?.close();
-                        //         delete audioOutCalls[userId];
-                        //         delete videoStreams[userId];
-                        //         delete screenStreams[userId];
-                        //         delete audioStreams[userId];
-                        //         delete users[userId];
-                        //         forceUpdate();
-                        //     }
-                        // });
+                        api.services.call.onPeerJoinedCall('call-page', (data: any) => {
+                            let { humanId } = data
+                            console.log(humanId, 'joined');
+                            if (humanId !== myHumanId) {
+                                users[humanId] = true;
+                                forceUpdate();
+                                connections[humanId] = peer.connect(humanId);
+                            }
+                        });
+                        api.services.call.onPeerTurnedVideoOff('call-page', (data: any) => {
+                            let { humanId } = data
+                            if (humanId !== myHumanId) {
+                                console.log(humanId, 'turned off video');
+                                delete videoStreams[humanId];
+                                forceUpdate();
+                            }
+                        });
+                        api.services.call.onPeerTurnedScreenOff('call-page', (data: any) => {
+                            let { humanId } = data
+                            if (humanId !== myHumanId) {
+                                console.log(humanId, 'turned off screen');
+                                delete screenStreams[humanId];
+                                forceUpdate();
+                            }
+                        });
+                        api.services.call.onPeerTurnedAudioOff('call-page', (data: any) => {
+                            let { humanId } = data
+                            if (humanId !== myHumanId) {
+                                console.log(humanId, 'turned off audio');
+                                delete audioStreams[humanId];
+                                forceUpdate();
+                            }
+                        });
+                        api.services.call.onPeerLeftCall('call-page', (data: any) => {
+                            let { humanId } = data
+                            console.log(humanId, 'left');
+                            if (humanId !== myHumanId) {
+                                connections[humanId]?.close();
+                                delete connections[humanId];
+                                videoInCalls[humanId]?.close();
+                                delete videoInCalls[humanId];
+                                screenInCalls[humanId]?.close();
+                                delete screenInCalls[humanId];
+                                audioInCalls[humanId]?.close();
+                                delete audioInCalls[humanId];
+                                videoOutCalls[humanId]?.close();
+                                delete videoOutCalls[humanId];
+                                screenOutCalls[humanId]?.close();
+                                delete screenOutCalls[humanId];
+                                audioOutCalls[humanId]?.close();
+                                delete audioOutCalls[humanId];
+                                delete videoStreams[humanId];
+                                delete screenStreams[humanId];
+                                delete audioStreams[humanId];
+                                delete users[humanId];
+                                forceUpdate();
+                            }
+                        });
                     });
                 }
             }
             if (extOpen) {
-                setBigUserId(myHumanId);
+                bigUserId = myHumanId
                 api.services.call.joinCall({ towerId, roomId }).then((body: any) => {
                     let { userIds } = body
                     userIds.forEach((userId: any) => {
-                        setUsers({ ...users, [userId]: true });
+                        users[userId] = true
                         if (userId !== myHumanId) {
                             console.log('connecting to', userId);
                             connections[userId] = peer.connect(userId);
@@ -495,8 +501,9 @@ const Call = (props: { id: string, isOnTop: boolean }) => {
             }
         }
 
-        viewCallPage = (human: any, room: any) => {
+        viewCallPage = (room: any) => {
             setOpen(true);
+            let human = api.memory.humans[myHumanId].get({ noproxy: true });
             if (room && spaceRef.current) {
                 if (room.id !== (spaceRef.current as any).id) {
                     if (window.confirm('you are already in another call. if you join this call, your current call will be ended. would you like to do so ?')) {
@@ -508,7 +515,7 @@ const Call = (props: { id: string, isOnTop: boolean }) => {
                         startTimer();
 
                         spaceRef.current = room;
-                        userRef.current = human;
+                        userRef.current = human
 
                         extOpen = true;
                         startTime = new Date();
@@ -545,13 +552,15 @@ const Call = (props: { id: string, isOnTop: boolean }) => {
                 } catch (ex) { }
             }, 500);
         }
+
+        //viewCallPage(props.room)
+
         return () => {
             if (timerInterval) {
                 clearInterval(timerInterval);
             }
         };
     }, []);
-
 
     return (
         <div style={{ width: '100%', height: '100%', backgroundColor: themeColor.get({ noproxy: true })[50] }}>
