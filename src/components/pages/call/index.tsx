@@ -1,5 +1,5 @@
 import { Box, Card, Grid, Paper, Typography } from "@mui/material"
-import { themeColor } from "../../../App"
+import { SigmaRouter, themeColor } from "../../../App"
 import { LeftControlTypes, RightControlTypes, StatusThemes, statusbarHeight, switchColor, switchLeftControl, switchRightControl, switchTitle } from "../../sections/StatusBar"
 import React, { useEffect, useRef, useState } from "react";
 import { Peer } from "peerjs";
@@ -10,7 +10,7 @@ import SigmaAvatar from "../../custom/elements/SigmaAvatar";
 import IHuman from "../../../api/models/human";
 import IRoom from "../../../api/models/room";
 import SigmaFab from "../../custom/elements/SigmaFab";
-import { Camera, Mic, ScreenShare, Videocam } from "@mui/icons-material";
+import { CallEnd, Camera, Mic, ScreenShare, Videocam } from "@mui/icons-material";
 
 let navigator = window.navigator as any
 
@@ -23,12 +23,12 @@ let peer: Peer;
 
 var ICE_SERVERS = [
     {
-        url: 'stun:164.92.234.28:3478'
+        url: `stun:${config.PEERJS_ADDRESS}`
     },
     {
-        url: 'turn:164.92.234.28:3478',
-        username: 'guest',
-        credential: 'somepassword',
+        url: `turn:${config.PEERJS_ADDRESS}`,
+        username: 'username',
+        credential: 'password',
     }
 ]
 
@@ -63,25 +63,77 @@ function millisToMinutesAndSeconds(millis: number) {
 
 export let viewCallPage = (room: IRoom) => { }
 
-const updaters: { [id: string]: State<any> } = {}
+const videoUpdaters: { [id: string]: State<any> } = {}
+const audioUpdaters: { [id: string]: State<any> } = {}
+const screenUpdaters: { [id: string]: State<any> } = {}
 
 const Block = (props: { userId: string }) => {
-    const updater = useHookstate(updaters[props.userId]).get({ noproxy: true })
+    const videoUpdater = useHookstate(videoUpdaters[props.userId]).get({ noproxy: true })
+    const audioUpdater = useHookstate(audioUpdaters[props.userId]).get({ noproxy: true })
+    const screenUpdater = useHookstate(screenUpdaters[props.userId]).get({ noproxy: true })
+    const myHumanId = useHookstate(api.memory.myHumanId).get({ noproxy: true })
     let videoStream = videoStreams[props.userId]
+    let audioStream = audioStreams[props.userId]
+    let screenStream = screenStreams[props.userId]
     const videoRef = useRef(null)
+    const audioRef = useRef(null)
+    const screenRef = useRef(null)
     useEffect(() => {
         if (videoRef.current) {
             (videoRef.current as HTMLVideoElement).srcObject = videoStream
         }
-    }, [updater])
+    }, [videoUpdater])
+    useEffect(() => {
+        if (audioRef.current) {
+            (audioRef.current as HTMLVideoElement).srcObject = audioStream
+        }
+    }, [audioUpdater])
+    useEffect(() => {
+        if (screenRef.current) {
+            (screenRef.current as HTMLVideoElement).srcObject = screenStream
+        }
+    }, [screenUpdater])
+    let doubleView = (videoStream !== undefined) && (screenStream !== undefined)
     return (
-        <video autoPlay ref={videoRef} style={{ width: '100%', height: '100%' }} />
+        <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+            <video
+                autoPlay
+                ref={screenRef}
+                style={{
+                    display: screenStream !== undefined ? 'block' : 'none',
+                    width: '100%',
+                    height: '100%',
+                    position: 'absolute',
+                    left: 0,
+                    top: 0
+                }} />
+            <video
+                autoPlay
+                ref={videoRef}
+                style={{
+                    width: doubleView ? '25%' : '100%',
+                    height: doubleView ? '25%' : '100%',
+                    position: 'absolute',
+                    left: doubleView ? undefined : 0,
+                    right: doubleView ? 0 : undefined,
+                    bottom: 0
+                }} />
+            <audio
+                autoPlay
+                ref={audioRef}
+                muted={props.userId === myHumanId}
+                style={{
+                    display: 'none',
+                }} />
+        </div>
     )
 }
 
 const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom }) => {
 
-    const triggerBlock = (userId: string) => updaters[userId].set(Math.random())
+    const triggerBlockVideo = (userId: string) => { try { videoUpdaters[userId].set(Math.random()) } catch (ex) { } }
+    const triggerBlockAudio = (userId: string) => { try { audioUpdaters[userId].set(Math.random()) } catch (ex) { } }
+    const triggerBlockScreen = (userId: string) => { try { screenUpdaters[userId].set(Math.random()) } catch (ex) { } }
 
     const [_, setTrigger] = useState(Math.random())
     const forceUpdate = () => setTrigger(Math.random())
@@ -100,6 +152,7 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
     const close = () => {
         extOpen = false;
         setOpen(false);
+        SigmaRouter.back();
     }
 
     useEffect(() => {
@@ -111,7 +164,6 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
     }, [props.isOnTop]);
 
     const exit = () => {
-        api.services.call.leaveCall();
         clearInterval(timerInterval);
         Object.values(videoInCalls).forEach((call: any) => {
             call.close();
@@ -134,6 +186,10 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
         Object.values(connections).forEach((connection: any) => {
             connection.close();
         });
+        endVideo();
+        endScreen();
+        endAudio();
+        api.services.call.leaveCall();
         users = {}
         connections = {};
         videoInCalls = {};
@@ -142,14 +198,12 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
         videoOutCalls = {};
         screenOutCalls = {};
         audioOutCalls = {};
-        endVideo();
-        endScreen();
-        endAudio();
         videoOn = false
         audioOn = false
         screenOn = false
         myVideoStream = undefined; myScreenStream = undefined; myAudioStream = undefined;
         videoStreams = {}; screenStreams = {}; audioStreams = {};
+        close();
         //Bus.publish(uiEvents.STOP_ALL_FLOATING_VIDEOS, {});
     };
 
@@ -173,7 +227,7 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
                         callWithVideoStream(conn.peer);
                     }
                 });
-                triggerBlock(myHumanId)
+                triggerBlockVideo(myHumanId)
             },
             function () {
                 console.log('Access denied for video/video')
@@ -194,7 +248,7 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
         delete videoStreams[myHumanId];
         let meVideo = document.getElementById('me-video')
         if (meVideo) (meVideo as HTMLVideoElement).srcObject = null;
-        triggerBlock(myHumanId)
+        triggerBlockVideo(myHumanId)
         api.services.call.turnVideoOff();
     }
 
@@ -225,6 +279,7 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
                     callWithScreenStream(conn.peer);
                 }
             });
+            triggerBlockScreen(myHumanId)
         },
             function () {
                 console.log('Access denied for screen/screen')
@@ -243,6 +298,7 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
         }
         screenOn = false;
         delete screenStreams[myHumanId];
+        triggerBlockScreen(myHumanId)
         api.services.call.turnScreenOff();
     }
 
@@ -263,11 +319,11 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
                 call.on('close', () => {
                     delete audioOutCalls[peerId];
                     delete audioStreams[peerId];
-                    forceUpdate();
+                    triggerBlockAudio(peerId)
                 });
                 call.on("stream", (remoteStream) => {
                     audioStreams[peerId] = remoteStream;
-                    forceUpdate();
+                    triggerBlockAudio(peerId)
                 });
                 call.on('error', err => {
                     console.log(err);
@@ -287,11 +343,11 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
                 call.on('close', () => {
                     delete videoOutCalls[peerId];
                     delete videoStreams[peerId];
-                    forceUpdate();
+                    triggerBlockVideo(peerId)
                 });
                 call.on("stream", (remoteStream) => {
                     videoStreams[peerId] = remoteStream;
-                    forceUpdate();
+                    triggerBlockVideo(peerId)
                 });
                 call.on('error', err => {
                     console.log(err);
@@ -311,11 +367,11 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
                 call.on('close', () => {
                     delete screenOutCalls[peerId];
                     delete screenStreams[peerId];
-                    forceUpdate();
+                    triggerBlockScreen(peerId)
                 });
                 call.on("stream", (remoteStream) => {
                     screenStreams[peerId] = remoteStream;
-                    forceUpdate();
+                    triggerBlockScreen(peerId)
                 });
                 call.on('error', err => {
                     console.log(err);
@@ -345,6 +401,7 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
                         callWithAudioStream(conn.peer);
                     }
                 });
+                triggerBlockAudio(myHumanId)
             },
             function () {
                 console.log('Access denied for audio/audio')
@@ -363,6 +420,7 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
         }
         audioOn = false;
         delete audioStreams[myHumanId];
+        triggerBlockAudio(myHumanId)
         api.services.call.turnAudioOff();
     }
 
@@ -416,7 +474,7 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
                             call.answer(myVideoStream);
                             call.on("stream", (remoteStream) => {
                                 videoStreams[call.peer] = remoteStream;
-                                forceUpdate();
+                                triggerBlockVideo(call.peer)
                             });
                             call.on('error', err => {
                                 console.log(err);
@@ -426,7 +484,7 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
                             call.answer(myScreenStream);
                             call.on("stream", (remoteStream) => {
                                 screenStreams[call.peer] = remoteStream;
-                                forceUpdate();
+                                triggerBlockScreen(call.peer)
                             });
                             call.on('error', err => {
                                 console.log(err);
@@ -436,7 +494,7 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
                             call.answer(myAudioStream);
                             call.on("stream", (remoteStream) => {
                                 audioStreams[call.peer] = remoteStream;
-                                forceUpdate();
+                                triggerBlockAudio(call.peer)
                             });
                             call.on('error', err => {
                                 console.log(err);
@@ -446,62 +504,66 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
                     peer.on('open', () => {
                         console.log('connection to peer server opened');
                         api.services.call.onPeerJoinedCall('call-page', (data: any) => {
-                            let { humanId } = data
-                            console.log(humanId, 'joined');
-                            if (humanId !== myHumanId) {
-                                updaters[humanId] = hookstate(Math.random())
-                                users[humanId] = true;
-                                forceUpdate();
-                                connections[humanId] = peer.connect(humanId);
+                            let { peerId } = data
+                            console.log(peerId, 'joined');
+                            if (peerId !== myHumanId) {
+                                if (!videoUpdaters[peerId]) videoUpdaters[peerId] = hookstate(Math.random())
+                                if (!audioUpdaters[peerId]) audioUpdaters[peerId] = hookstate(Math.random())
+                                if (!screenUpdaters[peerId]) screenUpdaters[peerId] = hookstate(Math.random())
+                                users[peerId] = true;
+                                connections[peerId] = peer.connect(peerId);
+                                forceUpdate()
                             }
                         });
                         api.services.call.onPeerTurnedVideoOff('call-page', (data: any) => {
-                            let { humanId } = data
-                            if (humanId !== myHumanId) {
-                                console.log(humanId, 'turned off video');
-                                delete videoStreams[humanId];
-                                forceUpdate();
+                            let { peerId } = data
+                            if (peerId !== myHumanId) {
+                                console.log(peerId, 'turned off video');
+                                delete videoStreams[peerId];
+                                triggerBlockVideo(peerId)
                             }
                         });
                         api.services.call.onPeerTurnedScreenOff('call-page', (data: any) => {
-                            let { humanId } = data
-                            if (humanId !== myHumanId) {
-                                console.log(humanId, 'turned off screen');
-                                delete screenStreams[humanId];
-                                forceUpdate();
+                            let { peerId } = data
+                            if (peerId !== myHumanId) {
+                                console.log(peerId, 'turned off screen');
+                                delete screenStreams[peerId];
+                                triggerBlockScreen(peerId)
                             }
                         });
                         api.services.call.onPeerTurnedAudioOff('call-page', (data: any) => {
-                            let { humanId } = data
-                            if (humanId !== myHumanId) {
-                                console.log(humanId, 'turned off audio');
-                                delete audioStreams[humanId];
-                                forceUpdate();
+                            let { peerId } = data
+                            if (peerId !== myHumanId) {
+                                console.log(peerId, 'turned off audio');
+                                delete audioStreams[peerId];
+                                triggerBlockAudio(peerId)
                             }
                         });
                         api.services.call.onPeerLeftCall('call-page', (data: any) => {
-                            let { humanId } = data
-                            console.log(humanId, 'left');
-                            if (humanId !== myHumanId) {
-                                connections[humanId]?.close();
-                                delete connections[humanId];
-                                videoInCalls[humanId]?.close();
-                                delete videoInCalls[humanId];
-                                screenInCalls[humanId]?.close();
-                                delete screenInCalls[humanId];
-                                audioInCalls[humanId]?.close();
-                                delete audioInCalls[humanId];
-                                videoOutCalls[humanId]?.close();
-                                delete videoOutCalls[humanId];
-                                screenOutCalls[humanId]?.close();
-                                delete screenOutCalls[humanId];
-                                audioOutCalls[humanId]?.close();
-                                delete audioOutCalls[humanId];
-                                delete videoStreams[humanId];
-                                delete screenStreams[humanId];
-                                delete audioStreams[humanId];
-                                delete users[humanId];
-                                delete updaters[humanId];
+                            let { peerId } = data
+                            console.log(peerId, 'left');
+                            if (peerId !== myHumanId) {
+                                connections[peerId]?.close();
+                                delete connections[peerId];
+                                videoInCalls[peerId]?.close();
+                                delete videoInCalls[peerId];
+                                screenInCalls[peerId]?.close();
+                                delete screenInCalls[peerId];
+                                audioInCalls[peerId]?.close();
+                                delete audioInCalls[peerId];
+                                videoOutCalls[peerId]?.close();
+                                delete videoOutCalls[peerId];
+                                screenOutCalls[peerId]?.close();
+                                delete screenOutCalls[peerId];
+                                audioOutCalls[peerId]?.close();
+                                delete audioOutCalls[peerId];
+                                delete videoStreams[peerId];
+                                delete screenStreams[peerId];
+                                delete audioStreams[peerId];
+                                delete users[peerId];
+                                // delete videoUpdaters[peerId];
+                                // delete audioUpdaters[peerId];
+                                // delete screenUpdaters[peerId];
                                 forceUpdate();
                             }
                         });
@@ -513,7 +575,9 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
                 api.services.call.joinCall({ towerId, roomId }).then((body: any) => {
                     let { userIds } = body
                     userIds.forEach((userId: any) => {
-                        updaters[userId] = hookstate(Math.random())
+                        if (!videoUpdaters[userId]) videoUpdaters[userId] = hookstate(Math.random())
+                        if (!audioUpdaters[userId]) audioUpdaters[userId] = hookstate(Math.random())
+                        if (!screenUpdaters[userId]) screenUpdaters[userId] = hookstate(Math.random())
                         users[userId] = true
                         if (userId !== myHumanId) {
                             console.log('connecting to', userId);
@@ -600,11 +664,13 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
                                     margin: 8,
                                     width: 150,
                                     height: 150,
+                                    borderRadius: 16,
+                                    overflow: 'hidden',
                                     backgroundColor: themeColor.get({ noproxy: true })[100]
                                 }}
                                 elevation={0}
                             >
-                                <Block userId={userId} />
+                                <Block key={userId} userId={userId} />
                             </Paper>
                         )
                     })
@@ -612,14 +678,17 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
                 <div style={{ width: '100%', height: statusbarHeight() + 48 }} />
             </div>
             <Paper style={{ paddingTop: 8, paddingBottom: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', width: '100%', height: 72, borderRadius: 0, position: 'absolute', left: 0, bottom: 0 }}>
-                <SigmaFab style={{ marginRight: 8 }} onClick={toggleScreen}>
+                <SigmaFab style={{ marginRight: 8, backgroundColor: screenOn ? themeColor.get({ noproxy: true })[200] : themeColor.get({ noproxy: true })[100] }} onClick={toggleScreen}>
                     <ScreenShare />
                 </SigmaFab>
-                <SigmaFab style={{ marginLeft: 8, marginRight: 8 }} onClick={toggleAudio}>
+                <SigmaFab style={{ marginLeft: 8, marginRight: 8, backgroundColor: audioOn ? themeColor.get({ noproxy: true })[200] : themeColor.get({ noproxy: true })[100] }} onClick={toggleAudio}>
                     <Mic />
                 </SigmaFab>
-                <SigmaFab style={{ marginLeft: 8 }} onClick={toggleVideo}>
+                <SigmaFab style={{ marginLeft: 8, marginRight: 8, backgroundColor: videoOn ? themeColor.get({ noproxy: true })[200] : themeColor.get({ noproxy: true })[100] }} onClick={toggleVideo}>
                     <Videocam />
+                </SigmaFab>
+                <SigmaFab style={{ marginLeft: 8 }} onClick={exit}>
+                    <CallEnd />
                 </SigmaFab>
             </Paper>
         </div>
