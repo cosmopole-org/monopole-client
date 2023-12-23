@@ -165,25 +165,25 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
 
     const exit = () => {
         clearInterval(timerInterval);
-        Object.values(videoInCalls).forEach((call: any) => {
+        Object.values(videoInCalls).filter(c => c !== undefined).forEach((call: any) => {
             call.close();
         });
-        Object.values(screenInCalls).forEach((call: any) => {
+        Object.values(screenInCalls).filter(c => c !== undefined).forEach((call: any) => {
             call.close();
         });
-        Object.values(audioInCalls).forEach((call: any) => {
+        Object.values(audioInCalls).filter(c => c !== undefined).forEach((call: any) => {
             call.close();
         });
-        Object.values(videoOutCalls).forEach((call: any) => {
+        Object.values(videoOutCalls).filter(c => c !== undefined).forEach((call: any) => {
             call.close();
         });
-        Object.values(screenOutCalls).forEach((call: any) => {
+        Object.values(screenOutCalls).filter(c => c !== undefined).forEach((call: any) => {
             call.close();
         });
-        Object.values(audioOutCalls).forEach((call: any) => {
+        Object.values(audioOutCalls).filter(c => c !== undefined).forEach((call: any) => {
             call.close();
         });
-        Object.values(connections).forEach((connection: any) => {
+        Object.values(connections).filter(c => c !== undefined).forEach((connection: any) => {
             connection.close();
         });
         endVideo();
