@@ -23,12 +23,12 @@ let peer: Peer;
 
 var ICE_SERVERS = [
     {
-        url: `stun:${config.PEERJS_ADDRESS}`
+        url: `stun:monopole-coturn.liara.run`
     },
     {
-        url: `turn:${config.PEERJS_ADDRESS}`,
-        username: 'username',
-        credential: 'password',
+        url: `turn:monopole-coturn.liara.run`,
+        username: 'guest',
+        credential: 'somepassword',
     }
 ]
 
@@ -447,15 +447,17 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
             }, 1000);
         }
 
-        const openCall = (towerId: string, roomId: string) => {
+        const openCall = async (towerId: string, roomId: string) => {
             if (loadedRef.current === false) {
                 if (once === false) {
                     once = true;
+                    let iceServersHolder: any = await api.services.call.getIceServers()
                     peer = new Peer(myHumanId, {
                         host: config.PEERJS_ADDRESS,
-                        port: 3001,
+                        port: 443,
                         path: '/peerjs',
-                        config: { iceServers: ICE_SERVERS }
+                        config: { iceServers: iceServersHolder.iceServers },
+                        secure: true
                     });
                     peer.on("connection", (conn) => {
                         console.log('connection created : ', conn.peer);
@@ -504,67 +506,77 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
                     peer.on('open', () => {
                         console.log('connection to peer server opened');
                         api.services.call.onPeerJoinedCall('call-page', (data: any) => {
-                            let { peerId } = data
-                            console.log(peerId, 'joined');
-                            if (peerId !== myHumanId) {
-                                if (!videoUpdaters[peerId]) videoUpdaters[peerId] = hookstate(Math.random())
-                                if (!audioUpdaters[peerId]) audioUpdaters[peerId] = hookstate(Math.random())
-                                if (!screenUpdaters[peerId]) screenUpdaters[peerId] = hookstate(Math.random())
-                                users[peerId] = true;
-                                connections[peerId] = peer.connect(peerId);
-                                forceUpdate()
+                            let { peerId, roomId: ri, towerId: ti } = data
+                            if (ri === roomId && ti === towerId) {
+                                console.log(peerId, 'joined');
+                                if (peerId !== myHumanId) {
+                                    if (!videoUpdaters[peerId]) videoUpdaters[peerId] = hookstate(Math.random())
+                                    if (!audioUpdaters[peerId]) audioUpdaters[peerId] = hookstate(Math.random())
+                                    if (!screenUpdaters[peerId]) screenUpdaters[peerId] = hookstate(Math.random())
+                                    users[peerId] = true;
+                                    connections[peerId] = peer.connect(peerId);
+                                    forceUpdate()
+                                }
                             }
                         });
                         api.services.call.onPeerTurnedVideoOff('call-page', (data: any) => {
-                            let { peerId } = data
-                            if (peerId !== myHumanId) {
-                                console.log(peerId, 'turned off video');
-                                delete videoStreams[peerId];
-                                triggerBlockVideo(peerId)
+                            let { peerId, roomId: ri, towerId: ti } = data
+                            if (ri === roomId && ti === towerId) {
+                                if (peerId !== myHumanId) {
+                                    console.log(peerId, 'turned off video');
+                                    delete videoStreams[peerId];
+                                    triggerBlockVideo(peerId)
+                                }
                             }
                         });
                         api.services.call.onPeerTurnedScreenOff('call-page', (data: any) => {
-                            let { peerId } = data
-                            if (peerId !== myHumanId) {
-                                console.log(peerId, 'turned off screen');
-                                delete screenStreams[peerId];
-                                triggerBlockScreen(peerId)
+                            let { peerId, roomId: ri, towerId: ti } = data
+                            if (ri === roomId && ti === towerId) {
+                                if (peerId !== myHumanId) {
+                                    console.log(peerId, 'turned off screen');
+                                    delete screenStreams[peerId];
+                                    triggerBlockScreen(peerId)
+                                }
                             }
                         });
                         api.services.call.onPeerTurnedAudioOff('call-page', (data: any) => {
-                            let { peerId } = data
-                            if (peerId !== myHumanId) {
-                                console.log(peerId, 'turned off audio');
-                                delete audioStreams[peerId];
-                                triggerBlockAudio(peerId)
+                            let { peerId, roomId: ri, towerId: ti } = data
+                            if (ri === roomId && ti === towerId) {
+                                if (peerId !== myHumanId) {
+                                    console.log(peerId, 'turned off audio');
+                                    delete audioStreams[peerId];
+                                    triggerBlockAudio(peerId)
+                                }
                             }
                         });
                         api.services.call.onPeerLeftCall('call-page', (data: any) => {
-                            let { peerId } = data
-                            console.log(peerId, 'left');
-                            if (peerId !== myHumanId) {
-                                connections[peerId]?.close();
-                                delete connections[peerId];
-                                videoInCalls[peerId]?.close();
-                                delete videoInCalls[peerId];
-                                screenInCalls[peerId]?.close();
-                                delete screenInCalls[peerId];
-                                audioInCalls[peerId]?.close();
-                                delete audioInCalls[peerId];
-                                videoOutCalls[peerId]?.close();
-                                delete videoOutCalls[peerId];
-                                screenOutCalls[peerId]?.close();
-                                delete screenOutCalls[peerId];
-                                audioOutCalls[peerId]?.close();
-                                delete audioOutCalls[peerId];
-                                delete videoStreams[peerId];
-                                delete screenStreams[peerId];
-                                delete audioStreams[peerId];
-                                delete users[peerId];
-                                // delete videoUpdaters[peerId];
-                                // delete audioUpdaters[peerId];
-                                // delete screenUpdaters[peerId];
-                                forceUpdate();
+                            let { peerId, roomId: ri, towerId: ti } = data
+                            if (ri === roomId && ti === towerId) {
+                                console.log(peerId, 'left');
+                                if (peerId !== myHumanId) {
+                                    connections[peerId]?.close();
+                                    delete connections[peerId];
+                                    videoInCalls[peerId]?.close();
+                                    delete videoInCalls[peerId];
+                                    screenInCalls[peerId]?.close();
+                                    delete screenInCalls[peerId];
+                                    audioInCalls[peerId]?.close();
+                                    delete audioInCalls[peerId];
+                                    videoOutCalls[peerId]?.close();
+                                    delete videoOutCalls[peerId];
+                                    screenOutCalls[peerId]?.close();
+                                    delete screenOutCalls[peerId];
+                                    audioOutCalls[peerId]?.close();
+                                    delete audioOutCalls[peerId];
+                                    delete videoStreams[peerId];
+                                    delete screenStreams[peerId];
+                                    delete audioStreams[peerId];
+                                    delete users[peerId];
+                                    // delete videoUpdaters[peerId];
+                                    // delete audioUpdaters[peerId];
+                                    // delete screenUpdaters[peerId];
+                                    forceUpdate();
+                                }
                             }
                         });
                     });

@@ -55,13 +55,13 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
   }
   const onMetaOpen = () => {
     switchLeftControl && switchLeftControl(LeftControlTypes.CLOSE, () => { closeMeta(false); showRoomShadow.set(false); })
-    switchRightControl && switchRightControl(RightControlTypes.CALL, () => SigmaRouter.navigate('call'))
+    switchRightControl && switchRightControl(RightControlTypes.CALL, () => SigmaRouter.navigate('call', { initialData: { room: props.room } }))
     switchTitle && switchTitle(props.room.title)
     switchColor && switchColor(themeColor.get({ noproxy: true })[500], StatusThemes.DARK)
   }
   const onMetaClose = () => {
     switchLeftControl && switchLeftControl(LeftControlTypes.BACK, close)
-    switchRightControl && switchRightControl(RightControlTypes.CALL, () => SigmaRouter.navigate('call'))
+    switchRightControl && switchRightControl(RightControlTypes.CALL, () => SigmaRouter.navigate('call', { initialData: { room: props.room } }))
     switchTitle && switchTitle(props.room.title)
     switchColor && switchColor(themeColor.get({ noproxy: true })[500], StatusThemes.DARK)
   }
