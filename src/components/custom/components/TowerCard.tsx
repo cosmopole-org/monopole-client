@@ -1,7 +1,7 @@
 import { Badge, Card, IconButton, Rating, Typography } from "@mui/material"
 import SigmaBadgeButton from "../elements/SigmaBadgeButton"
-import { AllOut, ArrowForward, Done, DoneAll, LocationCity, MoreVert } from "@mui/icons-material"
-import { SigmaRouter, themeBasedTextColor, themeColor } from "../../../App"
+import { AllOut, ArrowForward, Call, Done, DoneAll, LocationCity, MoreVert } from "@mui/icons-material"
+import { SigmaRouter, themeBasedTextColor, themeColor, themeColorSecondary } from "../../../App"
 import SigmaAvatar from "../elements/SigmaAvatar"
 import { api } from "../../.."
 import '../../../resources/styles/towercard.css'
@@ -22,6 +22,7 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
     const backPatternColor0 = themeColor.get({ noproxy: true })[50];
     const backPatternColor1 = themeColor.get({ noproxy: true })[100];
     const unseenMsgCount = useHookstate(api.services.messenger.unseenMsgCount).get({ noproxy: true })
+    const calls = useHookstate(api.services.call.calls).get({ noproxy: true })
     if (props.showRating) {
         return (
             <Card elevation={0} style={{
@@ -122,6 +123,10 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
             </Card>
         )
     } else {
+        let isCall = false;
+        Object.keys(props.tower.rooms).forEach((roomId: string) => {
+            if (calls[roomId]) isCall = true;
+        });
         const unseenCount = unseenMsgCount[(Object.values(props.tower.rooms)[0] as any).id]
         let unseenRoomMessages = 0
         Object.values(props.tower.rooms).forEach((room: any) => {
@@ -131,6 +136,7 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
                     0
             )
         })
+        let hall: any = Object.values(props.tower.rooms)[0]
         return (
             <Card elevation={0} style={{
                 ...props.style, position: 'relative', width: 'calc(100% - 32px)', padding: 16, height: 168,
@@ -147,8 +153,8 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
                     backgroundSize: `75px 100px`
                 }} />
                 {
-                    unseenRoomMessages ? (
-                        <Badge badgeContent={unseenRoomMessages} style={{
+                    (unseenRoomMessages || isCall) ? (
+                        <Badge color="secondary" badgeContent={isCall ? <Call style={{ width: 12, height: 12 }} /> : unseenRoomMessages} style={{
                             position: 'absolute',
                             left: 40,
                             top: 22,
@@ -263,27 +269,36 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
                                         null
                                 }
                                 {
-                                    lastMessage ?
-                                        !unseenCount ?
-                                            null :
-                                            <Typography
-                                                variant="caption"
-                                                style={{
-                                                    marginLeft: 4,
-                                                    width: 'auto',
-                                                    height: 'auto',
-                                                    minWidth: 20,
-                                                    minHeight: 20,
-                                                    padding: 2,
-                                                    borderRadius: '50%',
-                                                    color: themeBasedTextColor.get({ noproxy: true }),
-                                                    backgroundColor: themeColor.get({ noproxy: true })[200],
-                                                    textAlign: 'center'
-                                                }}
-                                            >
-                                                {unseenCount}
-                                            </Typography> :
-                                        null
+                                    calls[hall.id] ? (
+                                        <Badge
+                                            badgeContent={<Call style={{ width: 12, height: 12 }} />}
+                                            color="secondary"
+                                            style={{
+                                                transform: 'translate(-8px, -8px)'
+                                            }}
+                                        />
+                                    ) :
+                                        lastMessage ?
+                                            !unseenCount ?
+                                                null :
+                                                <Typography
+                                                    variant="caption"
+                                                    style={{
+                                                        marginLeft: 4,
+                                                        width: 'auto',
+                                                        height: 'auto',
+                                                        minWidth: 20,
+                                                        minHeight: 20,
+                                                        padding: 2,
+                                                        borderRadius: '50%',
+                                                        color: themeBasedTextColor.get({ noproxy: true }),
+                                                        backgroundColor: themeColor.get({ noproxy: true })[200],
+                                                        textAlign: 'center'
+                                                    }}
+                                                >
+                                                    {unseenCount}
+                                                </Typography> :
+                                            null
                                 }
                             </div>
                         </div>

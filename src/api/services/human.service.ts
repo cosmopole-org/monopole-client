@@ -137,6 +137,7 @@ class HumanService {
                 api.services.messenger.unssenCount()
                 api.services.interaction.read()
                 api.services.invite.read()
+                api.services.call.activeCalls()
                 await subscribeToNotification(this._token)
                 return body
             })

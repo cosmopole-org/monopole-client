@@ -71,7 +71,7 @@ export let themeColorName = hookstate(tempThemeColorName)
 let colorFamily = { ...(colors as { [id: string]: any })[tempThemeColorName], plain: '#fff', activeText: '#333', passiveText: '#666' }
 export let themeColor = hookstate(tempThemeColorName === 'night' ? fixedNightColor : colorFamily)
 export let themeBasedTextColor = hookstate(tempThemeColorName === 'night' ? '#fff' : '#333')
-export let themeColorSecGroup = hookstate(colors.blue)
+export let themeColorSecondary = hookstate(tempThemeColorName === 'night' ? '#fff' : colors.purple[200])
 var metaThemeColor = document.querySelector("meta[name=theme-color]");
 metaThemeColor?.setAttribute("content", tempThemeColorName === 'night' ? fixedNightColor[50] : (colors as { [id: string]: any })[tempThemeColorName][50]);
 const headerImageAddresses = {
@@ -171,6 +171,7 @@ export let reconstructMaterialPalette = (name: string, color: any) => {
     });
     switchColor && switchColor(color[500], StatusBar.StatusThemes.DARK)
     themeColor.set(color)
+    themeColorSecondary.set(name === 'night' ? '#fff' : colors.purple[200])
     themeBasedTextColor.set(name === 'night' ? '#fff' : '#333')
     headerImageAddress.set(name === 'night' ? headerImageAddresses.dark : headerImageAddresses.light)
     forceUpdate()
