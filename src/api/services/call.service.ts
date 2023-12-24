@@ -58,7 +58,7 @@ class CallService {
 
         this.onCallDestructed('call-service', (data: any) => {
             let { roomId } = data
-            this.calls.merge({ [roomId]: true })
+            this.calls.merge({ [roomId]: none })
         })
     }
 

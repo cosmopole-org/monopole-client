@@ -152,41 +152,26 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
                                 radial-gradient(circle at 0% 50%, transparent 20%, ${backPatternColor1} 21%, ${backPatternColor1} 34%, transparent 35%, transparent) 0 -50px`,
                     backgroundSize: `75px 100px`
                 }} />
-                {
-                    (unseenRoomMessages || isCall) ? (
-                        <Badge color="secondary" badgeContent={isCall ? <Call style={{ width: 12, height: 12 }} /> : unseenRoomMessages} style={{
-                            position: 'absolute',
-                            left: 40,
-                            top: 22,
-                        }}>
-                            <Typography variant={'h6'} style={{
-                                paddingTop: 2,
-                                paddingBottom: 2,
-                                paddingLeft: 32,
-                                paddingRight: 12
-                            }}>
-                                {props.tower.title}
-                            </Typography>
-                        </Badge>
-                    ) : (
-                        <Typography variant={'h6'} style={{
-                            position: 'absolute',
-                            left: 40,
-                            top: 22,
-                            paddingTop: 2,
-                            paddingBottom: 2,
-                            paddingLeft: 32,
-                            paddingRight: 12
-                        }}>
-                            {props.tower.title}
-                        </Typography>
-                    )
-                }
-                <SigmaAvatar style={{
-                    width: 48, height: 48, position: 'absolute', left: 16, top: 16
+                <Typography variant={'h6'} style={{
+                    position: 'absolute',
+                    left: 40,
+                    top: 22,
+                    paddingTop: 2,
+                    paddingBottom: 2,
+                    paddingLeft: 32,
+                    paddingRight: 12
                 }}>
-                    {props.tower.title.substring(0, 1)}
-                </SigmaAvatar>
+                    {props.tower.title}
+                </Typography>
+                <Badge invisible={!(unseenRoomMessages || isCall)} color="secondary" overlap="circular" badgeContent={isCall ? <Call style={{ width: 12, height: 12 }} /> : unseenRoomMessages} style={{
+                    position: 'absolute', left: 16, top: 16
+                }}>
+                    <SigmaAvatar style={{
+                        width: 48, height: 48
+                    }}>
+                        {props.tower.title.substring(0, 1)}
+                    </SigmaAvatar>
+                </Badge>
                 <IconButton style={{
                     position: 'absolute', right: 16, top: 16
                 }} onClick={() => {
@@ -274,7 +259,9 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
                                             badgeContent={<Call style={{ width: 12, height: 12 }} />}
                                             color="secondary"
                                             style={{
-                                                transform: 'translate(-8px, -8px)'
+                                                position: 'absolute',
+                                                right: 16,
+                                                bottom: 12
                                             }}
                                         />
                                     ) :
