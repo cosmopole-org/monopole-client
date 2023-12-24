@@ -44,20 +44,26 @@ class CallService {
         this.onCallCreated('call-service', (data: any) => {
             let { creatorId, towerId, roomId } = data
             const myHumanId = api.memory.myHumanId.get({ noproxy: true })
+            this.calls.merge({ [roomId]: true })
             if (creatorId !== myHumanId) {
                 let tower = api.memory.spaces[towerId].get({ noproxy: true })
-                let room = tower.rooms[roomId]
-                utils.toasts.showCallToast(tower, room, () => {
-                    SigmaRouter.navigate('call', { initialData: { room } })
-                })
+                if (tower) {
+                    let room = tower.rooms[roomId]
+                    utils.toasts.showCallToast(tower, room, () => {
+                        SigmaRouter.navigate('call', { initialData: { room } })
+                    })
+                }
             }
+        })
+
+        this.onCallDestructed('call-service', (data: any) => {
+            let { roomId } = data
+            this.calls.merge({ [roomId]: true })
         })
     }
 
     onCallCreated(tag: string, callback: any) {
         this.network.addUpdateListener('call/onCreate', (data: any) => {
-            let { roomId } = data
-            this.calls.merge({ [roomId]: true })
             callback(data)
         }, tag)
         return {
@@ -124,7 +130,11 @@ class CallService {
     async activeCalls(): Promise<void> {
         return this.network.request('call/activeCalls', {}).then((body: any) => {
             let { activeCalls: ac } = body
-            this.calls.set(ac)
+            let dict: { [id: string]: boolean } = {}
+            ac.forEach((c: any) => {
+                dict[c.id] = true
+            });
+            this.calls.set(dict)
             return body
         })
     }
