@@ -4,10 +4,9 @@ import IMessage from "../models/message"
 import { none } from "@hookstate/core"
 import memoryUtils from "../utils/memory"
 import encodingUtils from "../utils/encoding"
-import ITower from "../models/tower"
-import { SigmaRouter, Toasts } from "../../App"
-import IRoom from "../models/room"
+import { SigmaRouter } from "../../App"
 import { api } from "../.."
+import utils from "../../components/utils"
 
 export let MessageTypes = {
     TEXT: "text",
@@ -87,7 +86,7 @@ class MessengerService {
             ) {
                 // do nothing
             } else {
-                Toasts.showMessageToast(message, tower, tower.rooms[message.roomId], () => {
+                utils.toasts.showMessageToast(message, tower, tower.rooms[message.roomId], () => {
                     if (Object.values(api.memory.chats.get({ noproxy: true })).find(chat => chat.roomId === message.roomId)) {
                         SigmaRouter.navigate('chat', { initialData: { room: tower.rooms[message.roomId], humanId: message.authorId } })
                     } else {

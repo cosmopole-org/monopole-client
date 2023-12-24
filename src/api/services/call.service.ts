@@ -1,5 +1,8 @@
-import { State } from "@hookstate/core"
+import { State, hookstate, none } from "@hookstate/core"
 import { DatabaseDriver, NetworkDriver } from "../drivers"
+import utils from "../../components/utils"
+import { api } from "../.."
+import { SigmaRouter } from "../../App"
 
 class CallService {
 
@@ -16,6 +19,8 @@ class CallService {
         }
     }
     network: NetworkDriver
+
+    calls: State<any> = hookstate({})
 
     constructor(
         storage: DatabaseDriver,
@@ -35,6 +40,40 @@ class CallService {
         this.storage = storage
         this.memory = memory
         this.network = network
+
+        this.onCallCreated('call-service', (data: any) => {
+            let { creatorId, towerId, roomId } = data
+            const myHumanId = api.memory.myHumanId.get({ noproxy: true })
+            if (creatorId !== myHumanId) {
+                let tower = api.memory.spaces[towerId].get({ noproxy: true })
+                let room = tower.rooms[roomId]
+                utils.toasts.showCallToast(tower, room, () => {
+                    SigmaRouter.navigate('call', { initialData: { room } })
+                })
+            }
+        })
+    }
+
+    onCallCreated(tag: string, callback: any) {
+        this.network.addUpdateListener('call/onCreate', (data: any) => {
+            let { roomId } = data
+            this.calls.merge({ [roomId]: true })
+            callback(data)
+        }, tag)
+        return {
+            unregister: () => this.network.removeUpdateListener('call/onCreate', tag)
+        }
+    }
+
+    onCallDestructed(tag: string, callback: any) {
+        this.network.addUpdateListener('call/onDestruct', (data: any) => {
+            let { roomId } = data
+            this.calls.merge({ [roomId]: none })
+            callback(data)
+        }, tag)
+        return {
+            unregister: () => this.network.removeUpdateListener('call/onCreate', tag)
+        }
     }
 
     onPeerJoinedCall(tag: string, callback: any) {
@@ -82,8 +121,16 @@ class CallService {
         }
     }
 
+    async activeCalls(): Promise<void> {
+        return this.network.request('call/activeCalls', {}).then((body: any) => {
+            let { activeCalls: ac } = body
+            this.calls.set(ac)
+            return body
+        })
+    }
+
     async getIceServers(): Promise<void> {
-        return this.network.request('call/getIceServers', { })
+        return this.network.request('call/getIceServers', {})
     }
 
     async joinCall(data: { towerId: string, roomId: string }): Promise<void> {
@@ -95,15 +142,15 @@ class CallService {
     }
 
     async turnVideoOff(): Promise<void> {
-        return this.network.request('call/turnVideoOff', { })
+        return this.network.request('call/turnVideoOff', {})
     }
 
     async turnAudioOff(): Promise<void> {
-        return this.network.request('call/turnAudioOff', { })
+        return this.network.request('call/turnAudioOff', {})
     }
 
     async turnScreenOff(): Promise<void> {
-        return this.network.request('call/turnScreenOff', { })
+        return this.network.request('call/turnScreenOff', {})
     }
 }
 
