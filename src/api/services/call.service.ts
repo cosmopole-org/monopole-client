@@ -41,30 +41,45 @@ class CallService {
         this.network.addUpdateListener('call/onJoin', (data: any) => {
             callback(data)
         }, tag)
+        return {
+            unregister: () => this.network.removeUpdateListener('call/onJoin', tag)
+        }
     }
 
     onPeerLeftCall(tag: string, callback: any) {
         this.network.addUpdateListener('call/onLeave', (data: any) => {
             callback(data)
         }, tag)
+        return {
+            unregister: () => this.network.removeUpdateListener('call/onLeave', tag)
+        }
     }
 
     onPeerTurnedVideoOff(tag: string, callback: any) {
         this.network.addUpdateListener('call/onVideoTurnOff', (data: any) => {
             callback(data)
         }, tag)
+        return {
+            unregister: () => this.network.removeUpdateListener('call/onVideoTurnOff', tag)
+        }
     }
 
     onPeerTurnedAudioOff(tag: string, callback: any) {
         this.network.addUpdateListener('call/onAudioTurnOff', (data: any) => {
             callback(data)
         }, tag)
+        return {
+            unregister: () => this.network.removeUpdateListener('call/onAudioTurnOff', tag)
+        }
     }
 
     onPeerTurnedScreenOff(tag: string, callback: any) {
         this.network.addUpdateListener('call/onScreenTurnOff', (data: any) => {
             callback(data)
         }, tag)
+        return {
+            unregister: () => this.network.removeUpdateListener('call/onScreenTurnOff', tag)
+        }
     }
 
     async getIceServers(): Promise<void> {

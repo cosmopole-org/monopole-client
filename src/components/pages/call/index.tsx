@@ -1,7 +1,7 @@
 import { Box, Card, Grid, Paper, Typography } from "@mui/material"
 import { SigmaRouter, themeColor } from "../../../App"
 import { LeftControlTypes, RightControlTypes, StatusThemes, statusbarHeight, switchColor, switchLeftControl, switchRightControl, switchTitle } from "../../sections/StatusBar"
-import React, { useEffect, useRef, useState } from "react";
+import React, { memo, useEffect, useRef, useState } from "react";
 import { Peer } from "peerjs";
 import { State, hookstate, useHookstate } from "@hookstate/core";
 import { api } from "../../..";
@@ -20,17 +20,6 @@ navigator.getUserMedia =
     navigator.mozGetUserMedia;
 
 let peer: Peer;
-
-var ICE_SERVERS = [
-    {
-        url: `stun:monopole-coturn.liara.run`
-    },
-    {
-        url: `turn:monopole-coturn.liara.run`,
-        username: 'guest',
-        credential: 'somepassword',
-    }
-]
 
 let connections: { [id: string]: any } = {};
 let videoInCalls: { [id: string]: any } = {};
@@ -55,6 +44,12 @@ let audioOn = false
 let screenOn = false
 let bigUserId = undefined
 
+let peerJoinEvent: any = undefined
+let peerVideoOnEvent: any = undefined
+let peerScreenOnEvent: any = undefined
+let peerAudioOnEvent: any = undefined
+let peerLeaveEvent: any = undefined
+
 function millisToMinutesAndSeconds(millis: number) {
     var minutes = Math.floor(millis / 60000);
     var seconds = Math.floor((millis % 60000) / 1000);
@@ -67,7 +62,7 @@ const videoUpdaters: { [id: string]: State<any> } = {}
 const audioUpdaters: { [id: string]: State<any> } = {}
 const screenUpdaters: { [id: string]: State<any> } = {}
 
-const Block = (props: { userId: string }) => {
+const Block = memo((props: { userId: string }) => {
     const videoUpdater = useHookstate(videoUpdaters[props.userId]).get({ noproxy: true })
     const audioUpdater = useHookstate(audioUpdaters[props.userId]).get({ noproxy: true })
     const screenUpdater = useHookstate(screenUpdaters[props.userId]).get({ noproxy: true })
@@ -127,7 +122,9 @@ const Block = (props: { userId: string }) => {
                 }} />
         </div>
     )
-}
+}, () => true)
+
+let recentSpace: any = undefined
 
 const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom }) => {
 
@@ -140,7 +137,6 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
 
     const myHumanId = useHookstate(api.memory.myHumanId).get({ noproxy: true })
 
-    const spaceRef: any = React.useRef();
     const userRef: any = React.useRef();
     const [timer, setTimer] = React.useState('00:00');
     const [open, setOpen] = React.useState(false);
@@ -163,7 +159,7 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
         }
     }, [props.isOnTop]);
 
-    const exit = () => {
+    const exit = (keepOpen?: boolean) => {
         clearInterval(timerInterval);
         Object.values(videoInCalls).filter(c => c !== undefined).forEach((call: any) => {
             call.close();
@@ -203,7 +199,13 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
         screenOn = false
         myVideoStream = undefined; myScreenStream = undefined; myAudioStream = undefined;
         videoStreams = {}; screenStreams = {}; audioStreams = {};
-        close();
+        recentSpace = undefined
+        !keepOpen && close();
+        peerJoinEvent?.unregister()
+        peerVideoOnEvent?.unregister()
+        peerScreenOnEvent?.unregister()
+        peerAudioOnEvent?.unregister()
+        peerLeaveEvent?.unregister()
         //Bus.publish(uiEvents.STOP_ALL_FLOATING_VIDEOS, {});
     };
 
@@ -505,115 +507,113 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
                     });
                     peer.on('open', () => {
                         console.log('connection to peer server opened');
-                        api.services.call.onPeerJoinedCall('call-page', (data: any) => {
-                            let { peerId, roomId: ri, towerId: ti } = data
-                            if (ri === roomId && ti === towerId) {
-                                console.log(peerId, 'joined');
-                                if (peerId !== myHumanId) {
-                                    if (!videoUpdaters[peerId]) videoUpdaters[peerId] = hookstate(Math.random())
-                                    if (!audioUpdaters[peerId]) audioUpdaters[peerId] = hookstate(Math.random())
-                                    if (!screenUpdaters[peerId]) screenUpdaters[peerId] = hookstate(Math.random())
-                                    users[peerId] = true;
-                                    connections[peerId] = peer.connect(peerId);
-                                    forceUpdate()
-                                }
-                            }
-                        });
-                        api.services.call.onPeerTurnedVideoOff('call-page', (data: any) => {
-                            let { peerId, roomId: ri, towerId: ti } = data
-                            if (ri === roomId && ti === towerId) {
-                                if (peerId !== myHumanId) {
-                                    console.log(peerId, 'turned off video');
-                                    delete videoStreams[peerId];
-                                    triggerBlockVideo(peerId)
-                                }
-                            }
-                        });
-                        api.services.call.onPeerTurnedScreenOff('call-page', (data: any) => {
-                            let { peerId, roomId: ri, towerId: ti } = data
-                            if (ri === roomId && ti === towerId) {
-                                if (peerId !== myHumanId) {
-                                    console.log(peerId, 'turned off screen');
-                                    delete screenStreams[peerId];
-                                    triggerBlockScreen(peerId)
-                                }
-                            }
-                        });
-                        api.services.call.onPeerTurnedAudioOff('call-page', (data: any) => {
-                            let { peerId, roomId: ri, towerId: ti } = data
-                            if (ri === roomId && ti === towerId) {
-                                if (peerId !== myHumanId) {
-                                    console.log(peerId, 'turned off audio');
-                                    delete audioStreams[peerId];
-                                    triggerBlockAudio(peerId)
-                                }
-                            }
-                        });
-                        api.services.call.onPeerLeftCall('call-page', (data: any) => {
-                            let { peerId, roomId: ri, towerId: ti } = data
-                            if (ri === roomId && ti === towerId) {
-                                console.log(peerId, 'left');
-                                if (peerId !== myHumanId) {
-                                    connections[peerId]?.close();
-                                    delete connections[peerId];
-                                    videoInCalls[peerId]?.close();
-                                    delete videoInCalls[peerId];
-                                    screenInCalls[peerId]?.close();
-                                    delete screenInCalls[peerId];
-                                    audioInCalls[peerId]?.close();
-                                    delete audioInCalls[peerId];
-                                    videoOutCalls[peerId]?.close();
-                                    delete videoOutCalls[peerId];
-                                    screenOutCalls[peerId]?.close();
-                                    delete screenOutCalls[peerId];
-                                    audioOutCalls[peerId]?.close();
-                                    delete audioOutCalls[peerId];
-                                    delete videoStreams[peerId];
-                                    delete screenStreams[peerId];
-                                    delete audioStreams[peerId];
-                                    delete users[peerId];
-                                    // delete videoUpdaters[peerId];
-                                    // delete audioUpdaters[peerId];
-                                    // delete screenUpdaters[peerId];
-                                    forceUpdate();
-                                }
-                            }
-                        });
                     });
                 }
             }
-            if (extOpen) {
-                bigUserId = myHumanId
-                api.services.call.joinCall({ towerId, roomId }).then((body: any) => {
-                    let { userIds } = body
-                    userIds.forEach((userId: any) => {
-                        if (!videoUpdaters[userId]) videoUpdaters[userId] = hookstate(Math.random())
-                        if (!audioUpdaters[userId]) audioUpdaters[userId] = hookstate(Math.random())
-                        if (!screenUpdaters[userId]) screenUpdaters[userId] = hookstate(Math.random())
-                        users[userId] = true
-                        if (userId !== myHumanId) {
-                            console.log('connecting to', userId);
-                            connections[userId] = peer.connect(userId);
-                        }
-                    });
+            bigUserId = myHumanId
+            peerJoinEvent = api.services.call.onPeerJoinedCall('call-page', (data: any) => {
+                let { peerId, roomId: ri, towerId: ti } = data
+                if (ri === roomId && ti === towerId) {
+                    console.log(peerId, 'joined');
+                    if (peerId !== myHumanId) {
+                        if (!videoUpdaters[peerId]) videoUpdaters[peerId] = hookstate(Math.random())
+                        if (!audioUpdaters[peerId]) audioUpdaters[peerId] = hookstate(Math.random())
+                        if (!screenUpdaters[peerId]) screenUpdaters[peerId] = hookstate(Math.random())
+                        users[peerId] = true;
+                        connections[peerId] = peer.connect(peerId);
+                        forceUpdate()
+                    }
+                }
+            });
+            peerVideoOnEvent = api.services.call.onPeerTurnedVideoOff('call-page', (data: any) => {
+                let { peerId, roomId: ri, towerId: ti } = data
+                if (ri === roomId && ti === towerId) {
+                    if (peerId !== myHumanId) {
+                        console.log(peerId, 'turned off video');
+                        delete videoStreams[peerId];
+                        triggerBlockVideo(peerId)
+                    }
+                }
+            });
+            peerScreenOnEvent = api.services.call.onPeerTurnedScreenOff('call-page', (data: any) => {
+                let { peerId, roomId: ri, towerId: ti } = data
+                if (ri === roomId && ti === towerId) {
+                    if (peerId !== myHumanId) {
+                        console.log(peerId, 'turned off screen');
+                        delete screenStreams[peerId];
+                        triggerBlockScreen(peerId)
+                    }
+                }
+            });
+            peerAudioOnEvent = api.services.call.onPeerTurnedAudioOff('call-page', (data: any) => {
+                let { peerId, roomId: ri, towerId: ti } = data
+                if (ri === roomId && ti === towerId) {
+                    if (peerId !== myHumanId) {
+                        console.log(peerId, 'turned off audio');
+                        delete audioStreams[peerId];
+                        triggerBlockAudio(peerId)
+                    }
+                }
+            });
+            peerLeaveEvent = api.services.call.onPeerLeftCall('call-page', (data: any) => {
+                let { peerId, roomId: ri, towerId: ti } = data
+                if (ri === roomId && ti === towerId) {
+                    console.log(peerId, 'left');
+                    if (peerId !== myHumanId) {
+                        connections[peerId]?.close();
+                        delete connections[peerId];
+                        videoInCalls[peerId]?.close();
+                        delete videoInCalls[peerId];
+                        screenInCalls[peerId]?.close();
+                        delete screenInCalls[peerId];
+                        audioInCalls[peerId]?.close();
+                        delete audioInCalls[peerId];
+                        videoOutCalls[peerId]?.close();
+                        delete videoOutCalls[peerId];
+                        screenOutCalls[peerId]?.close();
+                        delete screenOutCalls[peerId];
+                        audioOutCalls[peerId]?.close();
+                        delete audioOutCalls[peerId];
+                        delete videoStreams[peerId];
+                        delete screenStreams[peerId];
+                        delete audioStreams[peerId];
+                        delete users[peerId];
+                        // delete videoUpdaters[peerId];
+                        // delete audioUpdaters[peerId];
+                        // delete screenUpdaters[peerId];
+                        forceUpdate();
+                    }
+                }
+            });
+            api.services.call.joinCall({ towerId, roomId }).then((body: any) => {
+                let { userIds } = body
+                userIds.forEach((userId: any) => {
+                    if (!videoUpdaters[userId]) videoUpdaters[userId] = hookstate(Math.random())
+                    if (!audioUpdaters[userId]) audioUpdaters[userId] = hookstate(Math.random())
+                    if (!screenUpdaters[userId]) screenUpdaters[userId] = hookstate(Math.random())
+                    users[userId] = true
+                    if (userId !== myHumanId) {
+                        console.log('connecting to', userId);
+                        connections[userId] = peer.connect(userId);
+                    }
                 });
-            }
+            });
         }
 
         viewCallPage = (room: any) => {
             setOpen(true);
             let human = api.memory.humans[myHumanId].get({ noproxy: true });
-            if (room && spaceRef.current) {
-                if (room.id !== (spaceRef.current as any).id) {
+            if (room && recentSpace) {
+                if (room.id !== (recentSpace as any).id) {
                     if (window.confirm('you are already in another call. if you join this call, your current call will be ended. would you like to do so ?')) {
 
-                        exit();
+                        exit(true);
 
-                        spaceRef.current = undefined;
+                        recentSpace = undefined;
                         setTimer('00:00');
                         startTimer();
 
-                        spaceRef.current = room;
+                        recentSpace = room;
                         userRef.current = human
 
                         extOpen = true;
@@ -625,18 +625,18 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
                 } else {
                     extOpen = true;
                 }
-            } else if (room && !spaceRef.current) {
+            } else if (room && !recentSpace) {
 
-                spaceRef.current = room;
+                recentSpace = room;
                 userRef.current = human;
 
                 extOpen = true;
                 startTime = new Date();
                 startTimer();
                 openCall(room.towerId, room.id);
-            } else if (!room && spaceRef.current) {
+            } else if (!room && recentSpace) {
                 extOpen = true;
-            } else if (!room && !spaceRef.current) {
+            } else if (!room && !recentSpace) {
                 close();
             }
             setTimeout(() => {
@@ -661,6 +661,9 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
         };
     }, []);
 
+    let userIdList = Object.keys(users)
+    let blockCount = userIdList.length
+
     return (
         <div style={{ width: '100%', height: '100%', backgroundColor: themeColor.get({ noproxy: true })[50] }}>
             <div style={{
@@ -669,13 +672,33 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
                 paddingTop: statusbarHeight() + 32
             }}>
                 {
-                    Object.keys(users).map(userId => {
+                    userIdList.map((userId: string, indeX: number) => {
+                        let width = 0
+                        let height = 0
+                        if (blockCount === 1) {
+                            width = window.innerWidth - 32
+                            height = width
+                        } else if (blockCount === 2) {
+                            width = window.innerWidth - 32
+                            height = width - 32
+                        } else if (blockCount === 3) {
+                            if (indeX === 0) {
+                                width = window.innerWidth - 32
+                                height = width
+                            } else {
+                                width = (window.innerWidth - 32) / 2
+                                height = width
+                            }
+                        } else {
+                            width = (window.innerWidth - 32) / 2
+                            height = width
+                        }
                         return (
                             <Paper
                                 style={{
                                     margin: 8,
-                                    width: 150,
-                                    height: 150,
+                                    width: width,
+                                    height: height,
                                     borderRadius: 16,
                                     overflow: 'hidden',
                                     backgroundColor: themeColor.get({ noproxy: true })[100]
@@ -699,7 +722,7 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
                 <SigmaFab style={{ marginLeft: 8, marginRight: 8, backgroundColor: videoOn ? themeColor.get({ noproxy: true })[200] : themeColor.get({ noproxy: true })[100] }} onClick={toggleVideo}>
                     <Videocam />
                 </SigmaFab>
-                <SigmaFab style={{ marginLeft: 8 }} onClick={exit}>
+                <SigmaFab style={{ marginLeft: 8 }} onClick={() => exit()}>
                     <CallEnd />
                 </SigmaFab>
             </Paper>
