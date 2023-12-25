@@ -1,6 +1,6 @@
 {
-  "name": "sigma",
-  "description": "Welcome to Sigma !",
+  "name": "cosmopole",
+  "description": "Welcome to Cosmopole !",
   "version": "0.0.1",
   "dependencies": {
     "@auth0/auth0-react": "^2.2.4",

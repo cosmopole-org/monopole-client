@@ -1,10 +1,11 @@
-import { ArrowBack, Call, Close, Dashboard, Explore, Feed, Home, KeyboardCommandKey, MusicNote, Notifications, Settings, Wallet } from "@mui/icons-material"
+import { ArrowBack, Call, CallEnd, CallMade, Close, Dashboard, Explore, Feed, Home, KeyboardCommandKey, MusicNote, Notifications, Settings, Wallet } from "@mui/icons-material"
 import { Badge, IconButton, Paper, Typography } from "@mui/material"
 import { useState } from "react"
 import { SigmaRouter, themeBasedTextColor, themeColor, themeColorName } from "../../App"
 import SigmaAvatar from "../custom/elements/SigmaAvatar"
 import { api } from "../.."
 import { useHookstate } from "@hookstate/core"
+import { recentSpace } from "../pages/call"
 
 const statusbarHeight = () => 40
 const LeftControlTypes = {
@@ -39,6 +40,8 @@ const StatusBar = () => {
     const [leftControlType, setLeftControlType] = useState(LeftControlTypes.NOTIFICATIONS)
     const [rightControlType, setRightControlType] = useState(RightControlTypes.NONE)
     const [title, setTitle] = useState('')
+    const calls = useHookstate(api.services.call.calls).get({ noproxy: true })
+    let callCount = Object.keys(calls).length
     switchLeftControl = (type: number, functionality?: () => void) => {
         setLeftControlType(type)
         leftControlFunctionality = functionality
@@ -151,7 +154,22 @@ const StatusBar = () => {
                 {
                     SigmaRouter.topPath() === 'auth' || SigmaRouter.topPath() === 'audioPlayer' ?
                         null :
-                        (
+                        callCount > 0 ? (
+                            <IconButton size="small" style={{ width: 32, height: 32, borderRadius: '50%', position: 'absolute', top: 4, right: 8 }}
+                                onClick={() => {
+                                    if (recentSpace && calls[recentSpace.id]) {
+                                        SigmaRouter.navigate('call', { initialData: { room: recentSpace } });
+                                    } else {
+                                        let roomId = Object.keys(calls)[0]
+                                        let tower = Object.values(api.memory.spaces.get({ noproxy: true })).find(tower => tower.rooms[roomId] !== undefined)
+                                        let room = tower?.rooms[roomId]
+                                        SigmaRouter.navigate('call', { initialData: { room } });
+                                    }
+                                }}
+                            >
+                                <CallEnd style={{ color: themeBasedTextColor.get({ noproxy: true }) }} />
+                            </IconButton>
+                        ) : (
                             <IconButton size="small" style={{ width: 32, height: 32, borderRadius: '50%', position: 'absolute', top: 4, right: 8 }}
                                 onClick={() => {
                                     SigmaRouter.navigate('audioPlayer');

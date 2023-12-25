@@ -124,7 +124,7 @@ const Block = memo((props: { userId: string }) => {
     )
 }, () => true)
 
-let recentSpace: any = undefined
+export let recentSpace: any = undefined
 
 const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom }) => {
 

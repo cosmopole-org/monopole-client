@@ -2,6 +2,7 @@ import { State } from "@hookstate/core"
 import { DatabaseDriver, NetworkDriver } from "../drivers"
 import memoryUtils from "../utils/memory"
 import IRoom from "../models/room"
+import { api } from "../.."
 
 class RoomService {
 
@@ -42,6 +43,7 @@ class RoomService {
             let { room } = data
             await this.storage.factories.room?.create(room)
             let newSpaces = memoryUtils.spaces.prepareRoom(room, { ...this.memory.spaces.get({ noproxy: true }) })
+            api.services.messenger.check(room.id)
             this.memory.spaces.set(newSpaces)
         })
 
@@ -82,6 +84,7 @@ class RoomService {
             await this.storage.factories.room?.create(room)
             let newSpaces = memoryUtils.spaces.prepareRoom(room, { ...this.memory.spaces.get({ noproxy: true }) })
             this.memory.spaces.set(newSpaces)
+            api.services.messenger.check(room.id)
             return body
         })
     }

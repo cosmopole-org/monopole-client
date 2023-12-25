@@ -74,6 +74,7 @@ class TowerService {
             this.memory.spaces.set(newSpaces)
             let newKnownSpaces = memoryUtils.spaces.prepareSpaces([tower], [room], { ...this.memory.known.spaces.get({ noproxy: true }) })
             this.memory.known.spaces.set(newKnownSpaces)
+            api.services.messenger.check(room.id)
             return body
         })
     }
