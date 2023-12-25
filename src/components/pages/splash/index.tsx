@@ -5,6 +5,7 @@ import { SigmaRouter, themeColor } from '../../../App';
 import { api } from '../../..';
 import { useAuth0 } from '@auth0/auth0-react';
 import Logo from '../../../resources/images/logo.png';
+import sigma from '../../../resources/images/sigma.png';
 
 const Splash = (props: { id: string, isOnTop: boolean }) => {
     const {
@@ -41,7 +42,7 @@ const Splash = (props: { id: string, isOnTop: boolean }) => {
         }
     }, [isAuthenticated, isLoading, getAccessTokenSilently])
     return (
-        <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+        <div style={{ width: '100%', height: '100%', position: 'relative', backgroundColor: themeColor.get({ noproxy: true })[100]  }}>
             <div style={{
                 width: 176,
                 height: 176,
@@ -53,6 +54,18 @@ const Splash = (props: { id: string, isOnTop: boolean }) => {
                 transform: 'translate(-50%, -75%)'
             }}>
                 <img src={Logo} style={{ width: '100%', height: '100%' }} />
+            </div>
+            <div style={{
+                width: 128,
+                height: 128,
+                borderRadius: '50%',
+                backgroundColor: themeColor.get({ noproxy: true })[100],
+                position: 'absolute',
+                left: '50%',
+                bottom: 32,
+                transform: 'translateX(-50%)'
+            }}>
+                <img src={sigma} style={{ width: '100%', height: '100%' }} />
             </div>
         </div>
     )
