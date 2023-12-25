@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { SigmaRouter, themeColor } from '../../../App';
 import { api } from '../../..';
 import { useAuth0 } from '@auth0/auth0-react';
+import Logo from '../../../resources/images/logo.png';
 
 const Splash = (props: { id: string, isOnTop: boolean }) => {
     const {
@@ -51,7 +52,7 @@ const Splash = (props: { id: string, isOnTop: boolean }) => {
                 top: '50%',
                 transform: 'translate(-50%, -50%)'
             }}>
-
+                <img src={Logo} style={{ width: '100%', height: '100%' }} />
             </div>
         </div>
     )
