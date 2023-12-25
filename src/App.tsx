@@ -63,7 +63,7 @@ export const fixedNightColor = {
 
 let tempThemeColorName = localStorage.getItem('themeColor')
 if (tempThemeColorName === null) {
-    tempThemeColorName = 'night'
+    tempThemeColorName = 'indigo'
     localStorage.setItem('themeColor', tempThemeColorName)
 }
 export let themeColorName = hookstate(tempThemeColorName)
