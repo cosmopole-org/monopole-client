@@ -260,8 +260,15 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
                                             color="secondary"
                                             style={{
                                                 position: 'absolute',
-                                                right: 16,
-                                                bottom: 12
+                                                right: (
+                                                    lastMessage && (
+                                                        (lastMessage.authorId === api.memory.myHumanId.get({ noproxy: true })) ||
+                                                        unseenCount
+                                                    )
+                                                ) ?
+                                                    32 :
+                                                    12,
+                                                bottom: 10
                                             }}
                                         />
                                     ) :

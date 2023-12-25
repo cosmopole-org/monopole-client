@@ -36,7 +36,6 @@ const RoomMoreMenu = (props: { shown: boolean, onClose: () => void, room: any })
                     caption='Delete Room'
                 />
                 <Divider />
-                <SigmaMenuItem onClick={() => { props.onClose(); }} icon={KeyboardCommandKey} caption='Start the timer' />
             </Drawer>
         </React.Fragment >
     );
