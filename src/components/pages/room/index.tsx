@@ -1,11 +1,11 @@
 
 import './index.css';
 import { LeftControlTypes, RightControlTypes, StatusThemes, switchColor, switchLeftControl, switchRightControl, switchTitle } from '../../sections/StatusBar';
-import { Paper, Typography } from '@mui/material';
+import { Divider, Paper, Typography } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { SigmaRouter, interfaceMode, themeColor, themeColorName } from '../../../App';
 import SliderPage from '../../layouts/SliderPage';
-import { KeyboardCommandKey, Message, People } from '@mui/icons-material';
+import { Forum, Inbox, KeyboardCommandKey, Message, People } from '@mui/icons-material';
 import RoomControl from '../../custom/components/RoomControl';
 import Desk, { addWidgetToSDesktop, desktopEditMode } from '../../tabs/Desk';
 import IRoom from '../../../api/models/room';
@@ -20,8 +20,10 @@ import MetaTouch from './metaTouch';
 import { useHookstate } from '@hookstate/core';
 import { api } from '../../..';
 import RoomWallpaper from '../../../resources/images/room.jpg';
+import SigmaAvatar from '../../custom/elements/SigmaAvatar';
 
 const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
+  const myUser = api.memory.humans.get({ noproxy: true })[api.memory.myHumanId.get({ noproxy: true })];
   const containerRef: any = useRef(null)
   const [showRoomControl, setShowRoomControl] = useState(false)
   const [showMachineBox, setShowMachineBox] = useState(false)
@@ -61,7 +63,9 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
     switchColor && switchColor(themeColor.get({ noproxy: true })[500], StatusThemes.DARK)
   }
   const onMetaClose = () => {
-    switchLeftControl && switchLeftControl(isOs ? LeftControlTypes.NONE : LeftControlTypes.BACK, isOs ? undefined : close)
+    switchLeftControl && switchLeftControl(isOs ? LeftControlTypes.CITY : LeftControlTypes.BACK, isOs ? () => {
+      SigmaRouter.navigate('home')
+    } : close)
     switchRightControl && switchRightControl(RightControlTypes.CALL, () => SigmaRouter.navigate('call', { initialData: { room: props.room } }))
     switchTitle && switchTitle(props.room.title)
     switchColor && switchColor(themeColor.get({ noproxy: true })[500], StatusThemes.DARK)
@@ -91,39 +95,78 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
           width: '100%', height: '100%', position: 'absolute', left: 0, top: 0
         }} />
         <Desk show={true} room={props.room} />
-        <Paper style={{
-          borderRadius: '24px 24px 0px 0px', width: '100%', height: 48, backgroundColor: themeColor.get({ noproxy: true })[50],
-          position: 'absolute', left: 0, bottom: 0
-        }}>
-          <div style={{ display: 'flex', marginTop: 12 }}>
-            <Message style={{ marginLeft: 16, marginRight: 8 }} />
-            <Typography variant='body2' style={{
-              maxWidth: 'calc(100% - 128px)',
-              wordWrap: 'break-word', textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap', overflow: 'hidden'
+        {
+          isOs ?
+            null : (
+              <Paper style={{
+                borderRadius: '24px 24px 0px 0px', width: '100%', height: 48, backgroundColor: themeColor.get({ noproxy: true })[50],
+                position: 'absolute', left: 0, bottom: 0
+              }}>
+                <div style={{ display: 'flex', marginTop: 12 }}>
+                  <Message style={{ marginLeft: 16, marginRight: 8 }} />
+                  <Typography variant='body2' style={{
+                    maxWidth: 'calc(100% - 128px)',
+                    wordWrap: 'break-word', textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap', overflow: 'hidden'
+                  }}>
+                    {lastMessage ?
+                      lastMessage.author.firstName + ' : ' + (
+                        lastMessage.type === 'text' ? lastMessage.data.text :
+                          ['photo', 'audio', 'video'].includes(lastMessage.type) ? lastMessage.type :
+                            'Unsupported message type'
+                      ) :
+                      'No messages yet'
+                    }
+                  </Typography>
+                </div>
+              </Paper>
+            )
+        }
+        {
+          !isOs ? [
+            <SigmaFab size={'medium'} style={{ position: 'absolute', right: 16, bottom: 16, zIndex: 1 }} onClick={() => {
+              openMeta()
+            }}
+            >
+              <People />
+            </SigmaFab>,
+            <SigmaFab size={'medium'} style={{ position: 'absolute', bottom: 16, right: 16 + 56, zIndex: 1 }} onClick={() => {
+              setShowRoomControl(true)
             }}>
-              {lastMessage ?
-                lastMessage.author.firstName + ' : ' + (
-                  lastMessage.type === 'text' ? lastMessage.data.text :
-                    ['photo', 'audio', 'video'].includes(lastMessage.type) ? lastMessage.type :
-                      'Unsupported message type'
-                ) :
-                'No messages yet'
-              }
-            </Typography>
-          </div>
-        </Paper>
-        <SigmaFab size={'medium'} style={{ position: 'absolute', right: 16, bottom: 16, zIndex: 1 }} onClick={() => {
-          openMeta()
-        }}
-        >
-          <People />
-        </SigmaFab>
-        <SigmaFab size={'medium'} style={{ position: 'absolute', bottom: 16, right: 16 + 56, zIndex: 1 }} onClick={() => {
-          setShowRoomControl(true)
-        }}>
-          <KeyboardCommandKey />
-        </SigmaFab>
+              <KeyboardCommandKey />
+            </SigmaFab>
+          ] : (
+            <Paper style={{ display: 'flex', borderRadius: 16, padding: 4, width: 'auto', height: 'auto', position: 'absolute', left: '50%', bottom: 16, transform: 'translateX(-50%)' }}>
+              <SigmaFab style={{ margin: 4 }} onClick={() => {
+                openMeta()
+              }}
+              >
+                <People />
+              </SigmaFab>
+              <SigmaFab style={{ margin: 4 }} onClick={() => {
+                setShowRoomControl(true)
+              }}>
+                <KeyboardCommandKey />
+              </SigmaFab>
+              <Divider orientation='vertical' style={{ width: 1, height: 48, margin: 4, marginTop: 8 }} />
+              <SigmaFab style={{ margin: 4 }} onClick={() => {
+                SigmaRouter.navigate('inbox')
+              }}>
+                <Inbox />
+              </SigmaFab>
+              <SigmaFab style={{ margin: 4 }} onClick={() => {
+                SigmaRouter.navigate('chats')
+              }}>
+                <Forum />
+              </SigmaFab>
+              <SigmaAvatar style={{ margin: 8, width: 48, height: 48 }} onClick={() => {
+                SigmaRouter.navigate('settings')
+              }}>
+                {myUser.firstName.substring(0, 1)}
+              </SigmaAvatar>
+            </Paper>
+          )
+        }
         <Shadow onClick={() => closeMeta(false)} />
         {
           utils.screen.isTouchDevice() ? (

@@ -28,7 +28,7 @@ const lightWallpapers = [
 
 let cachedActiveTab: string | undefined = undefined, cachedPageType: string = 'home'
 
-const TowersList = (props: { towers?: Array<any>, humans?: Array<any>, hasFocus: boolean, showRating: boolean, bottomSpace: number, overridenStyle: any, defaultSCrollTop?: number, onScroll: (scrollTop: number) => void, towersContainerRef: any, onCollapsibleBarStateChange: (dy: number, v: boolean, collapsibleScrollTop: number) => void, showTowerMoreMenu?: (towerId: string) => void }) => {
+const TowersList = (props: { fullscreen?: boolean, towers?: Array<any>, humans?: Array<any>, hasFocus: boolean, showRating: boolean, bottomSpace: number, overridenStyle: any, defaultSCrollTop?: number, onScroll: (scrollTop: number) => void, towersContainerRef: any, onCollapsibleBarStateChange: (dy: number, v: boolean, collapsibleScrollTop: number) => void, showTowerMoreMenu?: (towerId: string) => void }) => {
     const lastScrollRef = useRef(props.defaultSCrollTop !== undefined ? props.defaultSCrollTop : 0)
     if (!cachedActiveTab || ((cachedPageType === 'home' && props.showRating) || (cachedPageType === 'explore' && !props.showRating))) {
         cachedPageType = props.showRating ? 'explore' : 'home'
@@ -56,7 +56,7 @@ const TowersList = (props: { towers?: Array<any>, humans?: Array<any>, hasFocus:
             ref={props.towersContainerRef}
             style={{
                 ...props.overridenStyle,
-                width: '100%', height: `calc(100% - ${162 + statusbarHeight()}px)`,
+                width: '100%', height: `calc(100% - ${162 + (props.fullscreen ? -16 : statusbarHeight())}px)`,
                 position: 'absolute',
                 left: 0,
                 top: 0,

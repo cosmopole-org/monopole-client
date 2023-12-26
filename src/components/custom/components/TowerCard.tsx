@@ -1,7 +1,7 @@
 import { Badge, Card, IconButton, Rating, Typography } from "@mui/material"
 import SigmaBadgeButton from "../elements/SigmaBadgeButton"
 import { AllOut, ArrowForward, Call, Done, DoneAll, LocationCity, MoreVert } from "@mui/icons-material"
-import { SigmaRouter, themeBasedTextColor, themeColor, themeColorSecondary } from "../../../App"
+import { SigmaRouter, interfaceMode, themeBasedTextColor, themeColor, themeColorSecondary } from "../../../App"
 import SigmaAvatar from "../elements/SigmaAvatar"
 import { api } from "../../.."
 import '../../../resources/styles/towercard.css'
@@ -9,6 +9,7 @@ import { useEffect } from "react"
 import { useHookstate } from "@hookstate/core"
 import IRoom from "../../../api/models/room"
 import utils from "../../utils"
+import { setOsCurrentRoomId } from "../../pages/main"
 
 const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void, showRating?: boolean }) => {
     useEffect(() => {
@@ -23,6 +24,7 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
     const backPatternColor1 = themeColor.get({ noproxy: true })[100];
     const unseenMsgCount = useHookstate(api.services.messenger.unseenMsgCount).get({ noproxy: true })
     const calls = useHookstate(api.services.call.calls).get({ noproxy: true })
+    const isOs = useHookstate(interfaceMode).get({ noproxy: true }) === 'os'
     if (props.showRating) {
         return (
             <Card elevation={0} style={{
@@ -104,19 +106,24 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
                     <SigmaBadgeButton icon={<AllOut style={{ marginLeft: 8 }} />} style={{ marginLeft: 16 }} caption='View tower' onClick={() => SigmaRouter.navigate('tower', { initialData: { tower: props.tower } })} />
                     <div style={{ flex: 1 }} />
                     <SigmaBadgeButton icon={<ArrowForward style={{ marginLeft: 8 }} />} style={{ marginRight: 16 }} caption='Open main room' onClick={() => {
-                        if (props.showRating) {
-                            let rooms = api.memory.spaces.get({ noproxy: true })[props.tower?.id]?.rooms
-                            if (rooms && rooms[0]) {
-                                let room = api.memory.spaces.get({ noproxy: true })[props.tower.id].rooms[0]
-                                SigmaRouter.navigate('room', { initialData: { room } });
-                            } else {
-                                api.services.room.search({ towerId: props.tower.id, query: '', offset: 0, count: 1 }).then((body: any) => {
-                                    let room = body.rooms[0]
-                                    SigmaRouter.navigate('room', { initialData: { room } });
-                                })
-                            }
+                        if (isOs) {
+                            setOsCurrentRoomId(Object.values(api.memory.spaces.get({ noproxy: true })[props.tower.id].rooms)[0])
+                            SigmaRouter.back()
                         } else {
-                            SigmaRouter.navigate('room', { initialData: { room: Object.values(api.memory.spaces.get({ noproxy: true })[props.tower.id].rooms)[0] } });
+                            if (props.showRating) {
+                                let rooms = api.memory.spaces.get({ noproxy: true })[props.tower?.id]?.rooms
+                                if (rooms && rooms[0]) {
+                                    let room = api.memory.spaces.get({ noproxy: true })[props.tower.id].rooms[0]
+                                    SigmaRouter.navigate('room', { initialData: { room } });
+                                } else {
+                                    api.services.room.search({ towerId: props.tower.id, query: '', offset: 0, count: 1 }).then((body: any) => {
+                                        let room = body.rooms[0]
+                                        SigmaRouter.navigate('room', { initialData: { room } });
+                                    })
+                                }
+                            } else {
+                                SigmaRouter.navigate('room', { initialData: { room: Object.values(api.memory.spaces.get({ noproxy: true })[props.tower.id].rooms)[0] } });
+                            }
                         }
                     }} />
                 </div>
@@ -302,19 +309,24 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
                     <SigmaBadgeButton icon={<AllOut style={{ marginLeft: 8 }} />} style={{ marginLeft: 16 }} caption='View tower' onClick={() => SigmaRouter.navigate('tower', { initialData: { tower: props.tower } })} />
                     <div style={{ flex: 1 }} />
                     <SigmaBadgeButton icon={<ArrowForward style={{ marginLeft: 8 }} />} style={{ marginRight: 16 }} caption='Open main room' onClick={() => {
-                        if (props.showRating) {
-                            let rooms = api.memory.spaces.get({ noproxy: true })[props.tower?.id]?.rooms
-                            if (rooms && rooms[0]) {
-                                let room = api.memory.spaces.get({ noproxy: true })[props.tower.id].rooms[0]
-                                SigmaRouter.navigate('room', { initialData: { room } });
-                            } else {
-                                api.services.room.search({ towerId: props.tower.id, query: '', offset: 0, count: 1 }).then((body: any) => {
-                                    let room = body.rooms[0]
-                                    SigmaRouter.navigate('room', { initialData: { room } });
-                                })
-                            }
+                        if (isOs) {
+                            setOsCurrentRoomId(Object.values(api.memory.spaces.get({ noproxy: true })[props.tower.id].rooms)[0])
+                            SigmaRouter.back()
                         } else {
-                            SigmaRouter.navigate('room', { initialData: { room: Object.values(api.memory.spaces.get({ noproxy: true })[props.tower.id].rooms)[0] } });
+                            if (props.showRating) {
+                                let rooms = api.memory.spaces.get({ noproxy: true })[props.tower?.id]?.rooms
+                                if (rooms && rooms[0]) {
+                                    let room = api.memory.spaces.get({ noproxy: true })[props.tower.id].rooms[0]
+                                    SigmaRouter.navigate('room', { initialData: { room } });
+                                } else {
+                                    api.services.room.search({ towerId: props.tower.id, query: '', offset: 0, count: 1 }).then((body: any) => {
+                                        let room = body.rooms[0]
+                                        SigmaRouter.navigate('room', { initialData: { room } });
+                                    })
+                                }
+                            } else {
+                                SigmaRouter.navigate('room', { initialData: { room: Object.values(api.memory.spaces.get({ noproxy: true })[props.tower.id].rooms)[0] } });
+                            }
                         }
                     }} />
                 </div>

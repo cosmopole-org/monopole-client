@@ -1,4 +1,4 @@
-import { ArrowBack, Call, CallEnd, Close, Explore, Home, MusicNote, Notifications, Settings, Wallet } from "@mui/icons-material"
+import { ArrowBack, Call, CallEnd, Close, Explore, Home, LocationCity, MusicNote, Notifications, Rocket, Settings, Wallet } from "@mui/icons-material"
 import { Badge, IconButton, Paper, Typography } from "@mui/material"
 import { useState } from "react"
 import { SigmaRouter, themeBasedTextColor, themeColor } from "../../App"
@@ -14,7 +14,7 @@ const LeftControlTypes = {
     CLOSE: 2,
     WALLET: 3,
     HOME: 4,
-    NONE: 5
+    CITY: 5
 }
 const RightControlTypes = {
     NONE: 0,
@@ -94,7 +94,9 @@ const StatusBar = () => {
                                                     <Wallet style={{ color: themeBasedTextColor.get({ noproxy: true }) }} /> :
                                                     leftControlType === LeftControlTypes.HOME ?
                                                         <Home style={{ color: themeBasedTextColor.get({ noproxy: true }) }} /> :
-                                                        null
+                                                        leftControlType === LeftControlTypes.CITY ?
+                                                            <LocationCity style={{ color: themeBasedTextColor.get({ noproxy: true }) }} /> :
+                                                            null
                                 }
                             </IconButton>
                         )

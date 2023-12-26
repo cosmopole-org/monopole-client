@@ -38,6 +38,11 @@ import ChatPage from './components/pages/chat';
 import { GlobalAppletSheet } from './components/custom/components/GlobalAppletSheet';
 import { Toaster } from 'react-hot-toast';
 import Call from './components/pages/call';
+import SnMain from './components/pages/main/sn';
+import ChatsPage from './components/pages/chats';
+import SettingsPage from './components/pages/settings';
+import InboxPage from './components/pages/inbox';
+import HomePage from './components/pages/home';
 
 let tempInterfaceMode = localStorage.getItem('interfaceMode')
 if (tempInterfaceMode === null) {
@@ -48,6 +53,9 @@ export const interfaceMode = hookstate(tempInterfaceMode)
 export const switchInterfaceMode = (val: string) => {
     localStorage.setItem('interfaceMode', val)
     interfaceMode.set(val)
+    setTimeout(() => {
+        SigmaRouter.reset()
+    })
 }
 
 const useForceUpdate = () => {
@@ -205,6 +213,11 @@ let pages: { [id: string]: any } = {
     'explore': Explore,
     'chat': ChatPage,
     'call': Call,
+    'sn': SnMain,
+    'chats': ChatsPage,
+    'settings': SettingsPage,
+    'inbox': InboxPage,
+    'home': HomePage,
     // forms
     'createTower': CreateTower,
     'createRoom': CreateRoom,

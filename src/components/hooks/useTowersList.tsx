@@ -11,12 +11,14 @@ const useTowersList = (
     showRating: boolean,
     hasFocus: boolean,
     towers: Array<any>,
+    fullscreen: boolean,
     humans?: Array<any>
 ) => {
     const towersContainerRef = useRef(null)
     return {
         Component: () => (
             <TowersList
+                fullscreen={fullscreen}
                 hasFocus={hasFocus}
                 showRating={showRating}
                 bottomSpace={bottomSpace}

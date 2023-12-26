@@ -8,7 +8,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import Settings from '../../tabs/Settings';
 import { LeftControlTypes, RightControlTypes, StatusThemes, switchColor, switchLeftControl, switchRightControl, switchTitle } from '../../sections/StatusBar';
 import { Route, Routes, useNavigate } from 'react-router-dom';
-import { SigmaRouter, themeColor } from '../../../App';
+import { SigmaRouter, interfaceMode, themeColor } from '../../../App';
 import { api } from '../../..';
 import SigmaAvatar from '../../custom/elements/SigmaAvatar';
 import Inbox from '../../tabs/Inbox';
@@ -17,6 +17,8 @@ import { useHookstate } from '@hookstate/core';
 
 const SnMain = (props: { id: string, isOnTop: boolean }) => {
     const navigate = useNavigate()
+    const im = useHookstate(interfaceMode).get({ noproxy: true })
+    const isOs = im === 'os'
     const chats = useHookstate(api.memory.chats).get({ noproxy: true })
     const spaces = useHookstate(api.memory.spaces).get({ noproxy: true })
     const unseenCount = useHookstate(api.services.messenger.unseenMsgCount).get({ noproxy: true })
@@ -50,8 +52,12 @@ const SnMain = (props: { id: string, isOnTop: boolean }) => {
     }, [])
     useEffect(() => {
         if (props.isOnTop) {
-            switchLeftControl && switchLeftControl(LeftControlTypes.HOME, () =>
-                SigmaRouter.navigate('tower', { initialData: { tower: Object.values(api.memory.spaces.get({ noproxy: true }))[0] } }))
+            if (isOs) {
+                switchLeftControl && switchLeftControl(LeftControlTypes.BACK, () => SigmaRouter.back())
+            } else {
+                switchLeftControl && switchLeftControl(LeftControlTypes.HOME, () =>
+                    SigmaRouter.navigate('tower', { initialData: { tower: Object.values(api.memory.spaces.get({ noproxy: true }))[0] } }))
+            }
             switchRightControl && switchRightControl(RightControlTypes.EXPLORE, () => SigmaRouter.navigate('explore'))
             switchColor && switchColor(themeColor.get({ noproxy: true })[500], StatusThemes.DARK)
             updateTitle(value)

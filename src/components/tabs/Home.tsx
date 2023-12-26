@@ -18,7 +18,7 @@ let savedSCrollTop = 0,
         maxValue: 24 + statusbarHeight()
     }
 
-const Home = (props: { isOnTop: boolean, show: boolean }) => {
+const Home = (props: { isOnTop: boolean, show: boolean, isPage?: boolean }) => {
     const [pointedTower, setPointedTower] = useState()
     const allSpaces = useHookstate(api.memory.spaces).get({ noproxy: true })
     const [searchText, setSearchText] = useState('')
@@ -56,7 +56,8 @@ const Home = (props: { isOnTop: boolean, show: boolean }) => {
         80,
         false,
         props.show,
-        towers
+        towers,
+        props.isPage === true
     )
     let PulseBar = usePulseBar()
     let SearchBarHandler = useSearchBar(cachedSearchBarTop)
@@ -93,7 +94,7 @@ const Home = (props: { isOnTop: boolean, show: boolean }) => {
                 onClose={() => setPointedTower(undefined)}
                 shown={pointedTower !== undefined}
             />
-            <SigmaFab style={{ position: 'absolute', right: 16, bottom: 16 + 56, borderRadius: 16 }} onClick={() => {
+            <SigmaFab style={{ position: 'fixed', right: 16, bottom: 16 + (props.isPage ? 0 : 56), borderRadius: 16 }} onClick={() => {
                 SigmaRouter.navigate('createTower')
             }}>
                 <Add />

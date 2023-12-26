@@ -61,7 +61,7 @@ const Chats = (props: { isOnTop: boolean, show: boolean }) => {
         <div ref={containerRef} style={{ position: 'relative', width: '100%', height: '100%' }}>
             <FriendBar humans={humans} containerRef={FriendsBarHandler.friendsContainerRef} />
             <ChatsList.Component />
-            <SearchBar containerRef={SearchBarHandler.searchContainerRef} placeHolder={'Search Sigma Universe...'}
+            <SearchBar containerRef={SearchBarHandler.searchContainerRef} placeHolder={'Search chats...'}
                 onSearch={(text: string) => {
                     setSearchText(text)
                     search(text)

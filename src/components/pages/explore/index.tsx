@@ -67,6 +67,7 @@ const Explore = (props: { isOnTop: boolean, id: string }) => {
         true,
         true,
         towers,
+        false,
         humans
     )
     let MachineBarHandler = useMachines()
