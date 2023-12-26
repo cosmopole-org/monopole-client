@@ -17,7 +17,7 @@ const Settings = (props: { isOnTop: boolean, show: boolean }) => {
         if (event.target.value === 'night') {
             colorFamily = fixedNightColor
         } else {
-            colorFamily = { ...(colors as { [id: string]: any })[event.target.value.toString()], plain: '#fff', activeText: '#333', passiveText: '#666' }
+            colorFamily = { ...(colors as { [id: string]: any })[event.target.value.toString()], antiColor: '#000', absolutePlain: '#fff', plain: '#fff', activeText: '#333', passiveText: '#666' }
         }
         reconstructMaterialPalette(event.target.value, colorFamily)
     };

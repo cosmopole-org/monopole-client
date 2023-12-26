@@ -20,7 +20,7 @@
     "@types/react": "^18.2.33",
     "@types/react-dom": "^18.2.14",
     "applet-mwc": "^0.2.3",
-    "applet-vm": "^0.2.10",
+    "applet-vm": "^0.2.11",
     "buffer": "^6.0.3",
     "emoji-mart": "^5.5.2",
     "jquery": "^3.7.1",

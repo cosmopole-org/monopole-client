@@ -74,7 +74,9 @@ export const fixedNightColor = {
     '50': '#424550',
     'plain': '#363945',
     'activeText': '#ffffff',
-    'passiveText': '#dddddd'
+    'passiveText': '#dddddd',
+    'antiColor': '#fff',
+    'absolutePlain': '#000'
 }
 
 let tempThemeColorName = localStorage.getItem('themeColor')
