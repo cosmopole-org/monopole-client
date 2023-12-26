@@ -59,7 +59,7 @@ export const switchInterfaceMode = (val: string) => {
 }
 
 const useForceUpdate = () => {
-    const [value, setValue] = useState(0); // integer state
+    const [, setValue] = useState(0); // integer state
     return () => setValue(value => ++value); // update the state to force render
 }
 
@@ -86,7 +86,7 @@ if (tempThemeColorName === null) {
 }
 export let themeColorName = hookstate(tempThemeColorName)
 
-let colorFamily = { ...(colors as { [id: string]: any })[tempThemeColorName], plain: '#fff', activeText: '#333', passiveText: '#666' }
+let colorFamily = { ...(colors as { [id: string]: any })[tempThemeColorName], absolutePlain: '#fff', plain: '#fff', activeText: '#333', passiveText: '#666' }
 export let themeColor = hookstate(tempThemeColorName === 'night' ? fixedNightColor : colorFamily)
 export let themeBasedTextColor = hookstate(tempThemeColorName === 'night' ? '#fff' : '#333')
 export let themeColorSecondary = hookstate(tempThemeColorName === 'night' ? '#fff' : colors.purple[200])

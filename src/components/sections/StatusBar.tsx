@@ -1,7 +1,7 @@
 import { ArrowBack, Call, CallEnd, Close, Explore, Home, LocationCity, MusicNote, Notifications, Rocket, Settings, Wallet } from "@mui/icons-material"
 import { Badge, IconButton, Paper, Typography } from "@mui/material"
 import { useState } from "react"
-import { SigmaRouter, themeBasedTextColor, themeColor } from "../../App"
+import { SigmaRouter, interfaceMode, themeBasedTextColor, themeColor } from "../../App"
 import SigmaAvatar from "../custom/elements/SigmaAvatar"
 import { api } from "../.."
 import { useHookstate } from "@hookstate/core"
@@ -57,6 +57,7 @@ const StatusBar = () => {
     switchTitle = (title: string) => setTitle(title)
     switchColor = (color: string, theme: number) => { }
     const isOnline = useHookstate(api.services.home.lastSeensDict).get({ noproxy: true })
+    const isOs = useHookstate(interfaceMode).get({ noproxy: true }) === 'os'
     return SigmaRouter.topPath() === 'splash' ?
         null : (
             <Paper
@@ -85,17 +86,17 @@ const StatusBar = () => {
                             >
                                 {
                                     leftControlType === LeftControlTypes.NOTIFICATIONS ?
-                                        <Notifications style={{ color: themeBasedTextColor.get({ noproxy: true }) }} /> :
+                                        <Notifications style={{ fill: themeBasedTextColor.get({ noproxy: true }) }} /> :
                                         leftControlType === LeftControlTypes.BACK ?
-                                            <ArrowBack style={{ color: themeBasedTextColor.get({ noproxy: true }) }} /> :
+                                            <ArrowBack style={{ fill: themeBasedTextColor.get({ noproxy: true }) }} /> :
                                             leftControlType === LeftControlTypes.CLOSE ?
-                                                <Close style={{ color: themeBasedTextColor.get({ noproxy: true }) }} /> :
+                                                <Close style={{ fill: themeBasedTextColor.get({ noproxy: true }) }} /> :
                                                 leftControlType === LeftControlTypes.WALLET ?
-                                                    <Wallet style={{ color: themeBasedTextColor.get({ noproxy: true }) }} /> :
+                                                    <Wallet style={{ fill: themeBasedTextColor.get({ noproxy: true }) }} /> :
                                                     leftControlType === LeftControlTypes.HOME ?
-                                                        <Home style={{ color: themeBasedTextColor.get({ noproxy: true }) }} /> :
+                                                        <Home style={{ fill: themeBasedTextColor.get({ noproxy: true }) }} /> :
                                                         leftControlType === LeftControlTypes.CITY ?
-                                                            <LocationCity style={{ color: themeBasedTextColor.get({ noproxy: true }) }} /> :
+                                                            <LocationCity style={{ fill: themeBasedTextColor.get({ noproxy: true }) }} /> :
                                                             null
                                 }
                             </IconButton>
@@ -115,6 +116,14 @@ const StatusBar = () => {
                                         {api.memory.known.humans.get({ noproxy: true })[avatarHumanId].firstName.substring(0, 1)}
                                     </SigmaAvatar>
                                 </Badge>
+                            </IconButton>
+                        ) : ((SigmaRouter.topPath() === 'main') && isOs) ? (
+                            <IconButton size={'small'} style={{ width: 32, height: 32, borderRadius: '50%', position: 'absolute', top: 4, left: 8 + 32 }}
+                                onClick={() => {
+                                    SigmaRouter.navigate('explore')
+                                }}
+                            >
+                                <Explore style={{ fill: themeBasedTextColor.get({ noproxy: true }) }} />
                             </IconButton>
                         ) : null
                 }
@@ -144,11 +153,11 @@ const StatusBar = () => {
                                 size="small" style={{ width: 32, height: 32, borderRadius: '50%', position: 'absolute', top: 4, right: 8 + 32 + 8 }}>
                                 {
                                     rightControlType === RightControlTypes.CALL ? (
-                                        <Call style={{ color: themeBasedTextColor.get({ noproxy: true }) }} />
+                                        <Call style={{ fill: themeBasedTextColor.get({ noproxy: true }) }} />
                                     ) : rightControlType === RightControlTypes.SETTINGS ? (
-                                        <Settings style={{ color: themeBasedTextColor.get({ noproxy: true }) }} />
+                                        <Settings style={{ fill: themeBasedTextColor.get({ noproxy: true }) }} />
                                     ) : rightControlType === RightControlTypes.EXPLORE ? (
-                                        <Explore style={{ color: themeBasedTextColor.get({ noproxy: true }) }} />
+                                        <Explore style={{ fill: themeBasedTextColor.get({ noproxy: true }) }} />
                                     ) : null
                                 }
                             </IconButton>
@@ -170,7 +179,7 @@ const StatusBar = () => {
                                     }
                                 }}
                             >
-                                <CallEnd style={{ color: themeBasedTextColor.get({ noproxy: true }) }} />
+                                <CallEnd style={{ fill: themeBasedTextColor.get({ noproxy: true }) }} />
                             </IconButton>
                         ) : (
                             <IconButton size="small" style={{ width: 32, height: 32, borderRadius: '50%', position: 'absolute', top: 4, right: 8 }}
@@ -178,7 +187,7 @@ const StatusBar = () => {
                                     SigmaRouter.navigate('audioPlayer');
                                 }}
                             >
-                                <MusicNote style={{ color: themeBasedTextColor.get({ noproxy: true }) }} />
+                                <MusicNote style={{ fill: themeBasedTextColor.get({ noproxy: true }) }} />
                             </IconButton>
                         )
                 }
