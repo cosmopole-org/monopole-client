@@ -4,7 +4,6 @@ import {
     Fade,
 } from "@mui/material";
 import SigmaAvatar from "../../../custom/elements/SigmaAvatar";
-import IMessage from "../../../../api/models/message";
 import { useHookstate } from "@hookstate/core";
 import { api } from "../../../..";
 import { SigmaRouter } from "../../../../App";

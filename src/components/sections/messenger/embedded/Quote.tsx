@@ -1,11 +1,6 @@
 import { Typography } from "@mui/material"
 import IMessage from "../../../../api/models/message"
 import IRoom from "../../../../api/models/room"
-import AudioMessage from "../Message/AudioMessage"
-import PhotoMessage from "../Message/PhotoMessage"
-import TextMessage from "../Message/TextMessage"
-import VideoMessage from "../Message/VideoMessage"
-import MessageRow from "../container/MessageRow"
 import { themeBasedTextColor, themeColor } from "../../../../App"
 
 const Quote = (props: { message: IMessage, messageType: string, room: IRoom }) => {

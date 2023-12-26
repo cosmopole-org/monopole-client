@@ -2,15 +2,15 @@
 import { api } from "../.."
 import IRoom from "../../api/models/room"
 import IMessage from "../../api/models/message"
-import { memo, useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { useHookstate } from "@hookstate/core"
 import middleUtils from "../../api/utils/middle"
 import Messages from "../sections/messenger/Message/Messages"
 import utils from "../utils"
 import ChatFooter from "../sections/ChatFooter"
 import MessageMenu from "../custom/components/MessageMenu"
-import { Paper } from "@mui/material"
-import { themeColor, themeColorName } from "../../App"
+import { Paper, Typography } from "@mui/material"
+import { themeBasedTextColor, themeColor, themeColorName } from "../../App"
 import Quote from "../sections/messenger/embedded/Quote"
 import { chatUtils } from "../sections/messenger/Message/DynamicHeightList"
 import { MessageTypes } from "../../api/services/messenger.service"
@@ -82,7 +82,6 @@ const Chat = (props: { show: boolean, room: IRoom, needToCloseRecorder?: boolean
                 roomId: props.room.id,
                 message: { id: (message as IMessage).id, data: { text } }
             }).then((body: any) => {
-                let { message: updated } = body
                 message.isDummy = false
                 msgs.set([...msgs.get({ noproxy: true })])
             })
@@ -157,6 +156,7 @@ const Chat = (props: { show: boolean, room: IRoom, needToCloseRecorder?: boolean
             }
         })
     }
+    const isTyping = useHookstate(api.services.messenger.typings).get({ noproxy: true })[props.room.id]
     return (
         <div
             style={{ width: '100%', height: 'calc(100% - 32px - 16px)', position: 'absolute', left: props.show ? 0 : '-100%', paddingTop: 32 + 16 }}
@@ -185,7 +185,13 @@ const Chat = (props: { show: boolean, room: IRoom, needToCloseRecorder?: boolean
                         </Paper>
                     ) : null
                 }
+                {
+                    isTyping ? (
+                        <Typography style={{ width: 88, marginLeft: 8, marginBottom: 8, color: themeBasedTextColor.get({ noproxy: true }), padding: 4, paddingLeft: 8, backgroundColor: themeColor.get({ noproxy: true })[100], borderRadius: 16 }}>Is typing...</Typography>
+                    ) : null
+                }
                 <ChatFooter
+                    typing={() => api.services.messenger.typing({ towerId: props.room.towerId, roomId: props.room.id })}
                     needToCloseRecorder={props.needToCloseRecorder}
                     style={{
                         borderRadius: 0, width: '100%',

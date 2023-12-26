@@ -1,11 +1,10 @@
 
-var fulldays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const fulldays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const formatDate = (someDateTimeStamp: number) => {
-  var dt = new Date(someDateTimeStamp),
+  let dt = new Date(someDateTimeStamp),
     date = dt.getDate(),
     month = months[dt.getMonth()],
-    timeDiff = someDateTimeStamp - Date.now(),
     diffDays = new Date().getDate() - date,
     diffMonths = new Date().getMonth() - dt.getMonth(),
     diffYears = new Date().getFullYear() - dt.getFullYear();
@@ -52,9 +51,12 @@ const hexToRGB = (hex: string) => {
   }
 };
 
-export default {
+let formatter = {
   formatDate,
   formatTime,
   formatBytes,
   hexToRGB
 }
+
+
+export default formatter

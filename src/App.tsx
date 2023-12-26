@@ -26,7 +26,7 @@ import Gallery from './components/pages/gallery';
 import VideoPlayer from './components/pages/videoPlayer';
 import AudioPlayer from './components/pages/audioPlayer';
 import { api, resetApi } from '.';
-import { Avatar, Paper, Typography } from '@mui/material';
+import { Paper, Typography } from '@mui/material';
 import { History } from '@mui/icons-material';
 import 'swiper/css';
 import 'swiper/css/effect-creative';
@@ -36,11 +36,10 @@ import ManageHomeFolders from './components/forms/manageHomeFolders';
 import Explore from './components/pages/explore';
 import ChatPage from './components/pages/chat';
 import { GlobalAppletSheet } from './components/custom/components/GlobalAppletSheet';
-import toast, { Toaster } from 'react-hot-toast';
-import SigmaAvatar from './components/custom/elements/SigmaAvatar';
-import ITower from './api/models/tower';
-import IRoom from './api/models/room';
+import { Toaster } from 'react-hot-toast';
 import Call from './components/pages/call';
+
+export const interfaceMode = hookstate('sn')
 
 const useForceUpdate = () => {
     const [value, setValue] = useState(0); // integer state
@@ -257,6 +256,11 @@ function App() {
     forceUpdate = useForceUpdate()
     const cr = useHookstate(currentRoute)
     useEffect(() => {
+        if (historyStack.length > 2) {
+            swiper.allowTouchMove = true
+        } else {
+            swiper.allowTouchMove = false
+        }
         swiper.slideNext();
     }, [cr.get({ noproxy: true })])
     let result: Array<any> = []
@@ -272,10 +276,10 @@ function App() {
         <ThemeProvider theme={theme}>
             <div style={{ width: '100%', height: window.innerHeight + 'px', minHeight: '-webkit-fill-available', overflow: 'hidden', backgroundColor: themeColor.get({ noproxy: true })['plain'] }}>
                 <Swiper
-                style={{
-                    width: '100%',
-                    height: '100%'
-                }}
+                    style={{
+                        width: '100%',
+                        height: '100%'
+                    }}
                     effect="creative"
                     creativeEffect={{
                         prev: {

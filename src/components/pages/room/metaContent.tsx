@@ -12,7 +12,7 @@ import RoomWallpaper from '../../../resources/images/room.jpg';
 
 export const metaActiveTab = hookstate('chat')
 
-export default (props: { room: IRoom, needToCloseRecorder?: boolean }) => {
+const MetaContent = (props: { room: IRoom, needToCloseRecorder?: boolean }) => {
     const wallpaperContainerRef = useRef(null);
     const activeTab = useHookstate(metaActiveTab);
     const Puller = styled(Box)(({ theme }) => ({
@@ -81,3 +81,5 @@ export default (props: { room: IRoom, needToCloseRecorder?: boolean }) => {
         </div>
     )
 }
+
+export default MetaContent

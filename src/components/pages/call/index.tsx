@@ -1,16 +1,15 @@
-import { Box, Card, Grid, Paper, Typography } from "@mui/material"
+import { Paper } from "@mui/material"
 import { SigmaRouter, themeColor } from "../../../App"
-import { LeftControlTypes, RightControlTypes, StatusThemes, statusbarHeight, switchColor, switchLeftControl, switchRightControl, switchTitle } from "../../sections/StatusBar"
+import { LeftControlTypes, RightControlTypes, statusbarHeight, switchLeftControl, switchRightControl, switchTitle } from "../../sections/StatusBar"
 import React, { memo, useEffect, useRef, useState } from "react";
 import { Peer } from "peerjs";
 import { State, hookstate, useHookstate } from "@hookstate/core";
 import { api } from "../../..";
 import config from "../../../config";
-import SigmaAvatar from "../../custom/elements/SigmaAvatar";
 import IHuman from "../../../api/models/human";
 import IRoom from "../../../api/models/room";
 import SigmaFab from "../../custom/elements/SigmaFab";
-import { CallEnd, Camera, Mic, ScreenShare, Videocam } from "@mui/icons-material";
+import { CallEnd, Mic, ScreenShare, Videocam } from "@mui/icons-material";
 
 let navigator = window.navigator as any
 
@@ -35,14 +34,12 @@ let myVideoStream: any = undefined;
 let myScreenStream: any = undefined;
 let myAudioStream: any = undefined;
 let startTime: any = undefined;
-let extOpen = false;
 let timerInterval: any = undefined;
 let once = false;
 let users: { [id: string]: any } = {}
 let videoOn = false
 let audioOn = false
 let screenOn = false
-let bigUserId = undefined
 
 let peerJoinEvent: any = undefined
 let peerVideoOnEvent: any = undefined
@@ -138,15 +135,12 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
     const myHumanId = useHookstate(api.memory.myHumanId).get({ noproxy: true })
 
     const userRef: any = React.useRef();
-    const [timer, setTimer] = React.useState('00:00');
-    const [open, setOpen] = React.useState(false);
-    const [maximizeBtnHidden, setMaximizeBtnHidden] = React.useState(false);
-    const [peopleMaximize, setPeopleMaximize] = React.useState(false);
+    const [, setTimer] = React.useState('00:00');
+    const [, setOpen] = React.useState(false);
     const titleRef = React.useRef(undefined);
     const loadedRef = React.useRef(false);
 
     const close = () => {
-        extOpen = false;
         setOpen(false);
         SigmaRouter.back();
     }
@@ -510,7 +504,6 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
                     });
                 }
             }
-            bigUserId = myHumanId
             peerJoinEvent = api.services.call.onPeerJoinedCall('call-page', (data: any) => {
                 let { peerId, roomId: ri, towerId: ti } = data
                 if (ri === roomId && ti === towerId) {
@@ -616,26 +609,24 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
                         recentSpace = room;
                         userRef.current = human
 
-                        extOpen = true;
                         startTime = new Date();
                         openCall(room.towerId, room.id);
                     } else {
                         close();
                     }
                 } else {
-                    extOpen = true;
+                    // do nothing
                 }
             } else if (room && !recentSpace) {
 
                 recentSpace = room;
                 userRef.current = human;
 
-                extOpen = true;
                 startTime = new Date();
                 startTimer();
                 openCall(room.towerId, room.id);
             } else if (!room && recentSpace) {
-                extOpen = true;
+                // do nothing
             } else if (!room && !recentSpace) {
                 close();
             }

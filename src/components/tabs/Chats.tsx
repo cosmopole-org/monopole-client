@@ -15,7 +15,7 @@ let savedSCrollTop = 0,
     }
 
 const Chats = (props: { isOnTop: boolean, show: boolean }) => {
-    const [pointedTower, setPointedTower] = useState()
+    const [, setPointedTower] = useState()
     const containerRef = useRef(null)
     const [searchText, setSearchText] = useState('')
     const FriendsBarHandler = useFriends()

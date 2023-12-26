@@ -4,7 +4,6 @@ import ITower from "../../api/models/tower";
 import { Typography } from "@mui/material";
 import SigmaAvatar from "../custom/elements/SigmaAvatar";
 import { themeBasedTextColor, themeColor } from "../../App";
-import IHuman from "../../api/models/human";
 import { api } from "../..";
 
 export let showMessageToast = (message: any, tower: ITower, room: IRoom, onClick: any) => toast((t) => (

@@ -3,7 +3,7 @@ import './index.css';
 import { LeftControlTypes, RightControlTypes, StatusThemes, switchColor, switchLeftControl, switchRightControl, switchTitle } from '../../sections/StatusBar';
 import { Card, Typography } from '@mui/material';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { SigmaRouter, headerImageAddress, themeColor } from '../../../App';
+import { SigmaRouter, themeColor } from '../../../App';
 import SliderPage from '../../layouts/SliderPage';
 import Timeline from '@mui/lab/Timeline';
 import TimelineItem from '@mui/lab/TimelineItem';

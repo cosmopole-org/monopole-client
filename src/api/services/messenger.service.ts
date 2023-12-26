@@ -106,9 +106,25 @@ class MessengerService {
             }
             this.memory.messages[roomId].merge({ index: message })
         })
+
+        this.onTyping('messenger-service', (data: any) => {
+            let { roomId } = data
+            let timeout = this.typingsTimeout[roomId]
+            if (timeout) {
+                clearTimeout(timeout)
+                delete this.typingsTimeout[roomId]
+            }
+            this.typings.merge({ [roomId]: true })
+            this.typingsTimeout[roomId] = setTimeout(() => {
+                this.typings.merge({ [roomId]: none })
+                delete this.typingsTimeout[roomId]
+            }, 1000);
+        })
     }
 
     unseenMsgCount: State<any> = hookstate({})
+    typings: State<any> = hookstate({})
+    typingsTimeout: { [id: string]: any } = {}
 
     check(roomId: string) {
         if (!this.memory.messages[roomId]) {
@@ -170,6 +186,16 @@ class MessengerService {
         this.network.addUpdateListener('message/onSeen', (data: any) => {
             callback(data)
         }, tag)
+    }
+
+    private onTyping(tag: string, callback: (data: any) => void) {
+        this.network.addUpdateListener('message/onType', (data: any) => {
+            callback(data)
+        }, tag)
+    }
+
+    async typing(data: { towerId: string, roomId: string }): Promise<void> {
+        return this.network.request('messenger/typing', { towerId: data.towerId, roomId: data.roomId })
     }
 
     async create(data: { towerId: string, roomId: string, message: { type: string, data: any }, secure?: boolean }): Promise<IMessage> {

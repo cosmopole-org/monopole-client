@@ -1,11 +1,11 @@
 
 import './index.css';
 import { LeftControlTypes, RightControlTypes, StatusThemes, switchColor, switchLeftControl, switchRightControl, switchTitle } from '../../sections/StatusBar';
-import { Drawer, Paper, Typography } from '@mui/material';
+import { Paper, Typography } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { SigmaRouter, themeColor, themeColorName } from '../../../App';
 import SliderPage from '../../layouts/SliderPage';
-import { Call, KeyboardCommandKey, Message, People } from '@mui/icons-material';
+import { KeyboardCommandKey, Message, People } from '@mui/icons-material';
 import RoomControl from '../../custom/components/RoomControl';
 import Desk, { addWidgetToSDesktop, desktopEditMode } from '../../tabs/Desk';
 import IRoom from '../../../api/models/room';
@@ -13,9 +13,8 @@ import MachineBox from '../../custom/components/MachineBox';
 import SigmaFab from '../../custom/elements/SigmaFab';
 import { AppletSheet } from '../../custom/components/AppletSheet';
 import Shadow, { showRoomShadow } from './shadow';
-import Meta, { changeMetaDrawerState } from './metaTouch';
+import { changeMetaDrawerState } from './metaTouch';
 import utils from '../../utils';
-import MetaContent from './metaContent';
 import MetaNonTouch, { metaNonTouchOpen } from './metaNonTouch';
 import MetaTouch from './metaTouch';
 import { useHookstate } from '@hookstate/core';

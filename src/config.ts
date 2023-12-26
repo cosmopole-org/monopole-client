@@ -15,7 +15,7 @@ const publicVapidKey = "BNQ9TU-jAms67sRxUFLh6EsWGGVX6VlMB3PSSqblcUquY-QuSjkG8EZV
 const audience = AUDEIENCE && AUDEIENCE !== "YOUR_API_IDENTIFIER"
     ? AUDEIENCE
     : null;
-export default {
+const config = {
     GATEWAY_ADDRESS,
     PEERJS_ADDRESS,
     COTURN_ADDRESS,
@@ -24,3 +24,5 @@ export default {
     publicVapidKey,
     ...(audience ? { audience } : null),
 }
+export default config
+

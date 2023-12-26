@@ -1,5 +1,4 @@
 
-import { SigmaRouter } from "../../App"
 import MachineTag from "../custom/components/MachineTag"
 import { statusbarHeight } from "./StatusBar"
 

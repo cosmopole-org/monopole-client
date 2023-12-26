@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from "react"
+import { useRef } from "react"
 import { Card, Typography } from "@mui/material"
 import { api } from "../.."
-import { headerImageAddress, themeColor } from "../../App"
+import { themeColor } from "../../App"
 import { Timeline, TimelineConnector, TimelineDot, TimelineItem, TimelineSeparator } from "@mui/lab"
 import TimelineOppositeContent, {
     timelineOppositeContentClasses,

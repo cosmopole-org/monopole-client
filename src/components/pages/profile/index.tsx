@@ -104,7 +104,7 @@ const Profile = (props: { id: string, isOnTop: boolean, human?: IHuman, machine?
                             onClick={() => {
                                 if (props.human) {
                                     api.services.interaction.interact({ peerId: props.human.id }).then((body: any) => {
-                                        let { chat, room, tower } = body
+                                        let { room } = body
                                         SigmaRouter.navigate('chat', { initialData: { room, humanId: props.human?.id } })
                                     })
                                 }

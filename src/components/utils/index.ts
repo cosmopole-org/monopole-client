@@ -4,9 +4,11 @@ import * as screen from './screen'
 import * as formatter from './formatter'
 import * as toasts from './toasts'
 
-export default {
+let utils = {
     sizer,
     screen,
     formatter,
     toasts
 }
+
+export default utils

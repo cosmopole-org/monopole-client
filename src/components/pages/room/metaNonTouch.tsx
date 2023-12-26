@@ -5,7 +5,7 @@ import MetaContent from "./metaContent";
 
 export const metaNonTouchOpen = hookstate(false);
 
-export default (props: { room: IRoom, onClose: () => void, container: HTMLElement, needToCloseRecorder?: boolean }) => {
+const MetaNonTouch = (props: { room: IRoom, onClose: () => void, container: HTMLElement, needToCloseRecorder?: boolean }) => {
     const open = useHookstate(metaNonTouchOpen);
     return (
         <Drawer
@@ -25,3 +25,5 @@ export default (props: { room: IRoom, onClose: () => void, container: HTMLElemen
         </Drawer>
     )
 }
+
+export default MetaNonTouch

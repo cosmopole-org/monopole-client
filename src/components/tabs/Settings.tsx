@@ -1,17 +1,18 @@
-import { useRef, useState } from "react"
-import { Avatar, Card, FormControl, IconButton, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material"
+import { useRef } from "react"
+import { Card, FormControl, IconButton, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material"
 import * as colors from '@mui/material/colors'
-import { ArrowForward, DarkMode, Edit, Logout, SmartToy } from "@mui/icons-material"
-import SigmaSwitch from "../custom/elements/SigmaSwitch"
+import { ArrowForward, Edit, Logout, SmartToy } from "@mui/icons-material"
 import { api } from "../.."
-import { SigmaRouter, fixedNightColor, reconstructMaterialPalette, themeColor, themeColorName } from "../../App"
+import { SigmaRouter, fixedNightColor, interfaceMode, reconstructMaterialPalette, themeColor, themeColorName } from "../../App"
 import SigmaAvatar from "../custom/elements/SigmaAvatar"
 import { useAuth0 } from "@auth0/auth0-react"
+import { useHookstate } from "@hookstate/core"
 
 const Settings = (props: { isOnTop: boolean, show: boolean }) => {
     const containerRef = useRef(null)
     const { logout } = useAuth0()
-    const handleChange = (event: SelectChangeEvent) => {
+    const im = useHookstate(interfaceMode).get({ noproxy: true })
+    const handleColorChange = (event: SelectChangeEvent) => {
         let colorFamily = {}
         if (event.target.value === 'night') {
             colorFamily = fixedNightColor
@@ -19,6 +20,9 @@ const Settings = (props: { isOnTop: boolean, show: boolean }) => {
             colorFamily = { ...(colors as { [id: string]: any })[event.target.value.toString()], plain: '#fff', activeText: '#333', passiveText: '#666' }
         }
         reconstructMaterialPalette(event.target.value, colorFamily)
+    };
+    const handleInterfaceChange = (event: SelectChangeEvent) => {
+        interfaceMode.set(event.target.value)
     };
     let me = api.memory.humans.get({ noproxy: true })[api.memory.myHumanId.get({ noproxy: true })]
     return (
@@ -68,10 +72,10 @@ const Settings = (props: { isOnTop: boolean, show: boolean }) => {
                 <InputLabel id="settings-color-select-label">Color</InputLabel>
                 <Select
                     labelId="settings-color-select-label"
-                    id="demo-simple-select"
+                    id="settings-color-select"
                     value={themeColorName.get({ noproxy: true }).toString()}
                     label="Color"
-                    onChange={handleChange}
+                    onChange={handleColorChange}
                     style={{
                         borderRadius: 24,
                         backgroundColor: themeColor.get({ noproxy: true })[100],
@@ -84,6 +88,26 @@ const Settings = (props: { isOnTop: boolean, show: boolean }) => {
                             <MenuItem key={`settings-theme-color-${c}`} value={c}>{c}</MenuItem>
                         ))
                     }
+                </Select>
+            </FormControl>
+            <FormControl
+                style={{ marginLeft: 16, marginTop: 24, marginRight: 16, width: 'calc(100% - 32px)' }}
+            >
+                <InputLabel id="settings-interface-mode-select-label">Interface Mode</InputLabel>
+                <Select
+                    labelId="settings-interface-mode-select-label"
+                    id="settings-interface-mode-select"
+                    value={im}
+                    label="Interface Mode"
+                    onChange={handleInterfaceChange}
+                    style={{
+                        borderRadius: 24,
+                        backgroundColor: themeColor.get({ noproxy: true })[100],
+                        paddingLeft: 8
+                    }}
+                >
+                    <MenuItem key={`settings-interface-select-item-sn`} value={'sn'}>Social Network Mode</MenuItem>
+                    <MenuItem key={`settings-interface-select-item-os`} value={'os'}>Operating System Mode</MenuItem>
                 </Select>
             </FormControl>
             <Card

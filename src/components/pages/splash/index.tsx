@@ -5,7 +5,6 @@ import { SigmaRouter, themeBasedTextColor, themeColor } from '../../../App';
 import { api } from '../../..';
 import { useAuth0 } from '@auth0/auth0-react';
 import Logo from '../../../resources/images/logo.png';
-import sigma from '../../../resources/images/sigma.png';
 import { Typography } from '@mui/material';
 
 const Splash = (props: { id: string, isOnTop: boolean }) => {
@@ -54,7 +53,7 @@ const Splash = (props: { id: string, isOnTop: boolean }) => {
                 top: '50%',
                 transform: 'translate(-50%, -75%)'
             }}>
-                <img src={Logo} style={{ width: '100%', height: '100%' }} />
+                <img src={Logo} style={{ width: '100%', height: '100%' }} alt={'logo'}/>
                 <Typography variant='h5' style={{ width: '100%', textAlign: 'center', marginTop: 16, color: themeBasedTextColor.get({ noproxy: true }) }}>Welcome !</Typography>
             </div>
         </div>

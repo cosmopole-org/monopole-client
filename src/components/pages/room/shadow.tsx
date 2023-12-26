@@ -6,7 +6,7 @@ import $ from 'jquery';
 
 export let showRoomShadow = hookstate(false);
 
-export default (props: { onClick: () => void }) => {
+const Shadow = (props: { onClick: () => void }) => {
     const shadowRef = useRef(null);
     const show = useHookstate(showRoomShadow);
     const [postShow, setPostShow] = useState(false);
@@ -39,8 +39,10 @@ export default (props: { onClick: () => void }) => {
                 position: 'absolute', width: '100%', height: '100%', left: 0, top: 0, zIndex: 2
             }}
             className="deactive"
-            >
+        >
             <div style={{ width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.25)' }} className={'high-light'} />
         </div>
     ) : <div style={{ width: 0, height: 0 }} />
 }
+
+export default Shadow

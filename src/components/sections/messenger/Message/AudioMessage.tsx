@@ -10,7 +10,7 @@ import {
     DoneAll, History, Pause, PlayArrow
 } from "@mui/icons-material";
 import './bubble.css'
-import { SigmaRouter, themeColor } from "../../../../App";
+import { themeColor } from "../../../../App";
 import IMessage from "../../../../api/models/message";
 import Image from "../../../custom/components/Image";
 import IRoom from "../../../../api/models/room";
@@ -22,7 +22,7 @@ import { useEffect, useState } from "react";
 
 const AudioMessage = (props: { otherDocIds: Array<string | undefined>, room: IRoom, message: IMessage, side?: string, lastOfSection?: boolean, firstOfSection?: boolean, isQuote?: boolean }) => {
     const progress = useHookstate(api.services.file.transferProgress)?.get({ noproxy: true })[props.message.meta?.tag]
-    const [_, setTrigger] = useState(Math.random())
+    const [, setTrigger] = useState(Math.random())
     useEffect(() => {
         if (props.message.data.docId) {
             registerAudioPlayListener(props.message.data.docId, () => setTrigger(Math.random()));

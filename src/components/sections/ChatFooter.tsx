@@ -1,5 +1,5 @@
-import { Description, InsertEmoticon, Mic, Send, Widgets } from "@mui/icons-material";
-import { IconButton, InputBase, Paper, TextField, selectClasses } from "@mui/material";
+import { Description, InsertEmoticon, Mic, Send } from "@mui/icons-material";
+import { IconButton, InputBase, Paper } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import IMessage from "../../api/models/message";
 import { themeColor, themeColorName } from "../../App";
@@ -7,8 +7,9 @@ import Picker from "@emoji-mart/react"
 import pickerData from "@emoji-mart/data"
 import { setChatKeyboardOpen } from "../pages/room/metaTouch";
 import VoiceRecorder from "../custom/components/VoiceRecorder";
+import { api } from "../..";
 
-const ChatFooter = (props: { needToCloseRecorder?: boolean, style?: any, messages: Array<IMessage>, onVoiceRecorded: (blob: any) => void, onWidgetsClicked: () => void, onMessageSubmit: (text: string) => void, pointedMessage: any, action: any }) => {
+const ChatFooter = (props: { typing: () => void, needToCloseRecorder?: boolean, style?: any, messages: Array<IMessage>, onVoiceRecorded: (blob: any) => void, onWidgetsClicked: () => void, onMessageSubmit: (text: string) => void, pointedMessage: any, action: any }) => {
     const [value, setValue] = useState(props.pointedMessage?.type === 'text' ? props.pointedMessage.data.text : '')
     const inputbaseRef = useRef(null)
     const [showEmoji, setShowEmoji] = useState(false)
@@ -57,6 +58,7 @@ const ChatFooter = (props: { needToCloseRecorder?: boolean, style?: any, message
                             themeColor.get({ noproxy: true })[50],
                         color: themeColorName.get({ noproxy: true }) === 'night' ? '#fff' : '#000'
                     }} value={value} onChange={e => {
+                        props.typing()
                         if (!props.pointedMessage) {
                             valueBackup.current = e.target.value
                         }

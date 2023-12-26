@@ -14,7 +14,7 @@ export let setChatKeyboardOpen = (open: boolean) => {
     recalculateMetaCoverHeight()
 }
 
-export default (props: { room: IRoom, onClose: () => void, needToCloseRecorder?: boolean }) => {
+const MetaTouch = (props: { room: IRoom, onClose: () => void, needToCloseRecorder?: boolean }) => {
     const metaRef = useRef(null)
     const top = useRef(window.innerHeight)
     const updateTop = (newVal: number) => {
@@ -131,7 +131,6 @@ export default (props: { room: IRoom, onClose: () => void, needToCloseRecorder?:
                         if ((Math.abs(muX - mdX.current) < 16) && (Math.abs(muY - mdY.current) < 16)) {
                             touchRef.current && ((touchRef.current as HTMLElement).style.pointerEvents = 'none');
                             let el = (document.elementFromPoint(mdX.current, mdY.current) as HTMLElement);
-                            let box = el.getBoundingClientRect();
                             clickOnEl(el, e.clientX, e.clientY);
                             console.log(el);
                             touchRef.current && ((touchRef.current as HTMLElement).style.pointerEvents = 'auto');
@@ -142,3 +141,5 @@ export default (props: { room: IRoom, onClose: () => void, needToCloseRecorder?:
         </div>
     )
 }
+
+export default MetaTouch
