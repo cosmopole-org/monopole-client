@@ -3,7 +3,7 @@ import './index.css';
 import { LeftControlTypes, RightControlTypes, StatusThemes, switchColor, switchLeftControl, switchRightControl, switchTitle } from '../../sections/StatusBar';
 import { Paper, Typography } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
-import { SigmaRouter, themeColor, themeColorName } from '../../../App';
+import { SigmaRouter, interfaceMode, themeColor, themeColorName } from '../../../App';
 import SliderPage from '../../layouts/SliderPage';
 import { KeyboardCommandKey, Message, People } from '@mui/icons-material';
 import RoomControl from '../../custom/components/RoomControl';
@@ -29,6 +29,8 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
   const isMetaOpen = useRef(false);
   const [needToCloseRecorder, setNeedToCloseRecorder] = useState(false)
   const messagesList = useHookstate(api.memory.messages[props.room.id]).get({ noproxy: true })
+  const im = useHookstate(interfaceMode).get({ noproxy: true })
+  const isOs = im === 'os'
   const updateMetaState = (state: boolean) => {
     isMetaOpen.current = state;
     if (utils.screen.isTouchDevice()) {
@@ -59,7 +61,7 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
     switchColor && switchColor(themeColor.get({ noproxy: true })[500], StatusThemes.DARK)
   }
   const onMetaClose = () => {
-    switchLeftControl && switchLeftControl(LeftControlTypes.BACK, close)
+    switchLeftControl && switchLeftControl(isOs ? LeftControlTypes.NONE : LeftControlTypes.BACK, isOs ? undefined : close)
     switchRightControl && switchRightControl(RightControlTypes.CALL, () => SigmaRouter.navigate('call', { initialData: { room: props.room } }))
     switchTitle && switchTitle(props.room.title)
     switchColor && switchColor(themeColor.get({ noproxy: true })[500], StatusThemes.DARK)
@@ -73,7 +75,7 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
   useEffect(() => {
     if (isMetaOpen.current) onMetaOpen();
     else onMetaClose()
-  }, [props.isOnTop])
+  }, [props.isOnTop, im])
 
   const lastMessage = messagesList ? messagesList[messagesList.length - 1] : undefined
 

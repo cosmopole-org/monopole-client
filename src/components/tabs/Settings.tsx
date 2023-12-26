@@ -3,7 +3,7 @@ import { Card, FormControl, IconButton, InputLabel, MenuItem, Select, SelectChan
 import * as colors from '@mui/material/colors'
 import { ArrowForward, Edit, Logout, SmartToy } from "@mui/icons-material"
 import { api } from "../.."
-import { SigmaRouter, fixedNightColor, interfaceMode, reconstructMaterialPalette, themeColor, themeColorName } from "../../App"
+import { SigmaRouter, fixedNightColor, interfaceMode, reconstructMaterialPalette, switchInterfaceMode, themeColor, themeColorName } from "../../App"
 import SigmaAvatar from "../custom/elements/SigmaAvatar"
 import { useAuth0 } from "@auth0/auth0-react"
 import { useHookstate } from "@hookstate/core"
@@ -22,7 +22,7 @@ const Settings = (props: { isOnTop: boolean, show: boolean }) => {
         reconstructMaterialPalette(event.target.value, colorFamily)
     };
     const handleInterfaceChange = (event: SelectChangeEvent) => {
-        interfaceMode.set(event.target.value)
+        switchInterfaceMode(event.target.value)
     };
     let me = api.memory.humans.get({ noproxy: true })[api.memory.myHumanId.get({ noproxy: true })]
     return (

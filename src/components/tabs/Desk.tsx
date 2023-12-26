@@ -127,7 +127,7 @@ const Desk = (props: { show: boolean, room: any }) => {
         >
             <div
                 ref={desktopWrapperRef}
-                style={{ width: '100%', height: '100%', position: 'relative', overflowY: 'auto' }}
+                style={{ width: '100%', height: '100%', position: 'relative', overflowY: 'auto', paddingTop: 32 }}
             >
                 <Desktop.Host
                     showDesktop={loadDesktop}

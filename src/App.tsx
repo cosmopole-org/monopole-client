@@ -39,7 +39,16 @@ import { GlobalAppletSheet } from './components/custom/components/GlobalAppletSh
 import { Toaster } from 'react-hot-toast';
 import Call from './components/pages/call';
 
-export const interfaceMode = hookstate('sn')
+let tempInterfaceMode = localStorage.getItem('interfaceMode')
+if (tempInterfaceMode === null) {
+    tempInterfaceMode = 'sn'
+    localStorage.setItem('interfaceMode', tempInterfaceMode)
+}
+export const interfaceMode = hookstate(tempInterfaceMode)
+export const switchInterfaceMode = (val: string) => {
+    localStorage.setItem('interfaceMode', val)
+    interfaceMode.set(val)
+}
 
 const useForceUpdate = () => {
     const [value, setValue] = useState(0); // integer state

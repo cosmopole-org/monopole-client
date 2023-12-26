@@ -13,7 +13,8 @@ const LeftControlTypes = {
     BACK: 1,
     CLOSE: 2,
     WALLET: 3,
-    HOME: 4
+    HOME: 4,
+    NONE: 5
 }
 const RightControlTypes = {
     NONE: 0,
