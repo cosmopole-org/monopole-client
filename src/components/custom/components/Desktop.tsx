@@ -28,6 +28,13 @@ class DesktopData {
     appletExists(id: string) {
         return this.appletKeysStore[id] !== undefined
     }
+    clear() {
+        this.jsxContent = {}
+        this.layouts = { lg: [], md: [], sm: [], xs: [], xxs: [] }
+        this.appletKeysStore = {}
+        this.layoutCnangeFromCodeCallback && this.layoutCnangeFromCodeCallback(this.layouts)
+        this.layoutCnangeFromCodeInternallCallback && this.layoutCnangeFromCodeInternallCallback(this.layouts)
+    }
     fill(layouts: RGL.Layouts) {
         this.layouts = layouts
         this.layouts.lg.forEach((w: any) => {

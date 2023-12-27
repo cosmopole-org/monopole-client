@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Card, SwipeableDrawer } from '@mui/material';
 import AppletHost from './AppletHost';
-import { themeColor } from '../../../App';
+import { themeColor, themeColorName, themeColorSecondary } from '../../../App';
 import { api } from '../../..';
 
 let openMachineSheet = (machineId: string) => { }
@@ -16,7 +16,7 @@ const GlobalAppletSheet = () => {
             }
         })
         setShown(true)
-        api.services.worker.use({ machineId, packet: { tag: 'get/globalApplet', colors: themeColor.get({ noproxy: true }) } })
+        api.services.worker.use({ machineId, packet: { tag: 'get/globalApplet', secondaryColor: themeColorSecondary.get({ noproxy: true }), colorName: themeColorName.get({ noproxy: true }), colors: themeColor.get({ noproxy: true }) } })
     }
     React.useEffect(() => {
         if (!shown) setCode(undefined)

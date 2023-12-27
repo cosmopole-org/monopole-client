@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Card, SwipeableDrawer } from '@mui/material';
 import AppletHost from './AppletHost';
-import { themeColor } from '../../../App';
+import { themeColor, themeColorName, themeColorSecondary } from '../../../App';
 import { api } from '../../..';
 import IRoom from '../../../api/models/room';
 
@@ -17,12 +17,12 @@ const AppletSheet = () => {
             }
         })
         setShown(true)
-        api.services.worker.use({ towerId: room.towerId, roomId: room.id, workerId, packet: { tag: 'get/applet', colors: themeColor.get({ noproxy: true }) } })
+        api.services.worker.use({ towerId: room.towerId, roomId: room.id, workerId, packet: { tag: 'get/applet', secondaryColor: themeColorSecondary.get({ noproxy: true }), colorName: themeColorName.get({ noproxy: true }), colors: themeColor.get({ noproxy: true }) } })
     }
     React.useEffect(() => {
         if (!shown) {
             setCode(undefined)
-            
+
         }
     }, [shown]);
     return (

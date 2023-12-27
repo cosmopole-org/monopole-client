@@ -5,7 +5,7 @@ import useDesk from "../hooks/useDesk";
 import { api } from "../..";
 import { hookstate, useHookstate } from "@hookstate/core";
 import { openAppletSheet } from "../custom/components/AppletSheet";
-import { themeColor } from "../../App";
+import { AppUtils, themeColor, themeColorName, themeColorSecondary } from "../../App";
 import AppHostUtils from '../custom/components/AppletHost';
 
 let cachedWorkers: Array<any> = []
@@ -74,7 +74,7 @@ export const addWidgetToSDesktop = (room: any, machineId: string) => {
         }
     }).then((body: any) => {
         cachedWorkers.push(body.worker)
-        api.services.worker.use({ towerId: room.towerId, roomId: room.id, workerId: body.worker.id, packet: { tag: 'get/widget', colors: themeColor.get({ noproxy: true }) } })
+        api.services.worker.use({ towerId: room.towerId, roomId: room.id, workerId: body.worker.id, packet: { tag: 'get/widget', secondaryColor: themeColorSecondary.get({ noproxy: true }), colorName: themeColorName.get({ noproxy: true }), colors: themeColor.get({ noproxy: true }) } })
     }).catch(ex => {
         console.log(ex)
     })
@@ -96,6 +96,29 @@ const Desk = (props: { show: boolean, room: any }) => {
     )
     desktop = DesktopHolder.desktop
     useEffect(() => {
+        desktop.clear()
+        AppHostUtils.unloadAllHosts()
+        setTimeout(() => {
+            api.services.worker.onMachinePacketDeliver('get/widget', (data: any) => {
+                if (!desktop.appletExists(data.workerId)) {
+                    let gridData = cachedWorkers.filter(w => w.id === data.workerId)[0]?.secret?.grid
+                    if (gridData) {
+                        desktop.addWidget({ id: data.workerId, jsxCode: data.code, gridData: gridData.xxs })
+                    }
+                } else {
+                    desktop.updateWidget(data.workerId, data.code)
+                }
+            })
+            api.services.worker.read({ towerId: props.room.towerId, roomId: props.room.id }).then((body: any) => {
+                cachedWorkers = body.workers
+                desktop.fill(buildLayoutOfWorkers())
+                cachedWorkers.forEach(worker => {
+                    api.services.worker.use({ towerId: props.room.towerId, roomId: props.room.id, workerId: worker.id, packet: { tag: 'get/widget', secondaryColor: themeColorSecondary.get({ noproxy: true }), colorName: themeColorName.get({ noproxy: true }), colors: themeColor.get({ noproxy: true }) } })
+                })
+            })
+        });
+    }, [themeColorName.get({ noproxy: true })])
+    useEffect(() => {
         api.services.worker.onMachinePacketDeliver('get/widget', (data: any) => {
             if (!desktop.appletExists(data.workerId)) {
                 let gridData = cachedWorkers.filter(w => w.id === data.workerId)[0]?.secret?.grid
@@ -110,14 +133,13 @@ const Desk = (props: { show: boolean, room: any }) => {
             cachedWorkers = body.workers
             desktop.fill(buildLayoutOfWorkers())
             cachedWorkers.forEach(worker => {
-                api.services.worker.use({ towerId: props.room.towerId, roomId: props.room.id, workerId: worker.id, packet: { tag: 'get/widget', colors: themeColor.get({ noproxy: true }) } })
+                api.services.worker.use({ towerId: props.room.towerId, roomId: props.room.id, workerId: worker.id, packet: { tag: 'get/widget', secondaryColor: themeColorSecondary.get({ noproxy: true }), colorName: themeColorName.get({ noproxy: true }), colors: themeColor.get({ noproxy: true }) } })
             })
         })
         setTimeout(() => {
             setLoadDesktop(true)
         }, 750);
         return () => {
-            AppHostUtils.unloadAllHosts()
             cachedWorkers = []
         }
     }, [])
