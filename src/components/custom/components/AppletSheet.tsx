@@ -20,7 +20,10 @@ const AppletSheet = () => {
         api.services.worker.use({ towerId: room.towerId, roomId: room.id, workerId, packet: { tag: 'get/applet', colors: themeColor.get({ noproxy: true }) } })
     }
     React.useEffect(() => {
-        if (!shown) setCode(undefined)
+        if (!shown) {
+            setCode(undefined)
+            
+        }
     }, [shown]);
     return (
         <React.Fragment>
