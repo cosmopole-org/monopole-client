@@ -56,7 +56,7 @@ const TowersList = (props: { fullscreen?: boolean, towers?: Array<any>, humans?:
             ref={props.towersContainerRef}
             style={{
                 ...props.overridenStyle,
-                width: '100%', height: `calc(100% - ${162 + (props.fullscreen ? -16 : statusbarHeight())}px)`,
+                width: '100%', height: `calc(100% - ${162 + (props.fullscreen ? -22 : statusbarHeight())}px)`,
                 position: 'absolute',
                 left: 0,
                 top: 0,

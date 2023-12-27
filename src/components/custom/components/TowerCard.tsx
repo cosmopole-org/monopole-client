@@ -9,7 +9,7 @@ import { useEffect } from "react"
 import { useHookstate } from "@hookstate/core"
 import IRoom from "../../../api/models/room"
 import utils from "../../utils"
-import { setOsCurrentRoomId } from "../../pages/main"
+import { setOsCurrentRoom } from "../../pages/main"
 
 const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void, showRating?: boolean }) => {
     useEffect(() => {
@@ -107,7 +107,7 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
                     <div style={{ flex: 1 }} />
                     <SigmaBadgeButton icon={<ArrowForward style={{ marginLeft: 8 }} />} style={{ marginRight: 16 }} caption='Open main room' onClick={() => {
                         if (isOs) {
-                            setOsCurrentRoomId(Object.values(api.memory.spaces.get({ noproxy: true })[props.tower.id].rooms)[0])
+                            setOsCurrentRoom(Object.values(api.memory.spaces.get({ noproxy: true })[props.tower.id].rooms)[0])
                             SigmaRouter.back()
                         } else {
                             if (props.showRating) {
@@ -310,7 +310,7 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
                     <div style={{ flex: 1 }} />
                     <SigmaBadgeButton icon={<ArrowForward style={{ marginLeft: 8 }} />} style={{ marginRight: 16 }} caption='Open main room' onClick={() => {
                         if (isOs) {
-                            setOsCurrentRoomId(Object.values(api.memory.spaces.get({ noproxy: true })[props.tower.id].rooms)[0])
+                            setOsCurrentRoom(Object.values(api.memory.spaces.get({ noproxy: true })[props.tower.id].rooms)[0])
                             SigmaRouter.back()
                         } else {
                             if (props.showRating) {

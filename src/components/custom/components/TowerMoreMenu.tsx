@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Add, Edit, KeyboardCommandKey } from '@mui/icons-material';
+import { Add, Delete, Edit, KeyboardCommandKey } from '@mui/icons-material';
 import { Card, Divider, Drawer } from '@mui/material';
 import SigmaMenuItem from '../elements/SigmaMenuItem';
 import { SigmaRouter, themeColor } from '../../../App';
@@ -32,7 +32,7 @@ const TowerMoreMenu = (props: { shown: boolean, onClose: () => void, tower: any 
                             api.services.tower.remove({ towerId: props.tower.id })
                         }
                     }}
-                    icon={Edit}
+                    icon={Delete}
                     caption='Delete Tower'
                 />
                 <Divider />

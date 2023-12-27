@@ -3,7 +3,7 @@ import './index.css';
 import { LeftControlTypes, RightControlTypes, StatusThemes, switchColor, switchLeftControl, switchRightControl, switchTitle } from '../../sections/StatusBar';
 import { Card, Typography } from '@mui/material';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { SigmaRouter, themeColor } from '../../../App';
+import { SigmaRouter, interfaceMode, themeColor } from '../../../App';
 import SliderPage from '../../layouts/SliderPage';
 import Timeline from '@mui/lab/Timeline';
 import TimelineItem from '@mui/lab/TimelineItem';
@@ -21,6 +21,7 @@ import { api } from '../../..';
 import { useHookstate } from '@hookstate/core';
 import HumanBox from '../../custom/components/HumanBox';
 import ITower from '../../../api/models/tower';
+import { setOsCurrentRoom } from '../main';
 
 const Tower = (props: { id: string, isOnTop: boolean, tower: ITower }) => {
     const containerRef = useRef(null)
@@ -92,7 +93,15 @@ const Tower = (props: { id: string, isOnTop: boolean, tower: ITower }) => {
                                                 }}
                                                 room={room}
                                                 key={`tower-room-item-${room.id}`}
-                                                onClick={() => SigmaRouter.navigate('room', { initialData: { room } })}
+                                                onClick={() => {
+                                                    if (interfaceMode.get({ noproxy: true }) === 'os') {
+                                                        SigmaRouter.back()
+                                                        SigmaRouter.back()
+                                                        setOsCurrentRoom(room)
+                                                    } else {
+                                                        SigmaRouter.navigate('room', { initialData: { room } })
+                                                    }
+                                                }}
                                             />
                                         )
                                     })

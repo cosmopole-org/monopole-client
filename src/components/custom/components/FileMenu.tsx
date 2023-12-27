@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Edit } from '@mui/icons-material';
+import { Delete, DriveFileRenameOutline, Edit } from '@mui/icons-material';
 import { Card, Drawer } from '@mui/material';
 import SigmaMenuItem from '../elements/SigmaMenuItem';
 import { themeColor } from '../../../App';
@@ -21,7 +21,7 @@ const FileMenu = (props: { shown: boolean, onClose: () => void, onRename: () => 
                         props.onRename();
                         props.onClose();
                     }}
-                    icon={Edit}
+                    icon={DriveFileRenameOutline}
                     caption='Rename'
                 />
                 <SigmaMenuItem
@@ -29,7 +29,7 @@ const FileMenu = (props: { shown: boolean, onClose: () => void, onRename: () => 
                         props.onDelete();
                         props.onClose();
                     }}
-                    icon={Edit}
+                    icon={Delete}
                     caption='Delete'
                 />
             </Drawer>

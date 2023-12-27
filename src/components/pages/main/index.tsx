@@ -7,7 +7,7 @@ import SnMain from './sn';
 import Room from '../room';
 
 export let currentRoom = hookstate(undefined)
-export let setOsCurrentRoomId = (room: any) => {
+export let setOsCurrentRoom = (room: any) => {
     currentRoom.set(room)
 }
 
@@ -18,7 +18,7 @@ const Main = (props: { id: string, isOnTop: boolean }) => {
         return <SnMain id={props.id} isOnTop={props.isOnTop} />
     } else {
         if (!currentRoomState.get({ noproxy: true })) {
-            setOsCurrentRoomId(Object.values(Object.values(api.memory.spaces.get({ noproxy: true }))[0].rooms)[0])
+            setOsCurrentRoom(Object.values(Object.values(api.memory.spaces.get({ noproxy: true }))[0].rooms)[0])
             return;
         } else {
             return <Room key={currentRoomState.get({ noproxy: true }).id} id={props.id} isOnTop={props.isOnTop} room={currentRoomState.get({ noproxy: true })} />

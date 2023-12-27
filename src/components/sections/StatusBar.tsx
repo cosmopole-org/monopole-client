@@ -118,7 +118,7 @@ const StatusBar = () => {
                                 </Badge>
                             </IconButton>
                         ) : ((SigmaRouter.topPath() === 'main') && isOs) ? (
-                            <IconButton size={'small'} style={{ width: 32, height: 32, borderRadius: '50%', position: 'absolute', top: 4, left: 8 + 32 }}
+                            <IconButton size={'small'} style={{ width: 32, height: 32, borderRadius: '50%', position: 'absolute', top: 4, left: 16 + 32 }}
                                 onClick={() => {
                                     SigmaRouter.navigate('explore')
                                 }}
