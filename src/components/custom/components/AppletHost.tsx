@@ -45,27 +45,35 @@ const Host = (props: { appletKey: string, code: string, index: number, entry: st
     }, [props.code])
     useEffect(() => {
         return () => {
-            Object.values(intervalHolder[props.appletKey]).forEach(interval => {
-                clearInterval(interval)
-            })
-            delete intervalHolder[props.appletKey]
-            Object.values(timeoutHolder[props.appletKey]).forEach(timeout => {
-                clearTimeout(timeout)
-            })
-            delete timeoutHolder[props.appletKey]
+            if (intervalHolder[props.appletKey]) {
+                Object.values(intervalHolder[props.appletKey]).forEach(interval => {
+                    clearInterval(interval)
+                })
+                delete intervalHolder[props.appletKey]
+            }
+            if (timeoutHolder[props.appletKey]) {
+                Object.values(timeoutHolder[props.appletKey]).forEach(timeout => {
+                    clearTimeout(timeout)
+                })
+                delete timeoutHolder[props.appletKey]
+            }
             delete hostLoaded[props.appletKey]
         }
     }, [])
     useEffect(() => {
         if (props.entry === 'Dummy') {
-            Object.values(intervalHolder[props.appletKey]).forEach(interval => {
-                clearInterval(interval)
-            })
-            delete intervalHolder[props.appletKey]
-            Object.values(timeoutHolder[props.appletKey]).forEach(timeout => {
-                clearTimeout(timeout)
-            })
-            delete timeoutHolder[props.appletKey]
+            if (intervalHolder[props.appletKey]) {
+                Object.values(intervalHolder[props.appletKey]).forEach(interval => {
+                    clearInterval(interval)
+                })
+                delete intervalHolder[props.appletKey]
+            }
+            if (timeoutHolder[props.appletKey]) {
+                Object.values(timeoutHolder[props.appletKey]).forEach(timeout => {
+                    clearTimeout(timeout)
+                })
+                delete timeoutHolder[props.appletKey]
+            }
             delete hostLoaded[props.appletKey]
         }
     }, [props.entry])
