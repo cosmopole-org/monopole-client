@@ -4,10 +4,10 @@ import { api } from "../../.."
 const Safezone = (props: { code: string, machineId?: string, workerId?: string, towerId?: string, roomId?: string }) => {
     useEffect(() => {
         let eventController = api.services.worker.onMachinePacketDeliver('response', (data: any) => {
-            (document.querySelector("iframe") as any)?.contentWindow.postMessage({ key: 'response', packet: data, myHumanId: api.memory.myHumanId.get({ noproxy: true }) }, 'http://localhost:3001')
+            (document.querySelector("iframe") as any)?.contentWindow.postMessage({ key: 'response', packet: data, myHumanId: api.memory.myHumanId.get({ noproxy: true }) }, 'https://safezone.liara.run/')
         })
         let eventController2 = api.services.worker.onMachinePacketDeliver('push', (data: any) => {
-            (document.querySelector("iframe") as any)?.contentWindow.postMessage({ key: 'push', packet: data, myHumanId: api.memory.myHumanId.get({ noproxy: true }) }, 'http://localhost:3001')
+            (document.querySelector("iframe") as any)?.contentWindow.postMessage({ key: 'push', packet: data, myHumanId: api.memory.myHumanId.get({ noproxy: true }) }, 'https://safezone.liara.run/')
         })
         window.onmessage = e => {
             let data = e.data
