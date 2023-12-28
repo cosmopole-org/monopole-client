@@ -4,13 +4,19 @@ import AppletHost from './AppletHost';
 import { themeColor, themeColorName, themeColorSecondary } from '../../../App';
 import { api } from '../../..';
 import IRoom from '../../../api/models/room';
+import Safezone from './Safezone';
+import room from '../../../api/drivers/database/schemas/room';
 
 let openAppletSheet = (room: IRoom, workerId: string) => { }
 
 const AppletSheet = () => {
-    const [code, setCode] = React.useState(undefined)
-    const [shown, setShown] = React.useState(false)
+    const [code, setCode]: [any, any] = React.useState(undefined)
+    const [shown, setShown]: [boolean, any] = React.useState(false)
+    const workerIdRef: any = React.useRef(undefined)
+    const roomRef: any = React.useRef(undefined)    
     openAppletSheet = (room: IRoom, workerId: string) => {
+        workerIdRef.current = workerId
+        roomRef.current = room
         api.services.worker.onMachinePacketDeliver('get/applet', (data: any) => {
             if (data.workerId === workerId) {
                 setCode(data.code)
@@ -40,12 +46,18 @@ const AppletSheet = () => {
             >
                 <Card style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', width: 100, height: 6, borderRadius: 3, background: themeColor.get({ noproxy: true })[100], top: 12 }} />
                 <div style={{ width: '100%', height: 32 }} />
-                <AppletHost.Host
-                    appletKey='appletsheet'
-                    entry={code ? 'Test' : 'Dummy'}
-                    code={code ? code : 'class Dummy { constructor() {} onMount() {} render() { return "" } }'}
-                    index={1}
-                />
+                {
+                    code?.startsWith('safezone/') ? (
+                        <Safezone code={code} workerId={workerIdRef.current} roomId={roomRef.current.id} towerId={roomRef.current.towerId} />
+                    ) : (
+                        <AppletHost.Host
+                            appletKey='appletsheet'
+                            entry={code ? 'Test' : 'Dummy'}
+                            code={code ? code : 'class Dummy { constructor() {} onMount() {} render() { return "" } }'}
+                            index={1}
+                        />
+                    )
+                }
             </SwipeableDrawer>
         </React.Fragment>
     );

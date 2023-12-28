@@ -3,13 +3,16 @@ import { Card, SwipeableDrawer } from '@mui/material';
 import AppletHost from './AppletHost';
 import { themeColor, themeColorName, themeColorSecondary } from '../../../App';
 import { api } from '../../..';
+import Safezone from './Safezone';
 
 let openMachineSheet = (machineId: string) => { }
 
 const GlobalAppletSheet = () => {
-    const [code, setCode] = React.useState(undefined)
-    const [shown, setShown] = React.useState(false)
+    const [code, setCode]: [any, any] = React.useState(undefined)
+    const [shown, setShown]: [boolean, any] = React.useState(false)
+    const machineIdRef: any = React.useRef(undefined)
     openMachineSheet = (machineId: string) => {
+        machineIdRef.current = machineId
         api.services.worker.onMachinePacketDeliver('get/globalApplet', (data: any) => {
             if (data.machineId === machineId) {
                 setCode(data.code)
@@ -36,12 +39,18 @@ const GlobalAppletSheet = () => {
             >
                 <Card style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', width: 100, height: 6, borderRadius: 3, background: themeColor.get({ noproxy: true })[100], top: 12 }} />
                 <div style={{ width: '100%', height: 32 }} />
-                <AppletHost.Host
-                    appletKey='global_appletsheet'
-                    entry={code ? 'Test' : 'Dummy'}
-                    code={code ? code : 'class Dummy { constructor() {} onMount() {} render() { return "" } }'}
-                    index={1}
-                />
+                {
+                    code?.startsWith('safezone/') ? (
+                        <Safezone code={code} machineId={machineIdRef.current} />
+                    ) : (
+                        <AppletHost.Host
+                            appletKey='globalAppletsheet'
+                            entry={code ? 'Test' : 'Dummy'}
+                            code={code ? code : 'class Dummy { constructor() {} onMount() {} render() { return "" } }'}
+                            index={1}
+                        />
+                    )
+                }
             </SwipeableDrawer>
         </React.Fragment>
     );

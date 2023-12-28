@@ -42,6 +42,9 @@ class WorkerService {
         this.network.addUpdateListener('worker/onResponse', (data: any) => {
             callback(data.packet)
         }, tag)
+        return {
+            unregister: () => this.network.removeUpdateListener('message/onResponse', tag)
+        }
     }
 
     async create(data: { towerId: string, roomId: string, machineId: string, secret: any }): Promise<void> {

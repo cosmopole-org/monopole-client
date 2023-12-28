@@ -71,7 +71,6 @@
     "@types/lovefield": "^2.1.7",
     "@types/react-grid-layout": "^1.3.4",
     "@types/react-virtualized": "^9.21.28",
-    "@types/video.js": "^7.3.56",
     "react-scripts": "^5.0.1",
     "webpack-cli": "^5.1.4"
   }
