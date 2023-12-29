@@ -28,7 +28,7 @@ const Safezone = (props: { code: string, machineId?: string, workerId?: string, 
             frameBorder={0}
             width="100%"
             height="100%"
-            src="https://safezone.liara.run/"
+            src={`https://safezone.liara.run/${props.code.substring('safezone/'.length)}?random=${Math.random()}`}
         />
     )
 }
