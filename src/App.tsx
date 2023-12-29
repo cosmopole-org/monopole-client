@@ -275,6 +275,13 @@ export let SigmaRouter = {
 }
 
 let swiper: any = undefined;
+export let switchSwipeable = (val: boolean) => {
+    if (interfaceMode.get({ noproxy: true }) === 'os' && historyStack.length <= 2) {
+        swiper.allowTouchMove = false
+    } else {
+        swiper.allowTouchMove = val
+    }
+}
 
 function App() {
     forceUpdate = useForceUpdate()

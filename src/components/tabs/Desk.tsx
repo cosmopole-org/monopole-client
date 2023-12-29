@@ -5,7 +5,7 @@ import useDesk from "../hooks/useDesk";
 import { api } from "../..";
 import { hookstate, useHookstate } from "@hookstate/core";
 import { openAppletSheet } from "../custom/components/AppletSheet";
-import { AppUtils, themeColor, themeColorName, themeColorSecondary } from "../../App";
+import { AppUtils, switchSwipeable, themeColor, themeColorName, themeColorSecondary } from "../../App";
 import AppHostUtils from '../custom/components/AppletHost';
 
 let cachedWorkers: Array<any> = []
@@ -96,6 +96,9 @@ const Desk = (props: { show: boolean, room: any }) => {
     )
     desktop = DesktopHolder.desktop
     useEffect(() => {
+        switchSwipeable(!editMode)
+    }, [editMode])
+    useEffect(() => {
         desktop.clear()
         AppHostUtils.unloadAllHosts()
         setTimeout(() => {
@@ -140,6 +143,7 @@ const Desk = (props: { show: boolean, room: any }) => {
             setLoadDesktop(true)
         }, 750);
         return () => {
+            switchSwipeable(true)
             cachedWorkers = []
         }
     }, [])
