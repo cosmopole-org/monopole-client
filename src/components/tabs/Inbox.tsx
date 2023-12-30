@@ -31,7 +31,7 @@ const Inbox = (props: { isOnTop: boolean, show: boolean }) => {
             }}>
             <Timeline
                 style={{
-                    minHeight: 'calc(100% - 64px)', width: 'calc(100% - 32px)', background: themeColor.get({ noproxy: true })[50],
+                    minHeight: 'calc(100% - 62px)', width: 'calc(100% - 32px)', background: themeColor.get({ noproxy: true })[50],
                     position: 'absolute', left: 0, top: -20, paddingTop: 56
                 }}
                 sx={{

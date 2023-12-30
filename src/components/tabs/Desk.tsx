@@ -102,7 +102,7 @@ const Desk = (props: { show: boolean, room: any }) => {
         desktop.clear()
         AppHostUtils.unloadAllHosts()
         setTimeout(() => {
-            api.services.worker.onMachinePacketDeliver('get/widget', (data: any) => {
+            api.services.worker.onMachinePacketDeliver('get/widget', 'get/widget', (data: any) => {
                 if (!desktop.appletExists(data.workerId)) {
                     let gridData = cachedWorkers.filter(w => w.id === data.workerId)[0]?.secret?.grid
                     if (gridData) {
@@ -122,7 +122,7 @@ const Desk = (props: { show: boolean, room: any }) => {
         });
     }, [themeColorName.get({ noproxy: true })])
     useEffect(() => {
-        api.services.worker.onMachinePacketDeliver('get/widget', (data: any) => {
+        api.services.worker.onMachinePacketDeliver('get/widget', 'get/widget', (data: any) => {
             if (!desktop.appletExists(data.workerId)) {
                 let gridData = cachedWorkers.filter(w => w.id === data.workerId)[0]?.secret?.grid
                 if (gridData) {
@@ -156,6 +156,7 @@ const Desk = (props: { show: boolean, room: any }) => {
                 style={{ width: '100%', height: '100%', position: 'relative', overflowY: 'auto', paddingTop: 32 }}
             >
                 <Desktop.Host
+                    room={props.room}
                     showDesktop={loadDesktop}
                     editMode={editMode}
                     style={{ width: window.innerWidth }}

@@ -67,16 +67,16 @@ let forceUpdate = () => { };
 const currentRoute = hookstate('')
 
 export const fixedNightColor = {
-    '500': '#1e2127',
-    '400': '#1e2127',
-    '200': '#282b37',
-    '100': '#363945',
-    '50': '#424550',
-    'plain': '#363945',
+    '500': '#1e2135',
+    '400': '#1e2135',
+    '200': '#282b42',
+    '100': '#36394f',
+    '50': '#424559',
+    'plain': '#36394f',
     'activeText': '#ffffff',
     'passiveText': '#dddddd',
     'antiColor': '#fff',
-    'absolutePlain': '#000'
+    'absolutePlain': '#1e2135'
 }
 
 let tempThemeColorName = localStorage.getItem('themeColor')

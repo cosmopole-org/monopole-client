@@ -38,10 +38,10 @@ class WorkerService {
         this.memory = memory
     }
 
-    onMachinePacketDeliver(tag: string, callback: (data: any) => void) {
+    onMachinePacketDeliver(tag: string, opTag: string, callback: (data: any) => void) {
         this.network.addUpdateListener('worker/onResponse', (data: any) => {
             callback(data.packet)
-        }, tag)
+        }, tag, opTag)
         return {
             unregister: () => this.network.removeUpdateListener('message/onResponse', tag)
         }

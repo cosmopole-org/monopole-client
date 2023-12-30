@@ -7,6 +7,7 @@ class NetworkDriver {
 
     socket: Socket;
     updateListeners: { [id: string]: { [id: string]: (update: any) => void } } = {}
+    operationTags: { [id: string]: string } = {}
 
     constructor() {
         this.socket = io(config.GATEWAY_ADDRESS)
@@ -22,7 +23,14 @@ class NetworkDriver {
             let callback = this.updateListeners[update.type]
             if (callback) {
                 if (update.packet?.tag) {
-                    callback[update.packet.tag] && callback[update.packet.tag](update)
+                    let rs = Object.keys(this.operationTags).filter(tag => {
+                        return (this.operationTags[tag] === update.packet.tag)
+                    })
+                    if (rs.length > 0) {
+                        rs.forEach(r => (callback[r] && callback[r](update)))
+                    } else {
+                        callback[update.packet.tag] && callback[update.packet.tag](update)
+                    }
                 } else {
                     Object.values(callback).map(subCallback => {
                         subCallback(update)
@@ -32,7 +40,10 @@ class NetworkDriver {
         })
     }
 
-    addUpdateListener(key: string, callback: (update: any) => void, tag: string) {
+    addUpdateListener(key: string, callback: (update: any) => void, tag: string, opTag?: string) {
+        if (opTag) {
+            this.operationTags[tag] = opTag
+        }
         if (!this.updateListeners[key]) this.updateListeners[key] = {}
         this.updateListeners[key][tag !== undefined ? tag : Math.random()] = callback
     }

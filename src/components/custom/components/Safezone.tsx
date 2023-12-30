@@ -1,28 +1,36 @@
-import { useEffect, useState } from "react"
+import { memo, useEffect, useState } from "react"
 import { api } from "../../.."
 import { themeColorName } from "../../../App"
 import { CircularProgress } from "@mui/material"
+import { State, hookstate, useHookstate } from "@hookstate/core"
+
+export const shownFlags: { [id: string]: State<boolean> } = {}
 
 const Safezone = (props: { code: string, machineId?: string, workerId?: string, towerId?: string, roomId?: string }) => {
-    const [show, setShow] = useState(false)
+    if (!shownFlags[props.workerId ? props.workerId : props.machineId ? props.machineId : '']) {
+        shownFlags[props.workerId ? props.workerId : props.machineId ? props.machineId : ''] = hookstate(false)
+    }
+    const show = useHookstate(shownFlags[props.workerId ? props.workerId : props.machineId ? props.machineId : '']).get({ noproxy: true })
+    const identifier = `safezone-${props.workerId ? props.workerId : props.machineId}`
     useEffect(() => {
-        let eventController = api.services.worker.onMachinePacketDeliver('response', (data: any) => {
-            (document.querySelector("iframe") as any)?.contentWindow.postMessage({ key: 'response', packet: data }, 'https://safezone.liara.run/')
-        })
-        let eventController2 = api.services.worker.onMachinePacketDeliver('push', (data: any) => {
-            (document.querySelector("iframe") as any)?.contentWindow.postMessage({ key: 'push', packet: data }, 'https://safezone.liara.run/')
-        })
-        window.onmessage = e => {
-            let data = e.data
-            if (data.key === 'onLoad') {
-                (document.querySelector("iframe") as any)?.contentWindow.postMessage({ key: 'setup', myHumanId: api.memory.myHumanId.get({ noproxy: true }), colorName: themeColorName.get({ noproxy: true }) }, 'https://safezone.liara.run/')
-            } else if (data.key === 'ready') {
-                setShow(true)
-            } else if (data.key === 'ask') {
-                let packet = data.packet
-                api.services.worker.use({ machineId: props.machineId, packet, towerId: props.towerId, roomId: props.roomId, workerId: props.workerId })
+        let eventController = api.services.worker.onMachinePacketDeliver(`response-${identifier}`, 'response', (data: any) => {
+            if (props.workerId) {
+                if (data.workerId === props.workerId) {
+                    (document.getElementById(identifier) as any)?.contentWindow.postMessage({ key: 'response', packet: data }, 'https://safezone.liara.run/')
+                }
+            } else {
+                (document.getElementById(identifier) as any)?.contentWindow.postMessage({ key: 'response', packet: data }, 'https://safezone.liara.run/')
             }
-        }
+        })
+        let eventController2 = api.services.worker.onMachinePacketDeliver(`push-${identifier}`, 'push', (data: any) => {
+            if (props.workerId) {
+                if (data.workerId === props.workerId) {
+                    (document.getElementById(identifier) as any)?.contentWindow.postMessage({ key: 'push', packet: data }, 'https://safezone.liara.run/')
+                }
+            } else {
+                (document.getElementById(identifier) as any)?.contentWindow.postMessage({ key: 'push', packet: data }, 'https://safezone.liara.run/')
+            }
+        })
         return () => {
             eventController.unregister()
             eventController2.unregister()
@@ -31,8 +39,9 @@ const Safezone = (props: { code: string, machineId?: string, workerId?: string, 
     return (
         <div style={{ width: '100%', height: '100%', position: 'relative' }}>
             <iframe
-                key='globalAppletsheet'
-                id='globalAppletsheet'
+                name={identifier}
+                key={identifier}
+                id={identifier}
                 frameBorder={0}
                 width="100%"
                 height="100%"
@@ -48,4 +57,4 @@ const Safezone = (props: { code: string, machineId?: string, workerId?: string, 
     )
 }
 
-export default Safezone
+export default memo(Safezone, () => true)

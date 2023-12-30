@@ -13,7 +13,7 @@ const GlobalAppletSheet = () => {
     const machineIdRef: any = React.useRef(undefined)
     openMachineSheet = (machineId: string) => {
         machineIdRef.current = machineId
-        api.services.worker.onMachinePacketDeliver('get/globalApplet', (data: any) => {
+        api.services.worker.onMachinePacketDeliver('get/globalApplet', 'get/globalApplet', (data: any) => {
             if (data.machineId === machineId) {
                 setCode(data.code)
             }

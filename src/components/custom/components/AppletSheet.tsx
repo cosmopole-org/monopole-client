@@ -17,7 +17,7 @@ const AppletSheet = () => {
     openAppletSheet = (room: IRoom, workerId: string) => {
         workerIdRef.current = workerId
         roomRef.current = room
-        api.services.worker.onMachinePacketDeliver('get/applet', (data: any) => {
+        api.services.worker.onMachinePacketDeliver('get/applet', 'get/applet', (data: any) => {
             if (data.workerId === workerId) {
                 setCode(data.code)
             }
