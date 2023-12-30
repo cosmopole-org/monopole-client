@@ -10,7 +10,8 @@ const Safezone = (props: { code: string, machineId?: string, workerId?: string, 
     if (!shownFlags[props.workerId ? props.workerId : props.machineId ? props.machineId : '']) {
         shownFlags[props.workerId ? props.workerId : props.machineId ? props.machineId : ''] = hookstate(false)
     }
-    const show = useHookstate(shownFlags[props.workerId ? props.workerId : props.machineId ? props.machineId : '']).get({ noproxy: true })
+    const showState = useHookstate(shownFlags[props.workerId ? props.workerId : props.machineId ? props.machineId : ''])
+    const show = showState.get({ noproxy: true })
     const identifier = `safezone-${props.workerId ? props.workerId : props.machineId}`
     useEffect(() => {
         let eventController = api.services.worker.onMachinePacketDeliver(`response-${identifier}`, 'response', (data: any) => {
@@ -32,6 +33,7 @@ const Safezone = (props: { code: string, machineId?: string, workerId?: string, 
             }
         })
         return () => {
+            showState.set(false)
             eventController.unregister()
             eventController2.unregister()
         }
@@ -39,30 +41,16 @@ const Safezone = (props: { code: string, machineId?: string, workerId?: string, 
     let agentId = props.code.substring('safezone/'.length)
     return (
         <div style={{ width: '100%', height: '100%', position: 'relative' }}>
-            {
-                agentId === 'googleDocs' ? (
-                    <iframe
-                        name={identifier}
-                        key={identifier}
-                        id={identifier}
-                        frameBorder={0}
-                        width="100%"
-                        height="100%"
-                        src={`https://docs.google.com/gview?url=http://ieee802.org/secmail/docIZSEwEqHFr.doc&embedded=true"`}
-                    />
-                ) : (
-                    <iframe
-                        name={identifier}
-                        key={identifier}
-                        id={identifier}
-                        frameBorder={0}
-                        width="100%"
-                        height="100%"
-                        src={`https://safezone.liara.run/${agentId}?random=${Math.random()}`}
-                        style={{ opacity: show ? 1 : 0, transition: 'opacity 500ms' }}
-                    />
-                )
-            }
+            <iframe
+                name={identifier}
+                key={identifier}
+                id={identifier}
+                frameBorder={0}
+                width="100%"
+                height="100%"
+                src={`https://safezone.liara.run/${agentId}?random=${Math.random()}`}
+                style={{ opacity: show ? 1 : 0, transition: 'opacity 500ms' }}
+            />
             {
                 !show ? (
                     <CircularProgress style={{ position: 'absolute', left: 'calc(50% - 16px)', top: 'calc(50% - 16px)', transform: 'translate(-50%, -50%)' }} variant="indeterminate" />
