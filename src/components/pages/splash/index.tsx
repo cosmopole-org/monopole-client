@@ -17,7 +17,11 @@ const Splash = (props: { id: string, isOnTop: boolean }) => {
     useEffect(() => {
         setTimeout(() => {
             if (api.services.human.isSessionAvailable()) {
-                SigmaRouter.navigate('main')
+                api.services.human.signIn().then((body: any) => {
+                    if (body.success) {
+                        SigmaRouter.navigate('main')
+                    }
+                })
             } else if (!isLoading && !isAuthenticated) {
                 loginWithRedirect();
             }
@@ -30,7 +34,11 @@ const Splash = (props: { id: string, isOnTop: boolean }) => {
                     api.services.human.verify({ accessToken: at }).then((body: any) => {
                         let { accountExist } = body
                         if (accountExist) {
-                            SigmaRouter.navigate('main')
+                            api.services.human.signIn().then((body: any) => {
+                                if (body.success) {
+                                    SigmaRouter.navigate('main')
+                                }
+                            })
                         } else {
                             SigmaRouter.navigate('auth')
                         }
@@ -53,7 +61,7 @@ const Splash = (props: { id: string, isOnTop: boolean }) => {
                 top: '50%',
                 transform: 'translate(-50%, -75%)'
             }}>
-                <img src={Logo} style={{ width: '100%', height: '100%' }} alt={'logo'}/>
+                <img src={Logo} style={{ width: '100%', height: '100%' }} alt={'logo'} />
                 <Typography variant='h5' style={{ width: '100%', textAlign: 'center', marginTop: 16, color: themeBasedTextColor.get({ noproxy: true }) }}>Welcome !</Typography>
             </div>
         </div>

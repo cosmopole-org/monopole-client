@@ -64,9 +64,9 @@ const ChatsList = (props: { chats: any, hasFocus: boolean, showRating: boolean, 
                 <List style={{ width: 'calc(100% - 32px)', height: 'auto', paddingLeft: 16, paddingRight: 16, paddingTop: 0 }}>
                     {
                         props.chats.map((chat: any) => (
-                            <ListItemButton style={{padding: 0}}>
-                                <ChatItem chat={chat} key={`tower-card-${chat.id}`} style={{ marginTop: 8 }} onMoreClicked={() => {
-                                    props.showTowerMoreMenu && props.showTowerMoreMenu(chat)
+                            <ListItemButton key={`chat-list-item-${chat.id}`} style={{ padding: 0 }}>
+                                <ChatItem chat={chat} key={`chat-item-${chat.id}`} style={{ marginTop: 8 }} onMoreClicked={() => {
+                                    if (props.showTowerMoreMenu) props.showTowerMoreMenu(chat)
                                 }} />
                             </ListItemButton>
                         ))

@@ -82,7 +82,7 @@ const Home = (props: { isOnTop: boolean, show: boolean, isPage?: boolean }) => {
                 <ul className="circles">
                     {
                         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(i => (
-                            <li style={{
+                            <li key={`particle-${i}`} style={{
                                 background: themeColor.get({ noproxy: true })[500]
                             }}></li>
                         ))

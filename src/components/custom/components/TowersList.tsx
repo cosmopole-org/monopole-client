@@ -120,6 +120,7 @@ const TowersList = (props: { fullscreen?: boolean, towers?: Array<any>, humans?:
                                     folders.map((f: any) => {
                                         return (
                                             <SigmaTab
+                                                key={f.id}
                                                 value={f.id}
                                                 icon={<><Folder style={{ marginRight: 4 }} />{f.title}</>}
                                             />
