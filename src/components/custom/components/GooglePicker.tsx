@@ -18,12 +18,12 @@ export default () => {
                         clientId: '209261018094-3fgoua6nabqf5ea2aphhiaqs1u978pi3.apps.googleusercontent.com',
                         developerKey: 'AIzaSyCyqpXHhFv5dnMAvku77cAGAIVpr2gyHkE',
                         viewId: 'DOCS',
-                        viewMimeTypes: 'image/jpeg,image/png,image/gif',
+                        viewMimeTypes: '*/*',
                         token: tokenInfo ? tokenInfo.access_token : null,
                         showUploadView: true,
                         showUploadFolders: true,
                         supportDrives: true,
-                        multiselect: true,
+                        multiselect: false,
                         callbackFunction: (data: any) => {
                             const elements = Array.from(
                                 document.getElementsByClassName(
@@ -31,7 +31,7 @@ export default () => {
                                 ) as HTMLCollectionOf<HTMLElement>
                             );
                             for (let i = 0; i < elements.length; i++) {
-                                elements[i].style.zIndex = '2000';
+                                elements[i].style.zIndex = '99999';
                             }
                             if (data.action === 'picked') {
                                 //Add your desired workflow when choosing a file from the Google Picker popup

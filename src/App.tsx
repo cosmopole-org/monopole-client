@@ -413,7 +413,6 @@ function App() {
                     </div>
                 </div>
                 <GlobalAppletSheet />
-                <GooglePicker />
                 <div style={{ position: 'absolute', zIndex: 99999 }}>
                     <Toaster />
                 </div>
