@@ -15,7 +15,7 @@ export default () => {
                 .then(() => {
                     let tokenInfo = gapi.auth.getToken();
                     const pickerConfig: any = {
-                        clientId: '209261018094-3fgoua6nabqf5ea2aphhiaqs1u978pi3.apps.googleusercontent.com',
+                        clientId: '209261018094-g67cub474qcg8uh9c8fprjs5ub5mg09f.apps.googleusercontent.com',
                         developerKey: 'AIzaSyCyqpXHhFv5dnMAvku77cAGAIVpr2gyHkE',
                         viewId: 'DOCS',
                         viewMimeTypes: '*/*',
