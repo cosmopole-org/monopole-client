@@ -48,8 +48,7 @@ const Safezone = (props: { code: string, machineId?: string, workerId?: string, 
                 frameBorder={0}
                 width="100%"
                 height="100%"
-                //src={`https://safezone.liara.run/${agentId}?random=${Math.random()}`}
-                src={`https://490b-2a01-5ec0-7001-c3fd-d2e-39fe-529e-ba1a.ngrok-free.app/${agentId}?random=${Math.random()}`}
+                src={`https://safezone.liara.run/${agentId}?random=${Math.random()}`}
                 style={{ opacity: show ? 1 : 0, transition: 'opacity 500ms' }}
             />
             {
