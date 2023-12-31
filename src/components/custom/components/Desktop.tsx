@@ -114,6 +114,8 @@ const Host = (props: { room: IRoom, desktopKey: string, editMode: boolean, style
                 } else if (data.key === 'ask') {
                     let packet = data.packet
                     api.services.worker.use({ packet, towerId: props.room.towerId, roomId: props.room.id, workerId: workerId })
+                } else if (data.key === 'GoogleDrive/pickFile') {
+                    
                 }
             }
         }

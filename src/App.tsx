@@ -43,6 +43,7 @@ import ChatsPage from './components/pages/chats';
 import SettingsPage from './components/pages/settings';
 import InboxPage from './components/pages/inbox';
 import HomePage from './components/pages/home';
+import GooglePicker from './components/custom/components/GooglePicker';
 
 let tempInterfaceMode = localStorage.getItem('interfaceMode')
 if (tempInterfaceMode === null) {
@@ -412,6 +413,7 @@ function App() {
                     </div>
                 </div>
                 <GlobalAppletSheet />
+                <GooglePicker />
                 <div style={{ position: 'absolute', zIndex: 99999 }}>
                     <Toaster />
                 </div>
@@ -429,3 +431,32 @@ export let AppUtils = {
 }
 
 export default App;
+
+
+const GoogleDocumentViewer = () => {
+    const [documentContent, setDocumentContent] = useState('');
+    useEffect(() => {
+        const fetchDocument = async () => {
+            try {
+                const response = await fetch(
+                    'https://www.googleapis.com/drive/v3/files/DOCUMENT_ID/export?mimeType=text/html',
+                    {
+                        method: 'GET',
+                        headers: {
+                            Authorization: `Bearer YOUR_ACCESS_TOKEN`,
+                        },
+                    }
+                );
+                setDocumentContent(await response.json());
+            } catch (error) {
+                console.error('Error fetching Google Document:', error);
+            }
+        };
+        fetchDocument();
+    }, []);
+    return (
+        <div>
+            <div dangerouslySetInnerHTML={{ __html: documentContent }} />
+        </div>
+    );
+};

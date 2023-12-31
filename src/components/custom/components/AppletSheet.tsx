@@ -40,7 +40,8 @@ const AppletSheet = () => {
                         borderRadius: '24px 24px 0px 0px',
                         minHeight: window.innerHeight * 80 / 100 + 'px',
                         height: window.innerHeight * 80 / 100 + 'px',
-                        backgroundColor: themeColor.get({ noproxy: true })[50]
+                        backgroundColor: themeColor.get({ noproxy: true })[50],
+                        overflowY: 'auto'
                     }
                 }}
             >
