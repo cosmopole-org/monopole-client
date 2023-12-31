@@ -11,6 +11,7 @@ import { api } from "../../..";
 import Safezone, { shownFlags } from "./Safezone";
 import IRoom from "../../../api/models/room";
 import { themeColorName } from "../../../App";
+import { openGooglePicker } from "./GooglePicker";
 
 const ResponsiveReactGridLayout = RGL.WidthProvider(RGL.Responsive);
 
@@ -115,7 +116,7 @@ const Host = (props: { room: IRoom, desktopKey: string, editMode: boolean, style
                     let packet = data.packet
                     api.services.worker.use({ packet, towerId: props.room.towerId, roomId: props.room.id, workerId: workerId })
                 } else if (data.key === 'GoogleDrive/pickFile') {
-                    
+                    openGooglePicker()
                 }
             }
         }
