@@ -1,8 +1,11 @@
-import { memo, useEffect, useState } from "react"
+import { memo, useEffect, useRef, useState } from "react"
 import { api } from "../../.."
-import { themeColorName } from "../../../App"
-import { CircularProgress } from "@mui/material"
+import { closeOverlaySafezone, themeBasedTextColor, themeColorName } from "../../../App"
+import { CircularProgress, Fab, Paper } from "@mui/material"
 import { State, hookstate, useHookstate } from "@hookstate/core"
+import { Close } from "@mui/icons-material"
+import { closeMachineSheet } from "./GlobalAppletSheet"
+import { closeAppletSheet } from "./AppletSheet"
 
 export const shownFlags: { [id: string]: State<boolean> } = {}
 
@@ -51,11 +54,6 @@ const Safezone = (props: { code: string, machineId?: string, workerId?: string, 
                 src={`https://safezone.liara.run/${agentId}?random=${Math.random()}`}
                 style={{ opacity: show ? 1 : 0, transition: 'opacity 500ms' }}
             />
-            {
-                !show ? (
-                    <CircularProgress style={{ position: 'absolute', left: 'calc(50% - 16px)', top: 'calc(50% - 16px)', transform: 'translate(-50%, -50%)' }} variant="indeterminate" />
-                ) : null
-            }
         </div>
     )
 }

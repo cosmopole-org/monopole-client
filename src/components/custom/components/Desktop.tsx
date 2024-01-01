@@ -4,7 +4,7 @@ import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
 import AppletHost from "./AppletHost";
 import { useEffect, useState } from "react";
-import { openAppletSheet } from "./AppletSheet";
+import { appletsheetOpen, notifyAppletSheetReady, openAppletSheet } from "./AppletSheet";
 import SigmaFab from "../elements/SigmaFab";
 import { Delete } from "@mui/icons-material";
 import { api } from "../../..";
@@ -111,12 +111,14 @@ const Host = (props: { room: IRoom, desktopKey: string, editMode: boolean, style
                 if (data.key === 'onLoad') {
                     (document.getElementById(`safezone-${workerId}`) as any)?.contentWindow.postMessage({ key: 'setup', myHumanId: api.memory.myHumanId.get({ noproxy: true }), colorName: themeColorName.get({ noproxy: true }) }, 'https://safezone.liara.run/')
                 } else if (data.key === 'ready') {
-                    shownFlags[workerId].set(true)
+                    if (!shownFlags[workerId].get({ noproxy: true })) {
+                        (document.getElementById(`safezone-${workerId}`) as any)?.contentWindow.postMessage({ key: 'start' }, 'https://safezone.liara.run/')
+                        shownFlags[workerId].set(true)
+                    }
+                    if (appletsheetOpen && notifyAppletSheetReady) notifyAppletSheetReady()
                 } else if (data.key === 'ask') {
                     let packet = data.packet
                     api.services.worker.use({ packet, towerId: props.room.towerId, roomId: props.room.id, workerId: workerId })
-                } else if (data.key === 'GoogleDrive/pickFile') {
-                    openGooglePicker()
                 }
             }
         }

@@ -6,11 +6,13 @@ import { api } from '../../..';
 import Safezone from './Safezone';
 
 let openMachineSheet = (machineId: string) => { }
+let closeMachineSheet = () => { }
 
 const GlobalAppletSheet = () => {
     const [code, setCode]: [any, any] = React.useState(undefined)
     const [shown, setShown]: [boolean, any] = React.useState(false)
     const machineIdRef: any = React.useRef(undefined)
+    closeMachineSheet = () => setShown(false)
     openMachineSheet = (machineId: string) => {
         machineIdRef.current = machineId
         api.services.worker.onMachinePacketDeliver('get/globalApplet', 'get/globalApplet', (data: any) => {
@@ -56,4 +58,4 @@ const GlobalAppletSheet = () => {
     );
 }
 
-export { GlobalAppletSheet, openMachineSheet }
+export { GlobalAppletSheet, openMachineSheet, closeMachineSheet }
