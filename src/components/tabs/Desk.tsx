@@ -5,7 +5,7 @@ import useDesk from "../hooks/useDesk";
 import { api } from "../..";
 import { hookstate, useHookstate } from "@hookstate/core";
 import { openAppletSheet } from "../custom/components/AppletSheet";
-import { AppUtils, switchSwipeable, themeColor, themeColorName, themeColorSecondary } from "../../App";
+import { AppUtils, openOverlaySafezone, switchSwipeable, themeColor, themeColorName, themeColorSecondary } from "../../App";
 import AppHostUtils from '../custom/components/AppletHost';
 
 let cachedWorkers: Array<any> = []
@@ -84,6 +84,7 @@ const Desk = (props: { show: boolean, room: any }) => {
     const desktopWrapperRef = useRef(null)
     const [loadDesktop, setLoadDesktop] = useState(false)
     const editMode = useHookstate(desktopEditMode).get({ noproxy: true })
+    const metadataRef: any = useRef({})
     const DesktopHolder = useDesk(
         props.show,
         editMode,
@@ -103,6 +104,7 @@ const Desk = (props: { show: boolean, room: any }) => {
         AppHostUtils.unloadAllHosts()
         setTimeout(() => {
             api.services.worker.onMachinePacketDeliver('get/widget', 'get/widget', (data: any) => {
+                metadataRef.current[data.workerId] = { onClick: data.onClick }
                 if (!desktop.appletExists(data.workerId)) {
                     let gridData = cachedWorkers.filter(w => w.id === data.workerId)[0]?.secret?.grid
                     if (gridData) {
@@ -162,7 +164,14 @@ const Desk = (props: { show: boolean, room: any }) => {
                     style={{ width: window.innerWidth }}
                     desktopKey={desktop.key}
                     onWidgetClick={(workerId: string) => {
-                        openAppletSheet(props.room, workerId)
+                        let onClickOfMetadata = metadataRef.current[workerId]?.onClick
+                        if (onClickOfMetadata) {
+                            if (onClickOfMetadata) {
+                                openOverlaySafezone(onClickOfMetadata.code, workerId, props.room)
+                            }
+                        } else {
+                            openAppletSheet(props.room, workerId)
+                        }
                     }}
                     onWidgetRemove={(workerId: string) => {
                         if (window.confirm('do you to delete this widget ?')) {

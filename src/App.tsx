@@ -19,7 +19,7 @@ import CreateRoom from './components/forms/createRoom';
 import UpdateProfile from './components/forms/updateProfile';
 import Machines from './components/pages/machines';
 import CreateMachine from './components/forms/createMachine';
-import { hookstate, useHookstate } from '@hookstate/core';
+import { State, hookstate, useHookstate } from '@hookstate/core';
 import { switchColor } from './components/sections/StatusBar';
 import TowerPicker from './components/pages/towerPicker';
 import Gallery from './components/pages/gallery';
@@ -44,6 +44,8 @@ import SettingsPage from './components/pages/settings';
 import InboxPage from './components/pages/inbox';
 import HomePage from './components/pages/home';
 import GooglePicker from './components/custom/components/GooglePicker';
+import Safezone from './components/custom/components/Safezone';
+import IRoom from './api/models/room';
 
 let tempInterfaceMode = localStorage.getItem('interfaceMode')
 if (tempInterfaceMode === null) {
@@ -284,7 +286,16 @@ export let switchSwipeable = (val: boolean) => {
     }
 }
 
+const overlaySafezoneData: State<any> = hookstate(undefined)
+export let openOverlaySafezone = (code: string, workerId: string, room: IRoom) => {
+    overlaySafezoneData.set({ code, workerId, room })
+}
+export let closeOverlayFrame = () => {
+    overlaySafezoneData.set(undefined)
+}
+
 function App() {
+    const overlaySafezone = useHookstate(overlaySafezoneData).get({ noproxy: true })
     forceUpdate = useForceUpdate()
     const cr = useHookstate(currentRoute)
     useEffect(() => {
@@ -413,6 +424,13 @@ function App() {
                     </div>
                 </div>
                 <GlobalAppletSheet />
+                {
+                    overlaySafezone ? (
+                        <div style={{ position: 'fixed', left: 0, top: 0, zIndex: 99999 }}>
+                            <Safezone code={overlaySafezone.code} workerId={overlaySafezone.workerId} roomId={overlaySafezone.room.id} towerId={overlaySafezone.room.towerId} />
+                        </div>
+                    ) : null
+                }
                 <div style={{ position: 'absolute', zIndex: 99999 }}>
                     <Toaster />
                 </div>
