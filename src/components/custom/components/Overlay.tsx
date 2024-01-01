@@ -20,6 +20,9 @@ const Overlay = () => {
     const ready = useHookstate(readyState).get({ noproxy: true })
     const roomRef: any = useRef(undefined)
     useEffect(() => {
+        window.onfocus = () => {
+            overlaySafezoneData.set(undefined)
+        }
         const messageCallback = (e: any) => {
             let workerId = undefined
             let iframes = document.getElementsByTagName('iframe');
@@ -47,7 +50,6 @@ const Overlay = () => {
                         api.services.worker.use({ packet, towerId: roomRef.current.towerId, roomId: roomRef.current.id, workerId: workerId })
                     }
                 } else if (data.key === 'done') {
-                    alert('hello')
                     overlaySafezoneData.set(undefined)
                 }
             }
