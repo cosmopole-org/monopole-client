@@ -426,7 +426,7 @@ function App() {
                 <GlobalAppletSheet />
                 {
                     overlaySafezone ? (
-                        <div style={{ width: '100%', height: '100%', position: 'fixed', left: 0, top: 0, zIndex: 99999, backdropFilter: 'blur(5px)', backgroundColor: 'rgba(0, 0, 0, 0.25)' }}>
+                        <div style={{ width: '100%', height: '100%', position: 'fixed', left: 0, top: 0, zIndex: 99999, backdropFilter: 'blur(10px)', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
                             <Safezone code={overlaySafezone.code} workerId={overlaySafezone.workerId} roomId={overlaySafezone.room.id} towerId={overlaySafezone.room.towerId} />
                             <IconButton style={{ backgroundColor: themeColor.get({ noproxy: true })[50], position: 'fixed', top: 16, right: 16 }} onClick={() => closeOverlaySafezone()}>
                                 <Close style={{ fill: themeBasedTextColor.get({ noproxy: true }) }} />
