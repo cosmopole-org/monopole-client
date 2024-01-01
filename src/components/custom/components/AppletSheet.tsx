@@ -1,16 +1,13 @@
 import * as React from 'react';
 import { Card, CircularProgress, Fab, Paper, SwipeableDrawer } from '@mui/material';
 import AppletHost from './AppletHost';
-import { closeOverlaySafezone, themeBasedTextColor, themeColor, themeColorName, themeColorSecondary } from '../../../App';
+import { themeColor, themeColorName, themeColorSecondary } from '../../../App';
 import { api } from '../../..';
 import IRoom from '../../../api/models/room';
 import Safezone, { shownFlags } from './Safezone';
-import room from '../../../api/drivers/database/schemas/room';
-import { Close } from '@mui/icons-material';
-import { closeMachineSheet } from './GlobalAppletSheet';
-import SigmaFab from '../elements/SigmaFab';
 import { useHookstate } from '@hookstate/core';
 import { readyState } from './Desktop';
+import Loading from './Loading';
 
 let openAppletSheet = (room: IRoom, workerId: string) => { }
 let closeAppletSheet = () => { }
@@ -24,11 +21,45 @@ const AppletSheet = () => {
     const ready = useHookstate(readyState).get({ noproxy: true })
     const roomRef: any = React.useRef(undefined)
     React.useEffect(() => {
-        api.services.worker.onMachinePacketDeliver('get/applet', 'get/applet', (data: any) => {
+        const messageCallback = (e: any) => {
+            let workerId = undefined
+            let iframes = document.getElementsByTagName('iframe');
+            for (let i = 0, iframe, win; i < iframes.length; i++) {
+                iframe = iframes[i];
+                win = iframe.contentWindow
+                if (win === e.source) {
+                    workerId = iframe.id.substring('safezone-'.length)
+                    break
+                }
+            }
+            let data = e.data
+            if (workerId) {
+                if (data.key === 'onLoad') {
+                    (document.getElementById(`safezone-${workerId}`) as any)?.contentWindow.postMessage({ key: 'setup', myHumanId: api.memory.myHumanId.get({ noproxy: true }), colorName: themeColorName.get({ noproxy: true }) }, 'https://safezone.liara.run/')
+                } else if (data.key === 'ready') {
+                    if (!shownFlags[workerId].get({ noproxy: true })) {
+                        (document.getElementById(`safezone-${workerId}`) as any)?.contentWindow.postMessage({ key: 'start' }, 'https://safezone.liara.run/')
+                        shownFlags[workerId].set(true)
+                    }
+                    readyState.set(true)
+                } else if (data.key === 'ask') {
+                    let packet = data.packet
+                    if (roomRef.current) {
+                        api.services.worker.use({ packet, towerId: roomRef.current.towerId, roomId: roomRef.current.id, workerId: workerId })
+                    }
+                }
+            }
+        }
+        window.addEventListener('message', messageCallback)
+        let getAppletEvent = api.services.worker.onMachinePacketDeliver('get/applet', 'get/applet', (data: any) => {
             if (data.workerId === workerIdRef.current) {
                 setCode(data.code)
             }
         })
+        return () => {
+            window.removeEventListener('message', messageCallback)
+            getAppletEvent.unregister()
+        }
     }, [])
     closeAppletSheet = () => setShown(false)
     openAppletSheet = (room: IRoom, workerId: string) => {
@@ -72,21 +103,11 @@ const AppletSheet = () => {
                 }
                 {
                     (!code || (code && code?.startsWith('safezone/') && !ready)) ? (
-                        <Paper style={{ width: 56, height: 56, position: 'absolute', left: '50%', top: 'calc(50% - 16px)', transform: 'translate(-50%, -50%)', borderRadius: '50%' }}>
-                            <CircularProgress style={{ width: '80%', height: '80%', margin: '10%' }} variant="indeterminate" />
-                        </Paper>
-                    ) : null
-                }
-                {
-                    (!code || (code && code?.startsWith('safezone/') && !ready)) ? (
-                        <SigmaFab onClick={() => {
+                        <Loading onCancel={() => {
                             readyState.set(false)
                             setCode(undefined)
                             setShown(false)
-                        }} variant="extended" style={{ position: 'absolute', left: '50%', top: 'calc(50% - 16px + 68px)', transform: 'translate(-50%, -50%)' }}>
-                            <Close style={{ fill: themeBasedTextColor.get({ noproxy: true }), marginRight: 12 }} />
-                            Cancel
-                        </SigmaFab>
+                        }} />
                     ) : null
                 }
             </SwipeableDrawer>

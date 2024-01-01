@@ -5,8 +5,9 @@ import useDesk from "../hooks/useDesk";
 import { api } from "../..";
 import { hookstate, useHookstate } from "@hookstate/core";
 import { openAppletSheet } from "../custom/components/AppletSheet";
-import { AppUtils, openOverlaySafezone, switchSwipeable, themeColor, themeColorName, themeColorSecondary } from "../../App";
+import { switchSwipeable, themeColor, themeColorName, themeColorSecondary } from "../../App";
 import AppHostUtils from '../custom/components/AppletHost';
+import { overlaySafezoneData } from "../custom/components/Overlay";
 
 let cachedWorkers: Array<any> = []
 
@@ -166,9 +167,7 @@ const Desk = (props: { show: boolean, room: any }) => {
                     onWidgetClick={(workerId: string) => {
                         let onClickOfMetadata = metadataRef.current[workerId]?.onClick
                         if (onClickOfMetadata) {
-                            if (onClickOfMetadata) {
-                                openOverlaySafezone(onClickOfMetadata.code, workerId, props.room)
-                            }
+                            overlaySafezoneData.set({ code: onClickOfMetadata.code, workerId, room: props.room })
                         } else {
                             openAppletSheet(props.room, workerId)
                         }

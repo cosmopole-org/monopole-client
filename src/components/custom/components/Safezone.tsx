@@ -1,11 +1,6 @@
-import { memo, useEffect, useRef, useState } from "react"
+import { memo, useEffect } from "react"
 import { api } from "../../.."
-import { closeOverlaySafezone, themeBasedTextColor, themeColorName } from "../../../App"
-import { CircularProgress, Fab, Paper } from "@mui/material"
 import { State, hookstate, useHookstate } from "@hookstate/core"
-import { Close } from "@mui/icons-material"
-import { closeMachineSheet } from "./GlobalAppletSheet"
-import { closeAppletSheet } from "./AppletSheet"
 
 export const shownFlags: { [id: string]: State<boolean> } = {}
 

@@ -288,14 +288,6 @@ export let switchSwipeable = (val: boolean) => {
     }
 }
 
-export const overlaySafezoneData: State<any> = hookstate(undefined)
-export let openOverlaySafezone = (code: string, workerId: string, room: IRoom) => {
-    overlaySafezoneData.set({ code, workerId, room })
-}
-export let closeOverlaySafezone = () => {
-    overlaySafezoneData.set(undefined)
-}
-
 function App() {
     forceUpdate = useForceUpdate()
     const cr = useHookstate(currentRoute)

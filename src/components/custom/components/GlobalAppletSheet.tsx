@@ -12,14 +12,16 @@ const GlobalAppletSheet = () => {
     const [code, setCode]: [any, any] = React.useState(undefined)
     const [shown, setShown]: [boolean, any] = React.useState(false)
     const machineIdRef: any = React.useRef(undefined)
-    closeMachineSheet = () => setShown(false)
-    openMachineSheet = (machineId: string) => {
-        machineIdRef.current = machineId
+    React.useEffect(() => {
         api.services.worker.onMachinePacketDeliver('get/globalApplet', 'get/globalApplet', (data: any) => {
-            if (data.machineId === machineId) {
+            if (data.machineId === machineIdRef.current) {
                 setCode(data.code)
             }
         })
+    }, [])
+    closeMachineSheet = () => setShown(false)
+    openMachineSheet = (machineId: string) => {
+        machineIdRef.current = machineId
         setShown(true)
         api.services.worker.use({ machineId, packet: { tag: 'get/globalApplet', secondaryColor: themeColorSecondary.get({ noproxy: true }), colorName: themeColorName.get({ noproxy: true }), colors: themeColor.get({ noproxy: true }) } })
     }

@@ -12,7 +12,6 @@ import Safezone, { shownFlags } from "./Safezone";
 import IRoom from "../../../api/models/room";
 import { themeColorName } from "../../../App";
 import { hookstate } from "@hookstate/core";
-import { overlayOpen } from "./Overlay";
 
 const ResponsiveReactGridLayout = RGL.WidthProvider(RGL.Responsive);
 
@@ -98,12 +97,12 @@ const Host = (props: { room: IRoom, desktopKey: string, editMode: boolean, style
     let desktop = desktops[props.desktopKey]
     desktop.onLayoutChangeByCodeInternally((_: RGL.Layouts) => setTrigger(!trigger))
     useEffect(() => {
-        window.onmessage = e => {
+        const messageCallback = (e: any) => {
             let workerId = undefined
             let iframes = document.getElementsByTagName('iframe');
             for (let i = 0, iframe, win; i < iframes.length; i++) {
                 iframe = iframes[i];
-                let win = iframe.contentWindow
+                win = iframe.contentWindow
                 if (win === e.source) {
                     workerId = iframe.id.substring('safezone-'.length)
                     break
@@ -118,12 +117,15 @@ const Host = (props: { room: IRoom, desktopKey: string, editMode: boolean, style
                         (document.getElementById(`safezone-${workerId}`) as any)?.contentWindow.postMessage({ key: 'start' }, 'https://safezone.liara.run/')
                         shownFlags[workerId].set(true)
                     }
-                    if (appletsheetOpen || overlayOpen) readyState.set(true)
                 } else if (data.key === 'ask') {
                     let packet = data.packet
                     api.services.worker.use({ packet, towerId: props.room.towerId, roomId: props.room.id, workerId: workerId })
                 }
             }
+        }
+        window.addEventListener('message', messageCallback)
+        return () => {
+            window.removeEventListener('message', messageCallback)
         }
     }, [])
     return (
