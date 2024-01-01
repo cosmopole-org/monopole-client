@@ -20,9 +20,6 @@ const Overlay = () => {
     const ready = useHookstate(readyState).get({ noproxy: true })
     const roomRef: any = useRef(undefined)
     useEffect(() => {
-        window.onfocus = () => {
-            overlaySafezoneData.set(undefined)
-        }
         const messageCallback = (e: any) => {
             let workerId = undefined
             let iframes = document.getElementsByTagName('iframe');
@@ -43,7 +40,6 @@ const Overlay = () => {
                         (document.getElementById(`safezone-${workerId}`) as any)?.contentWindow.postMessage({ key: 'start' }, 'https://safezone.liara.run/')
                         shownFlags[workerId].set(true)
                     }
-                    readyState.set(true)
                 } else if (data.key === 'ask') {
                     let packet = data.packet
                     if (roomRef.current) {
@@ -51,6 +47,8 @@ const Overlay = () => {
                     }
                 } else if (data.key === 'done') {
                     overlaySafezoneData.set(undefined)
+                } else if (data.key === 'onAuthorize') {
+                    readyState.set(true)
                 }
             }
         }
