@@ -10,6 +10,7 @@ import { Close } from '@mui/icons-material';
 import { closeMachineSheet } from './GlobalAppletSheet';
 import SigmaFab from '../elements/SigmaFab';
 import { useHookstate } from '@hookstate/core';
+import { readyState } from './Desktop';
 
 let openAppletSheet = (room: IRoom, workerId: string) => { }
 let closeAppletSheet = () => { }
@@ -20,8 +21,8 @@ const AppletSheet = () => {
     const [code, setCode]: [any, any] = React.useState(undefined)
     const [shown, setShown]: [boolean, any] = React.useState(false)
     const workerIdRef: any = React.useRef(undefined)
+    const ready = useHookstate(readyState).get({ noproxy: true })
     const roomRef: any = React.useRef(undefined)
-    const [ready, setReady] = React.useState(false)
     React.useEffect(() => {
         api.services.worker.onMachinePacketDeliver('get/applet', 'get/applet', (data: any) => {
             if (data.workerId === workerIdRef.current) {
@@ -29,7 +30,6 @@ const AppletSheet = () => {
             }
         })
     }, [])
-    notifyAppletSheetReady = () => setReady(true)
     closeAppletSheet = () => setShown(false)
     openAppletSheet = (room: IRoom, workerId: string) => {
         workerIdRef.current = workerId
@@ -37,16 +37,14 @@ const AppletSheet = () => {
         setShown(true)
         api.services.worker.use({ towerId: room.towerId, roomId: room.id, workerId, packet: { tag: 'get/applet', secondaryColor: themeColorSecondary.get({ noproxy: true }), colorName: themeColorName.get({ noproxy: true }), colors: themeColor.get({ noproxy: true }) } })
     }
-    React.useEffect(() => {
-        appletsheetOpen = shown
-        if (!shown) {
-            setReady(false)
-            setCode(undefined)
-        }
-    }, [shown]);
+    appletsheetOpen = shown
     return (
         <React.Fragment>
-            <SwipeableDrawer anchor='bottom' open={shown} onOpen={() => { }} onClose={() => setShown(false)}
+            <SwipeableDrawer anchor='bottom' open={shown} onOpen={() => { }} onClose={() => {
+                readyState.set(false)
+                setCode(undefined)
+                setShown(false)
+            }}
                 disableSwipeToOpen
                 PaperProps={{
                     style: {
@@ -82,6 +80,8 @@ const AppletSheet = () => {
                 {
                     (!code || (code && code?.startsWith('safezone/') && !ready)) ? (
                         <SigmaFab onClick={() => {
+                            readyState.set(false)
+                            setCode(undefined)
                             setShown(false)
                         }} variant="extended" style={{ position: 'absolute', left: '50%', top: 'calc(50% - 16px + 68px)', transform: 'translate(-50%, -50%)' }}>
                             <Close style={{ fill: themeBasedTextColor.get({ noproxy: true }), marginRight: 12 }} />

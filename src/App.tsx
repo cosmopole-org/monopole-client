@@ -26,7 +26,7 @@ import Gallery from './components/pages/gallery';
 import VideoPlayer from './components/pages/videoPlayer';
 import AudioPlayer from './components/pages/audioPlayer';
 import { api, resetApi } from '.';
-import { IconButton, Paper, Typography } from '@mui/material';
+import { CircularProgress, IconButton, Paper, Typography } from '@mui/material';
 import { Close, History } from '@mui/icons-material';
 import 'swiper/css';
 import 'swiper/css/effect-creative';
@@ -46,6 +46,8 @@ import HomePage from './components/pages/home';
 import GooglePicker from './components/custom/components/GooglePicker';
 import Safezone from './components/custom/components/Safezone';
 import IRoom from './api/models/room';
+import SigmaFab from './components/custom/elements/SigmaFab';
+import Overlay from './components/custom/components/Overlay';
 
 let tempInterfaceMode = localStorage.getItem('interfaceMode')
 if (tempInterfaceMode === null) {
@@ -286,7 +288,7 @@ export let switchSwipeable = (val: boolean) => {
     }
 }
 
-const overlaySafezoneData: State<any> = hookstate(undefined)
+export const overlaySafezoneData: State<any> = hookstate(undefined)
 export let openOverlaySafezone = (code: string, workerId: string, room: IRoom) => {
     overlaySafezoneData.set({ code, workerId, room })
 }
@@ -295,7 +297,6 @@ export let closeOverlaySafezone = () => {
 }
 
 function App() {
-    const overlaySafezone = useHookstate(overlaySafezoneData).get({ noproxy: true })
     forceUpdate = useForceUpdate()
     const cr = useHookstate(currentRoute)
     useEffect(() => {
@@ -424,13 +425,7 @@ function App() {
                     </div>
                 </div>
                 <GlobalAppletSheet />
-                {
-                    overlaySafezone ? (
-                        <div style={{ width: '100%', height: '100%', position: 'fixed', left: 0, top: 0, zIndex: 99999 }}>
-                            <Safezone code={overlaySafezone.code} workerId={overlaySafezone.workerId} roomId={overlaySafezone.room.id} towerId={overlaySafezone.room.towerId} />
-                        </div>
-                    ) : null
-                }
+                <Overlay />
                 <div style={{ position: 'absolute', zIndex: 99999 }}>
                     <Toaster />
                 </div>

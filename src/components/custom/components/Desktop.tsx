@@ -12,6 +12,7 @@ import Safezone, { shownFlags } from "./Safezone";
 import IRoom from "../../../api/models/room";
 import { themeColorName } from "../../../App";
 import { openGooglePicker } from "./GooglePicker";
+import { hookstate } from "@hookstate/core";
 
 const ResponsiveReactGridLayout = RGL.WidthProvider(RGL.Responsive);
 
@@ -90,6 +91,8 @@ class DesktopData {
     }
 }
 
+export let readyState = hookstate(false)
+
 const Host = (props: { room: IRoom, desktopKey: string, editMode: boolean, style: any, showDesktop: boolean, onWidgetClick: (workerId: string) => void, onWidgetRemove: (workerId: string) => void }) => {
     const [trigger, setTrigger] = useState(false)
     let desktop = desktops[props.desktopKey]
@@ -115,7 +118,7 @@ const Host = (props: { room: IRoom, desktopKey: string, editMode: boolean, style
                         (document.getElementById(`safezone-${workerId}`) as any)?.contentWindow.postMessage({ key: 'start' }, 'https://safezone.liara.run/')
                         shownFlags[workerId].set(true)
                     }
-                    if (appletsheetOpen && notifyAppletSheetReady) notifyAppletSheetReady()
+                    if (appletsheetOpen) readyState.set(true)
                 } else if (data.key === 'ask') {
                     let packet = data.packet
                     api.services.worker.use({ packet, towerId: props.room.towerId, roomId: props.room.id, workerId: workerId })
