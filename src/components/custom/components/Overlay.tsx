@@ -5,10 +5,19 @@ import { CircularProgress, Paper } from "@mui/material"
 import SigmaFab from "../elements/SigmaFab"
 import { Close } from "@mui/icons-material"
 import { readyState } from "./Desktop"
+import { useEffect } from "react"
+
+export let overlayOpen = false
 
 const Overlay = () => {
     const overlaySafezone = useHookstate(overlaySafezoneData).get({ noproxy: true })
     const ready = useHookstate(readyState).get({ noproxy: true })
+    useEffect(() => {
+        overlayOpen = true
+        return () => {
+            overlayOpen = false
+        }
+    })
     return overlaySafezone ? (
         <div style={{ width: '100%', height: '100%', position: 'fixed', left: 0, top: 0, zIndex: 99999 }}>
             <Safezone code={overlaySafezone.code} workerId={overlaySafezone.workerId} roomId={overlaySafezone.room.id} towerId={overlaySafezone.room.towerId} />
