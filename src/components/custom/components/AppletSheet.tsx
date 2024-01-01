@@ -33,7 +33,7 @@ const AppletSheet = () => {
                 }
             }
             let data = e.data
-            if (workerId) {
+            if (workerId && (workerId === workerIdRef.current)) {
                 if (data.key === 'onLoad') {
                     (document.getElementById(`safezone-${workerId}`) as any)?.contentWindow.postMessage({ key: 'setup', myHumanId: api.memory.myHumanId.get({ noproxy: true }), colorName: themeColorName.get({ noproxy: true }) }, 'https://safezone.liara.run/')
                 } else if (data.key === 'ready') {
