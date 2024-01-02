@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { Card, CircularProgress, Fab, Paper, SwipeableDrawer, Typography } from '@mui/material';
 import AppletHost from './AppletHost';
-import { themeColor, themeColorName, themeColorSecondary } from '../../../App';
+import { themeBasedTextColor, themeColor, themeColorName, themeColorSecondary } from '../../../App';
 import { api } from '../../..';
 import IRoom from '../../../api/models/room';
 import { useHookstate } from '@hookstate/core';
 import Loading from './Loading';
 import useSafezone from '../../hooks/useSafezone';
+import { Close } from '@mui/icons-material';
+import SigmaFab from '../elements/SigmaFab';
 
 let openAppletSheet = (room: IRoom, workerId: string) => { }
 let closeAppletSheet = () => { }
@@ -74,9 +76,28 @@ const AppletSheet = () => {
                 />
                 {
                     !code ? (
-                        <Typography variant='body1' style={{ position: 'absolute', textAlign: 'center', width: '100%', left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}>
-                            Opening Applet...
-                        </Typography>
+                        <div style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}>
+                            <div style={{ width: 'auto', height: 'auto', position: 'relative', padding: 32, alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
+                                <Paper style={{ width: 56, height: 56, borderRadius: '50%', position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
+                                    <CircularProgress style={{ width: '80%', height: '80%', margin: '10%' }} variant="indeterminate" />
+                                </Paper>
+                                <div style={{ width: 56, height: 56 }} />
+                                <Typography variant="body1" style={{ width: 250, textAlign: 'center', marginTop: 12 }}>
+                                    Connecting to Applet...
+                                </Typography>
+                                <SigmaFab
+                                    style={{ marginTop: 32 }}
+                                    onClick={() => {
+                                        setCode(undefined)
+                                        setShown(false)
+                                    }}
+                                    variant="extended"
+                                >
+                                    <Close style={{ fill: themeBasedTextColor.get({ noproxy: true }), marginRight: 12 }} />
+                                    Cancel
+                                </SigmaFab>
+                            </div>
+                        </div>
                     ) : null
                 }
             </SwipeableDrawer>

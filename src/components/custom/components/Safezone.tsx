@@ -4,10 +4,10 @@ import { useHookstate } from "@hookstate/core"
 import useSafezone from "../../hooks/useSafezone"
 import IRoom from "../../../api/models/room"
 import { overlaySafezoneData } from "./Overlay"
-import { themeColorName } from "../../../App"
+import { themeColor, themeColorName } from "../../../App"
 import Loading from "./Loading"
 
-const Safezone = (props: { code: string, machineId?: string, workerId?: string, room?: IRoom, onCancel: () => void }) => {
+const Safezone = (props: { code: string, machineId?: string, workerId?: string, room?: IRoom, onCancel: () => void, overlay?: boolean }) => {
     const safezoneRepo = useSafezone()
     let id = props.room ? props.workerId : props.machineId
     if (!id) id = ''
@@ -35,7 +35,7 @@ const Safezone = (props: { code: string, machineId?: string, workerId?: string, 
             let data = e.data
             if (workerId && (workerId === id)) {
                 if (data.key === 'onLoad') {
-                    (document.getElementById(`safezone-${workerId}`) as any)?.contentWindow.postMessage({ key: 'setup', myHumanId: api.memory.myHumanId.get({ noproxy: true }), colorName: themeColorName.get({ noproxy: true }) }, 'https://safezone.liara.run/')
+                    (document.getElementById(`safezone-${workerId}`) as any)?.contentWindow.postMessage({ key: 'setup', myHumanId: api.memory.myHumanId.get({ noproxy: true }), themeColor: themeColor.get({ noproxy: true }), colorName: themeColorName.get({ noproxy: true }) }, 'https://safezone.liara.run/')
                 } else if (data.key === 'ready') {
                     if (!show) {
                         (document.getElementById(`safezone-${workerId}`) as any)?.contentWindow.postMessage({ key: 'start' }, 'https://safezone.liara.run/')
@@ -97,7 +97,7 @@ const Safezone = (props: { code: string, machineId?: string, workerId?: string, 
             />
             {
                 (!props.code || (props.code && props.code?.startsWith('safezone/') && !ready)) ? (
-                    <Loading key={'safezone-loading'} onCancel={() => {
+                    <Loading overlay={props.overlay} key={'safezone-loading'} onCancel={() => {
                         readyState.set(false)
                         props.onCancel()
                     }} />
