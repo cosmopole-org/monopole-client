@@ -20,7 +20,11 @@ class SafeZoneController {
         return this.safezones[id]
     }
     create(props: { room?: IRoom, id: string }) {
-        this.safezones[props.id] = new SafeZoneUnit(props)
+        if (this.safezones[props.id]) {
+            this.safezones[props.id].reset()
+        } else {
+            this.safezones[props.id] = new SafeZoneUnit(props)
+        }
     }
 }
 
@@ -55,6 +59,7 @@ const useSafezone = () => {
     const accessSafeZoneController = () => {
         return SafeZoneController.instance
     }
+    if (!accessSafeZoneController()) new SafeZoneController()
     useEffect(() => {
         if (!safezoneRunning) {
             const messageCallback = (e: any) => {
@@ -90,7 +95,6 @@ const useSafezone = () => {
                 }
             }
             window.addEventListener('message', messageCallback)
-            new SafeZoneController()
             safezoneRunning = true
         }
     }, [])

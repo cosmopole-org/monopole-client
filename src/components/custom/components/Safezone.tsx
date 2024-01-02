@@ -1,14 +1,15 @@
-import { memo, useEffect } from "react"
+import { memo, useEffect, useRef } from "react"
 import { api } from "../../.."
 import { useHookstate } from "@hookstate/core"
 import useSafezone from "../../hooks/useSafezone"
 import IRoom from "../../../api/models/room"
-import { overlaySafezoneData } from "./Overlay"
+import { overlaySafezoneBack, overlaySafezoneData } from "./Overlay"
 import { themeColor, themeColorName } from "../../../App"
 import Loading from "./Loading"
 
 const Safezone = (props: { code: string, machineId?: string, workerId?: string, room?: IRoom, onCancel: () => void, overlay?: boolean }) => {
     const safezoneRepo = useSafezone()
+    const randomPostFix = useRef(Math.random())
     let id = props.room ? props.workerId : props.machineId
     if (!id) id = ''
     if (!safezoneRepo.accessSafeZoneController().findById(id)) {
@@ -51,6 +52,7 @@ const Safezone = (props: { code: string, machineId?: string, workerId?: string, 
                 } else if (data.key === 'done') {
                     overlaySafezoneData.set(undefined)
                 } else if (data.key === 'onAuthorize') {
+                    overlaySafezoneBack.set(false)
                 }
             }
         }
@@ -92,7 +94,7 @@ const Safezone = (props: { code: string, machineId?: string, workerId?: string, 
                 frameBorder={0}
                 width="100%"
                 height="100%"
-                src={`https://safezone.liara.run/${agentId}?random=${Math.random()}`}
+                src={`https://safezone.liara.run/${agentId}?random=${randomPostFix.current}`}
                 style={{ opacity: show ? 1 : 0, transition: 'opacity 500ms' }}
             />
             {

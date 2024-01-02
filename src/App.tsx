@@ -47,7 +47,7 @@ import GooglePicker from './components/custom/components/GooglePicker';
 import Safezone from './components/custom/components/Safezone';
 import IRoom from './api/models/room';
 import SigmaFab from './components/custom/elements/SigmaFab';
-import Overlay from './components/custom/components/Overlay';
+import Overlay, { overlaySafezoneData } from './components/custom/components/Overlay';
 import useSafezone from './components/hooks/useSafezone';
 
 let tempInterfaceMode = localStorage.getItem('interfaceMode')
@@ -293,6 +293,7 @@ function App() {
     forceUpdate = useForceUpdate()
     const cr = useHookstate(currentRoute)
     const safezone = useSafezone()
+    const overlaySafezone = useHookstate(overlaySafezoneData).get({ noproxy: true })
     useEffect(() => {
         if (historyStack.length > 2) {
             swiper.allowTouchMove = true
@@ -419,7 +420,10 @@ function App() {
                     </div>
                 </div>
                 <GlobalAppletSheet />
-                <Overlay />
+                {
+                    overlaySafezone ? <Overlay /> : null
+
+                }
                 <div style={{ position: 'absolute', zIndex: 99999 }}>
                     <Toaster />
                 </div>
