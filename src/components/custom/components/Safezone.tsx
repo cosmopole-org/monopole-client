@@ -40,6 +40,7 @@ const Safezone = (props: { code: string, machineId?: string, workerId?: string, 
                     if (!show) {
                         (document.getElementById(`safezone-${workerId}`) as any)?.contentWindow.postMessage({ key: 'start' }, 'https://safezone.liara.run/')
                         showState.set(true)
+                        readyState.set(true)
                     }
                 } else if (data.key === 'ask') {
                     let packet = data.packet
@@ -50,7 +51,6 @@ const Safezone = (props: { code: string, machineId?: string, workerId?: string, 
                 } else if (data.key === 'done') {
                     overlaySafezoneData.set(undefined)
                 } else if (data.key === 'onAuthorize') {
-                    readyState.set(true)
                 }
             }
         }
