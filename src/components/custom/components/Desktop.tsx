@@ -4,11 +4,9 @@ import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
 import AppletHost from "./AppletHost";
 import { useEffect, useState } from "react";
-import { appletsheetOpen } from "./AppletSheet";
 import SigmaFab from "../elements/SigmaFab";
 import { Delete } from "@mui/icons-material";
 import { api } from "../../..";
-import Safezone, { shownFlags } from "./Safezone";
 import IRoom from "../../../api/models/room";
 import { themeColorName } from "../../../App";
 import { hookstate } from "@hookstate/core";
@@ -90,44 +88,10 @@ class DesktopData {
     }
 }
 
-export let readyState = hookstate(false)
-
 const Host = (props: { room: IRoom, desktopKey: string, editMode: boolean, style: any, showDesktop: boolean, onWidgetClick: (workerId: string) => void, onWidgetRemove: (workerId: string) => void }) => {
     const [trigger, setTrigger] = useState(false)
     let desktop = desktops[props.desktopKey]
     desktop.onLayoutChangeByCodeInternally((_: RGL.Layouts) => setTrigger(!trigger))
-    useEffect(() => {
-        const messageCallback = (e: any) => {
-            let workerId = undefined
-            let iframes = document.getElementsByTagName('iframe');
-            for (let i = 0, iframe, win; i < iframes.length; i++) {
-                iframe = iframes[i];
-                win = iframe.contentWindow
-                if (win === e.source) {
-                    workerId = iframe.id.substring('safezone-'.length)
-                    break
-                }
-            }
-            let data = e.data
-            if (workerId) {
-                if (data.key === 'onLoad') {
-                    (document.getElementById(`safezone-${workerId}`) as any)?.contentWindow.postMessage({ key: 'setup', myHumanId: api.memory.myHumanId.get({ noproxy: true }), colorName: themeColorName.get({ noproxy: true }) }, 'https://safezone.liara.run/')
-                } else if (data.key === 'ready') {
-                    if (!shownFlags[workerId].get({ noproxy: true })) {
-                        (document.getElementById(`safezone-${workerId}`) as any)?.contentWindow.postMessage({ key: 'start' }, 'https://safezone.liara.run/')
-                        shownFlags[workerId].set(true)
-                    }
-                } else if (data.key === 'ask') {
-                    let packet = data.packet
-                    api.services.worker.use({ packet, towerId: props.room.towerId, roomId: props.room.id, workerId: workerId })
-                }
-            }
-        }
-        window.addEventListener('message', messageCallback)
-        return () => {
-            window.removeEventListener('message', messageCallback)
-        }
-    }, [])
     return (
         <ResponsiveReactGridLayout
             className="layout"
@@ -168,24 +132,17 @@ const Host = (props: { room: IRoom, desktopKey: string, editMode: boolean, style
                 desktop.layouts['lg'].map(item => item.i).map((key, index) => {
                     return (
                         <div key={key} style={{ overflow: 'hidden', borderRadius: 4 }} data-grid={desktop.layouts['xxs'][index]}>
-                            {
-                                (desktop.jsxContent[key] && desktop.jsxContent[key]?.startsWith('safezone/')) ?
-                                    (
-                                        <Safezone code={desktop.jsxContent[key]} workerId={key} roomId={props.room.id} towerId={props.room.towerId} />
-                                    ) : (
-                                        <AppletHost.Host
-                                            appletKey={key}
-                                            onClick={() => props.onWidgetClick(key)}
-                                            entry={desktop.jsxContent[key] ? 'Test' : 'Dummy'}
-                                            code={
-                                                desktop.jsxContent[key] ?
-                                                    desktop.jsxContent[key] :
-                                                    'class Dummy { constructor() {} onMount() {} render() { return "" } }'
-                                            }
-                                            index={index}
-                                        />
-                                    )
-                            }
+                            <AppletHost.Host
+                                appletKey={key}
+                                onClick={() => props.onWidgetClick(key)}
+                                entry={desktop.jsxContent[key] ? 'Test' : 'Dummy'}
+                                code={
+                                    desktop.jsxContent[key] ?
+                                        desktop.jsxContent[key] :
+                                        'class Dummy { constructor() {} onMount() {} render() { return "" } }'
+                                }
+                                index={index}
+                            />
                             {
                                 props.editMode ? (
                                     <SigmaFab

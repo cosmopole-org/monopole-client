@@ -1,20 +1,64 @@
 import { memo, useEffect } from "react"
 import { api } from "../../.."
-import { State, hookstate, useHookstate } from "@hookstate/core"
+import { useHookstate } from "@hookstate/core"
+import useSafezone from "../../hooks/useSafezone"
+import IRoom from "../../../api/models/room"
+import { overlaySafezoneData } from "./Overlay"
+import { themeColorName } from "../../../App"
+import Loading from "./Loading"
 
-export const shownFlags: { [id: string]: State<boolean> } = {}
-
-const Safezone = (props: { code: string, machineId?: string, workerId?: string, towerId?: string, roomId?: string }) => {
-    if (!shownFlags[props.workerId ? props.workerId : props.machineId ? props.machineId : '']) {
-        shownFlags[props.workerId ? props.workerId : props.machineId ? props.machineId : ''] = hookstate(false)
+const Safezone = (props: { code: string, machineId?: string, workerId?: string, room?: IRoom, onCancel: () => void }) => {
+    const safezoneRepo = useSafezone()
+    let id = props.room ? props.workerId : props.machineId
+    if (!id) id = ''
+    if (!safezoneRepo.accessSafeZoneController().findById(id)) {
+        safezoneRepo.accessSafeZoneController().create({ room: props.room, id })
     }
-    const showState = useHookstate(shownFlags[props.workerId ? props.workerId : props.machineId ? props.machineId : ''])
-    const show = showState.get({ noproxy: true })
-    const identifier = `safezone-${props.workerId ? props.workerId : props.machineId}`
+    let safezone = safezoneRepo.accessSafeZoneController().findById(id)
+    const showState = useHookstate(safezone?.shown)
+    const readyState = useHookstate(safezone?.ready)
+    const show = showState?.get({ noproxy: true })
+    const ready = readyState?.get({ noproxy: true })
+    const identifier = props.room ? `safezone-${props.workerId}` : `safezone-${props.machineId}`
     useEffect(() => {
+        const messageCallback = (e: any) => {
+            let workerId = undefined
+            let iframes = document.getElementsByTagName('iframe');
+            for (let i = 0, iframe, win; i < iframes.length; i++) {
+                iframe = iframes[i];
+                win = iframe.contentWindow
+                if (win === e.source) {
+                    workerId = iframe.id.substring('safezone-'.length)
+                    break
+                }
+            }
+            let data = e.data
+            if (workerId && (workerId === id)) {
+                if (data.key === 'onLoad') {
+                    (document.getElementById(`safezone-${workerId}`) as any)?.contentWindow.postMessage({ key: 'setup', myHumanId: api.memory.myHumanId.get({ noproxy: true }), colorName: themeColorName.get({ noproxy: true }) }, 'https://safezone.liara.run/')
+                } else if (data.key === 'ready') {
+                    if (!show) {
+                        (document.getElementById(`safezone-${workerId}`) as any)?.contentWindow.postMessage({ key: 'start' }, 'https://safezone.liara.run/')
+                        showState.set(true)
+                    }
+                } else if (data.key === 'ask') {
+                    let packet = data.packet
+                    if (props.room) {
+                        let wi = workerId.startsWith('desktop-sheet-') ? workerId.substring('desktop-sheet-'.length) : workerId
+                        api.services.worker.use({ packet, towerId: props.room.towerId, roomId: props.room.id, workerId: wi })
+                    }
+                } else if (data.key === 'done') {
+                    overlaySafezoneData.set(undefined)
+                } else if (data.key === 'onAuthorize') {
+                    readyState.set(true)
+                }
+            }
+        }
+        window.addEventListener('message', messageCallback)
         let eventController = api.services.worker.onMachinePacketDeliver(`response-${identifier}`, 'response', (data: any) => {
             if (props.workerId) {
-                if (data.workerId === props.workerId) {
+                let wi = props.workerId.startsWith('desktop-sheet-') ? props.workerId.substring('desktop-sheet-'.length) : props.workerId;
+                if (data.workerId === wi) {
                     (document.getElementById(identifier) as any)?.contentWindow.postMessage({ key: 'response', packet: data }, 'https://safezone.liara.run/')
                 }
             } else {
@@ -23,7 +67,8 @@ const Safezone = (props: { code: string, machineId?: string, workerId?: string, 
         })
         let eventController2 = api.services.worker.onMachinePacketDeliver(`push-${identifier}`, 'push', (data: any) => {
             if (props.workerId) {
-                if (data.workerId === props.workerId) {
+                let wi = props.workerId.startsWith('desktop-sheet-') ? props.workerId.substring('desktop-sheet-'.length) : props.workerId;
+                if (data.workerId === wi) {
                     (document.getElementById(identifier) as any)?.contentWindow.postMessage({ key: 'push', packet: data }, 'https://safezone.liara.run/')
                 }
             } else {
@@ -31,7 +76,8 @@ const Safezone = (props: { code: string, machineId?: string, workerId?: string, 
             }
         })
         return () => {
-            showState.set(false)
+            safezone.reset()
+            window.removeEventListener('message', messageCallback)
             eventController.unregister()
             eventController2.unregister()
         }
@@ -49,6 +95,14 @@ const Safezone = (props: { code: string, machineId?: string, workerId?: string, 
                 src={`https://safezone.liara.run/${agentId}?random=${Math.random()}`}
                 style={{ opacity: show ? 1 : 0, transition: 'opacity 500ms' }}
             />
+            {
+                (!props.code || (props.code && props.code?.startsWith('safezone/') && !ready)) ? (
+                    <Loading key={'safezone-loading'} onCancel={() => {
+                        readyState.set(false)
+                        props.onCancel()
+                    }} />
+                ) : null
+            }
         </div>
     )
 }

@@ -43,18 +43,12 @@ const GlobalAppletSheet = () => {
             >
                 <Card style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', width: 100, height: 6, borderRadius: 3, background: themeColor.get({ noproxy: true })[100], top: 12 }} />
                 <div style={{ width: '100%', height: 32 }} />
-                {
-                    code?.startsWith('safezone/') ? (
-                        <Safezone code={code} machineId={machineIdRef.current} />
-                    ) : (
-                        <AppletHost.Host
-                            appletKey='globalAppletsheet'
-                            entry={code ? 'Test' : 'Dummy'}
-                            code={code ? code : 'class Dummy { constructor() {} onMount() {} render() { return "" } }'}
-                            index={1}
-                        />
-                    )
-                }
+                <AppletHost.Host
+                    appletKey={machineIdRef.current}
+                    entry={code ? 'Test' : 'Dummy'}
+                    code={code ? code : 'class Dummy { constructor() {} onMount() {} render() { return "" } }'}
+                    index={1}
+                />
             </SwipeableDrawer>
         </React.Fragment>
     );

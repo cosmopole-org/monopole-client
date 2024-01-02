@@ -2,6 +2,9 @@ import MwcDriver from "applet-mwc"
 import { useEffect, useRef } from "react"
 import { Applet, Controls } from "applet-vm"
 import Native, { intervalHolder, timeoutHolder } from "./Native"
+import Safezone from "./Safezone"
+import IRoom from "../../../api/models/room"
+import Loading from "./Loading"
 
 let hostLoaded: { [id: string]: boolean } = {}
 
@@ -19,20 +22,23 @@ const unloadAllHosts = () => {
     hostLoaded = {}
 }
 
-const Host = (props: { appletKey: string, code: string, index: number, entry: string, onClick?: () => void }) => {
+const Host = (props: { appletKey: string, code: string, index: number, entry: string, onClick?: () => void, room?: IRoom, onCancel?: () => void }) => {
     const hostContainerrId = `AppletHost:${props.appletKey}`
     const appletRef = useRef(new Applet(props.appletKey))
     const rootRef = useRef(null)
+    const isSafezone = props.code?.startsWith('safezone/')
     useEffect(() => {
         if (props.code) {
-            hostLoaded[props.appletKey] = true
-            appletRef.current.fill(props.code)
-            appletRef.current.setContextBuilder((mod) => new Native(mod, Controls))
-            let root = document.getElementById(hostContainerrId)
-            if (root !== null) {
-                root.innerHTML = ''
-                let driver = new MwcDriver(appletRef.current, root)
-                driver.start(props.entry)
+            if (!isSafezone) {
+                hostLoaded[props.appletKey] = true
+                appletRef.current.fill(props.code)
+                appletRef.current.setContextBuilder((mod) => new Native(mod, Controls))
+                let root = document.getElementById(hostContainerrId)
+                if (root !== null) {
+                    root.innerHTML = ''
+                    let driver = new MwcDriver(appletRef.current, root)
+                    driver.start(props.entry)
+                }
             }
             setTimeout(() => {
                 if (rootRef.current !== null) {
@@ -90,7 +96,19 @@ const Host = (props: { appletKey: string, code: string, index: number, entry: st
                 transition: 'transform .35s'
             }}
             onClick={props.onClick}
-        />
+        >
+            {
+                isSafezone ? (
+                    <Safezone
+                        onCancel={() => props.onCancel && props.onCancel()}
+                        code={props.code}
+                        machineId={props.appletKey}
+                        workerId={props.appletKey}
+                        room={props.room}
+                    />
+                ) : null
+            }
+        </div>
     )
 }
 

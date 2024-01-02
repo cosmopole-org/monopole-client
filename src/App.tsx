@@ -48,6 +48,7 @@ import Safezone from './components/custom/components/Safezone';
 import IRoom from './api/models/room';
 import SigmaFab from './components/custom/elements/SigmaFab';
 import Overlay from './components/custom/components/Overlay';
+import useSafezone from './components/hooks/useSafezone';
 
 let tempInterfaceMode = localStorage.getItem('interfaceMode')
 if (tempInterfaceMode === null) {
@@ -291,6 +292,7 @@ export let switchSwipeable = (val: boolean) => {
 function App() {
     forceUpdate = useForceUpdate()
     const cr = useHookstate(currentRoute)
+    const safezone = useSafezone()
     useEffect(() => {
         if (historyStack.length > 2) {
             swiper.allowTouchMove = true
