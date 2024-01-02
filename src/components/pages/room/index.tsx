@@ -5,7 +5,7 @@ import { Divider, Paper, Typography } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { SigmaRouter, interfaceMode, themeColor, themeColorName } from '../../../App';
 import SliderPage from '../../layouts/SliderPage';
-import { Forum, Inbox, KeyboardCommandKey, Message, People } from '@mui/icons-material';
+import { Edit, Forum, Inbox, Info, KeyboardCommandKey, Message, People, SmartToy } from '@mui/icons-material';
 import RoomControl from '../../custom/components/RoomControl';
 import Desk, { addWidgetToSDesktop, desktopEditMode } from '../../tabs/Desk';
 import IRoom from '../../../api/models/room';
@@ -148,22 +148,22 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
               }}>
                 <KeyboardCommandKey />
               </SigmaFab>
-              <Divider orientation='vertical' style={{ width: 1, height: 48, margin: 4, marginTop: 8 }} />
               <SigmaFab style={{ margin: 4 }} onClick={() => {
-                SigmaRouter.navigate('inbox')
+                desktopEditMode.set(!desktopEditMode.get({ noproxy: true }))
               }}>
-                <Inbox />
+                <Edit />
               </SigmaFab>
               <SigmaFab style={{ margin: 4 }} onClick={() => {
-                SigmaRouter.navigate('chats')
+                setShowRoomControl(false)
+                setShowMachineBox(true)
               }}>
-                <Forum />
+                <SmartToy />
               </SigmaFab>
-              <SigmaAvatar style={{ margin: 8, width: 48, height: 48 }} onClick={() => {
-                SigmaRouter.navigate('settings')
+              <SigmaFab style={{ margin: 4 }} onClick={() => {
+                
               }}>
-                {myUser.firstName.substring(0, 1)}
-              </SigmaAvatar>
+                <Info />
+              </SigmaFab>
             </Paper>
           )
         }
@@ -175,15 +175,6 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
             <MetaNonTouch container={containerRef.current} needToCloseRecorder={needToCloseRecorder} room={props.room} onClose={() => { closeMeta(true); }} />
           )
         }
-        <RoomControl
-          onClose={() => setShowRoomControl(false)}
-          shown={showRoomControl}
-          toggleEditMode={(v) => desktopEditMode.set(v)}
-          openToolbox={() => {
-            setShowRoomControl(false)
-            setShowMachineBox(true)
-          }}
-        />
         <MachineBox
           createWorker={(machineId: string) => addWidgetToSDesktop(props.room, machineId)}
           onClose={() => setShowMachineBox(false)}

@@ -6,6 +6,7 @@ import SigmaAvatar from "../custom/elements/SigmaAvatar"
 import { api } from "../.."
 import { useHookstate } from "@hookstate/core"
 import { recentSpace } from "../pages/call"
+import HomeMenu from "../custom/components/HomeMenu"
 
 const statusbarHeight = () => 40
 const LeftControlTypes = {
@@ -118,13 +119,7 @@ const StatusBar = () => {
                                 </Badge>
                             </IconButton>
                         ) : ((SigmaRouter.topPath() === 'main') && isOs) ? (
-                            <IconButton size={'small'} style={{ width: 32, height: 32, borderRadius: '50%', position: 'absolute', top: 4, left: 16 + 32 }}
-                                onClick={() => {
-                                    SigmaRouter.navigate('explore')
-                                }}
-                            >
-                                <Explore style={{ fill: themeBasedTextColor.get({ noproxy: true }) }} />
-                            </IconButton>
+                            <HomeMenu style={{ position: 'absolute', left: 24 }} />
                         ) : null
                 }
                 <Typography

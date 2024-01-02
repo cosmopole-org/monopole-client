@@ -10,14 +10,19 @@ let hostLoaded: { [id: string]: boolean } = {}
 
 const unloadAllHosts = () => {
     Object.keys(hostLoaded).forEach(key => {
-        Object.values(intervalHolder[key]).forEach(interval => {
-            clearInterval(interval)
-        })
-        delete intervalHolder[key]
-        Object.values(timeoutHolder[key]).forEach(timeout => {
-            clearTimeout(timeout)
-        })
-        delete timeoutHolder[key]
+        if (intervalHolder[key]) {
+            Object.values(intervalHolder[key]).forEach(interval => {
+                clearInterval(interval)
+            })
+            delete intervalHolder[key]
+        }
+        if (timeoutHolder[key]) {
+            Object.values(timeoutHolder[key]).forEach(timeout => {
+                clearTimeout(timeout)
+            })
+            delete timeoutHolder[key]
+        }
+        delete hostLoaded[key]
     })
     hostLoaded = {}
 }
