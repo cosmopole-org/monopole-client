@@ -1,12 +1,10 @@
 
-import './index.css';
 import { LeftControlTypes, RightControlTypes, StatusThemes, switchColor, switchLeftControl, switchRightControl, switchTitle } from '../../sections/StatusBar';
-import { Divider, Paper, Typography } from '@mui/material';
+import { Paper, Typography } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { SigmaRouter, interfaceMode, themeColor, themeColorName } from '../../../App';
 import SliderPage from '../../layouts/SliderPage';
-import { Edit, Forum, Inbox, Info, KeyboardCommandKey, Message, People, SmartToy } from '@mui/icons-material';
-import RoomControl from '../../custom/components/RoomControl';
+import { Edit, Info, KeyboardCommandKey, Message, People, SmartToy } from '@mui/icons-material';
 import Desk, { addWidgetToSDesktop, desktopEditMode } from '../../tabs/Desk';
 import IRoom from '../../../api/models/room';
 import MachineBox from '../../custom/components/MachineBox';
@@ -20,12 +18,9 @@ import MetaTouch from './metaTouch';
 import { useHookstate } from '@hookstate/core';
 import { api } from '../../..';
 import RoomWallpaper from '../../../resources/images/room.jpg';
-import SigmaAvatar from '../../custom/elements/SigmaAvatar';
 
 const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
-  const myUser = api.memory.humans.get({ noproxy: true })[api.memory.myHumanId.get({ noproxy: true })];
   const containerRef: any = useRef(null)
-  const [showRoomControl, setShowRoomControl] = useState(false)
   const [showMachineBox, setShowMachineBox] = useState(false)
   const wallpaperContainerRef = useRef(null)
   const isMetaOpen = useRef(false);
@@ -131,7 +126,7 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
               <People />
             </SigmaFab>,
             <SigmaFab size={'medium'} style={{ position: 'absolute', bottom: 16, right: 16 + 56, zIndex: 1 }} onClick={() => {
-              setShowRoomControl(true)
+              
             }}>
               <KeyboardCommandKey />
             </SigmaFab>
@@ -144,7 +139,7 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
                 <People />
               </SigmaFab>
               <SigmaFab style={{ margin: 4 }} onClick={() => {
-                setShowRoomControl(true)
+
               }}>
                 <KeyboardCommandKey />
               </SigmaFab>
@@ -154,7 +149,6 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
                 <Edit />
               </SigmaFab>
               <SigmaFab style={{ margin: 4 }} onClick={() => {
-                setShowRoomControl(false)
                 setShowMachineBox(true)
               }}>
                 <SmartToy />

@@ -3,13 +3,10 @@ import * as RGL from "react-grid-layout";
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
 import AppletHost from "./AppletHost";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import SigmaFab from "../elements/SigmaFab";
 import { Delete } from "@mui/icons-material";
-import { api } from "../../..";
 import IRoom from "../../../api/models/room";
-import { themeColorName } from "../../../App";
-import { hookstate } from "@hookstate/core";
 
 const ResponsiveReactGridLayout = RGL.WidthProvider(RGL.Responsive);
 
@@ -95,8 +92,7 @@ const Host = (props: { room: IRoom, desktopKey: string, editMode: boolean, style
     return (
         <ResponsiveReactGridLayout
             className="layout"
-            style={{ ...props.style, minWidth: window.innerWidth + 'px', display: props.showDesktop ? 'block' : 'hidden', paddingBottom: 200 }}
-            breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+            style={{ ...props.style, minWidth: window.innerWidth + 'px', display: props.showDesktop ? 'block' : 'hidden', paddingBottom: 200, paddingTop: 56 }}
             cols={{ lg: 14, md: 12, sm: 10, xs: 6, xxs: 4 }}
             rowHeight={8}
             width={props.style.width}
@@ -104,6 +100,7 @@ const Host = (props: { room: IRoom, desktopKey: string, editMode: boolean, style
             isDraggable={props.editMode}
             isResizable={props.editMode}
             draggableCancel=".cancelSelectorName"
+            breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
             onLayoutChange={(currentLayout: RGL.Layout[], layouts: RGL.Layouts) => {
                 let updates: Array<any> = []
                 const oldLayouts = desktop.layouts
@@ -129,9 +126,9 @@ const Host = (props: { room: IRoom, desktopKey: string, editMode: boolean, style
             }}
         >
             {
-                desktop.layouts['lg'].map(item => item.i).map((key, index) => {
+                desktop.layouts[window.innerWidth >= 1200 ? 'lg' : window.innerWidth >= 996 ? 'md' : window.innerWidth >= 768 ? 'sm' : window.innerWidth >= 480 ? 'xs' : 'xxs'].map(item => item.i).map((key, index) => {
                     return (
-                        <div key={key} style={{ overflow: 'hidden', borderRadius: 4 }} data-grid={desktop.layouts['xxs'][index]}>
+                        <div key={key} style={{ overflow: 'hidden', borderRadius: 4 }} data-grid={desktop.layouts[window.innerWidth >= 1200 ? 'lg' : window.innerWidth >= 996 ? 'md' : window.innerWidth >= 768 ? 'sm' : window.innerWidth >= 480 ? 'xs' : 'xxs'][index]}>
                             <AppletHost.Host
                                 appletKey={key}
                                 onClick={() => props.onWidgetClick(key)}

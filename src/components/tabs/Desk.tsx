@@ -5,9 +5,15 @@ import useDesk from "../hooks/useDesk";
 import { api } from "../..";
 import { hookstate, useHookstate } from "@hookstate/core";
 import { openAppletSheet } from "../custom/components/AppletSheet";
-import { switchSwipeable, themeColor, themeColorName, themeColorSecondary } from "../../App";
+import { forceUpdate, switchSwipeable, themeColor, themeColorName, themeColorSecondary } from "../../App";
 import AppHostUtils from '../custom/components/AppletHost';
 import { overlaySafezoneData } from "../custom/components/Overlay";
+
+let sizeKey = window.innerWidth >= 1200 ? 'lg' : window.innerWidth >= 996 ? 'md' : window.innerWidth >= 768 ? 'sm' : window.innerWidth >= 480 ? 'xs' : 'xxs'
+window.onresize = () => {
+    sizeKey = window.innerWidth >= 1200 ? 'lg' : window.innerWidth >= 996 ? 'md' : window.innerWidth >= 768 ? 'sm' : window.innerWidth >= 480 ? 'xs' : 'xxs'
+    forceUpdate()
+}
 
 let cachedWorkers: Array<any> = []
 
@@ -20,7 +26,6 @@ let saveLayouts = (layouts: ReactGridLayout.Layouts) => {
         let anyNew = false
         Object.keys(layouts).forEach(layoutKey => {
             let item = layouts[layoutKey].filter(item => item.i === itemId)[0]
-            console.log(worker, item, workersDict)
             if (
                 worker && (
                     worker.secret.grid[layoutKey].x !== item.x ||
@@ -60,7 +65,7 @@ let desktop: any = undefined
 export const addWidgetToSDesktop = (room: any, machineId: string) => {
     let workersMax = 0
     if (cachedWorkers.length > 0) {
-        workersMax = Math.max(...cachedWorkers.map(w => w.secret.grid.xxs.y + w.secret.grid.xxs.h)) + 1
+        workersMax = Math.max(...cachedWorkers.map(w => w.secret.grid[sizeKey].y + w.secret.grid[sizeKey].h)) + 1
     }
     api.services.worker.create({
         towerId: room.towerId, roomId: room.id, machineId: machineId,
@@ -109,7 +114,7 @@ const Desk = (props: { show: boolean, room: any }) => {
                 if (!desktop.appletExists(data.workerId)) {
                     let gridData = cachedWorkers.filter(w => w.id === data.workerId)[0]?.secret?.grid
                     if (gridData) {
-                        desktop.addWidget({ id: data.workerId, jsxCode: data.code, gridData: gridData.xxs })
+                        desktop.addWidget({ id: data.workerId, jsxCode: data.code, gridData: gridData[sizeKey] })
                     }
                 } else {
                     desktop.updateWidget(data.workerId, data.code)
@@ -129,7 +134,7 @@ const Desk = (props: { show: boolean, room: any }) => {
             if (!desktop.appletExists(data.workerId)) {
                 let gridData = cachedWorkers.filter(w => w.id === data.workerId)[0]?.secret?.grid
                 if (gridData) {
-                    desktop.addWidget({ id: data.workerId, jsxCode: data.code, gridData: gridData.xxs })
+                    desktop.addWidget({ id: data.workerId, jsxCode: data.code, gridData: gridData[sizeKey] })
                 }
             } else {
                 desktop.updateWidget(data.workerId, data.code)
@@ -152,11 +157,11 @@ const Desk = (props: { show: boolean, room: any }) => {
     }, [])
     return (
         <div
-            style={{ width: '100%', height: 'calc(100% - 24px)', position: 'absolute', left: props.show ? 0 : '-100%', paddingTop: 24 }}
+            style={{ width: '100%', height: '100%' }}
         >
             <div
                 ref={desktopWrapperRef}
-                style={{ width: '100%', height: '100%', position: 'relative', overflowY: 'auto', paddingTop: 32 }}
+                style={{ width: '100%', height: '100%', position: 'relative', overflowY: 'auto' }}
             >
                 <Desktop.Host
                     room={props.room}

@@ -69,7 +69,7 @@ const useForceUpdate = () => {
     return () => setValue(value => ++value); // update the state to force render
 }
 
-let forceUpdate = () => { };
+export let forceUpdate = () => { };
 const currentRoute = hookstate('')
 
 export const fixedNightColor = {
