@@ -81,14 +81,6 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
   return (
     <SliderPage id={props.id}>
       <div style={{ width: '100%', height: '100%' }} ref={containerRef}>
-        <div key={'room-background'} style={{ background: `url(${RoomWallpaper})`, width: '100%', height: '100%', position: 'absolute', left: 0, top: 0 }} ref={wallpaperContainerRef} />
-        <div key={'room-background-overlay'} style={{
-          opacity: themeColorName.get({ noproxy: true }) === 'night' ? 0.85 : 0.65,
-          backgroundColor: themeColorName.get({ noproxy: true }) === 'night' ?
-            themeColor.get({ noproxy: true })[500] :
-            themeColor.get({ noproxy: true })[200],
-          width: '100%', height: '100%', position: 'absolute', left: 0, top: 0
-        }} />
         <Desk show={true} room={props.room} />
         {
           isOs ?

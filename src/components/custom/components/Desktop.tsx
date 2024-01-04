@@ -92,7 +92,7 @@ const Host = (props: { room: IRoom, desktopKey: string, editMode: boolean, style
     return (
         <ResponsiveReactGridLayout
             className="layout"
-            style={{ ...props.style, minWidth: window.innerWidth + 'px', display: props.showDesktop ? 'block' : 'hidden', paddingBottom: 200, paddingTop: 56 }}
+            style={{ ...props.style, minWidth: window.innerWidth + 'px', display: props.showDesktop ? 'block' : 'hidden', paddingBottom: 200 }}
             cols={{ lg: 14, md: 12, sm: 10, xs: 6, xxs: 4 }}
             rowHeight={8}
             width={props.style.width}

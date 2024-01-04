@@ -1,7 +1,7 @@
 import { Paper } from "@mui/material"
 import { SigmaRouter, themeColor } from "../../../App"
 import { LeftControlTypes, RightControlTypes, statusbarHeight, switchLeftControl, switchRightControl, switchTitle } from "../../sections/StatusBar"
-import React, { memo, useEffect, useRef, useState } from "react";
+import React, { memo, useEffect, useId, useRef, useState } from "react";
 import { Peer } from "peerjs";
 import { State, hookstate, useHookstate } from "@hookstate/core";
 import { api } from "../../..";
@@ -686,6 +686,7 @@ const Call = (props: { id: string, isOnTop: boolean, human: IHuman, room: IRoom 
                         }
                         return (
                             <Paper
+                                key={'call-block-' + useId}
                                 style={{
                                     margin: 8,
                                     width: width,

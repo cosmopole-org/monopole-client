@@ -1,13 +1,15 @@
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, Paper } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import Desktop from '../custom/components/Desktop';
 import useDesk from "../hooks/useDesk";
 import { api } from "../..";
 import { hookstate, useHookstate } from "@hookstate/core";
 import { openAppletSheet } from "../custom/components/AppletSheet";
-import { forceUpdate, switchSwipeable, themeColor, themeColorName, themeColorSecondary } from "../../App";
+import { darkWallpapers, forceUpdate, lightWallpapers, switchSwipeable, themeColor, themeColorName, themeColorSecondary } from "../../App";
 import AppHostUtils from '../custom/components/AppletHost';
 import { overlaySafezoneData } from "../custom/components/Overlay";
+import Earth from '../../resources/images/earth.png';
+import SigmaAvatar from "../custom/elements/SigmaAvatar";
 
 let sizeKey = window.innerWidth >= 1200 ? 'lg' : window.innerWidth >= 996 ? 'md' : window.innerWidth >= 768 ? 'sm' : window.innerWidth >= 480 ? 'xs' : 'xxs'
 window.onresize = () => {
@@ -91,6 +93,7 @@ const Desk = (props: { show: boolean, room: any }) => {
     const [loadDesktop, setLoadDesktop] = useState(false)
     const editMode = useHookstate(desktopEditMode).get({ noproxy: true })
     const metadataRef: any = useRef({})
+    const headerRef = useRef(null)
     const DesktopHolder = useDesk(
         props.show,
         editMode,
@@ -155,52 +158,74 @@ const Desk = (props: { show: boolean, room: any }) => {
             cachedWorkers = []
         }
     }, [])
+
+    const tower: any = useHookstate(api.memory.spaces).get({ noproxy: true })[props.room.towerId]
+    if (tower.wallpaper === undefined) {
+        let wallpapers = themeColorName.get({ noproxy: true }) === 'night' ? darkWallpapers : lightWallpapers
+        tower.wallpaper = wallpapers[Math.floor(Math.random() * wallpapers.length)]
+    }
     return (
         <div
-            style={{ width: '100%', height: '100%' }}
+            style={{ width: '100%', height: '100%', position: 'relative' }}
         >
+            <img ref={headerRef} style={{ width: '100%', position: 'absolute', left: 0, top: 0 }} src={tower.wallpaper} alt={'header'} />
             <div
                 ref={desktopWrapperRef}
                 style={{ width: '100%', height: '100%', position: 'relative', overflowY: 'auto' }}
             >
-                <Desktop.Host
-                    room={props.room}
-                    showDesktop={loadDesktop}
-                    editMode={editMode}
-                    style={{ width: window.innerWidth }}
-                    desktopKey={desktop.key}
-                    onWidgetClick={(workerId: string) => {
-                        let onClickOfMetadata = metadataRef.current[workerId]?.onClick
-                        if (onClickOfMetadata) {
-                            overlaySafezoneData.set({ code: onClickOfMetadata.code, workerId, room: props.room })
-                        } else {
-                            openAppletSheet(props.room, workerId)
-                        }
-                    }}
-                    onWidgetRemove={(workerId: string) => {
-                        if (window.confirm('do you to delete this widget ?')) {
-                            api.services.worker.remove({ towerId: props.room.towerId, roomId: props.room.id, workerId }).then((body: any) => {
-                                cachedWorkers = cachedWorkers.filter(w => w.id !== workerId)
-                                desktop.removeWidget(workerId)
-                            })
-                        }
-                    }}
-                />
-                {
-                    loadDesktop ?
-                        null : (
-                            <div style={{ width: '100%', height: '100%', position: 'absolute', left: '50%', top: 'calc(50% - 32px)', transform: 'translate(-50%, -50%)' }}>
-                                <CircularProgress style={{
-                                    width: 40,
-                                    height: 40,
-                                    position: 'absolute',
-                                    left: 'calc(50% - 16px)',
-                                    top: 'calc(50% - 16px)',
-                                    transform: 'translate(-50%, -50%)'
-                                }} />
-                            </div>
-                        )
-                }
+                <div ref={headerRef} style={{ width: '100%', height: 176 }} />
+                <Paper style={{
+                    backgroundColor: themeColorName.get({ noproxy: true }) === 'night' ?
+                        themeColor.get({ noproxy: true })[200] :
+                        themeColor.get({ noproxy: true })[200],
+                    borderRadius: '24px 24px 0px 0px',
+                    width: '100%', height: 'auto',
+                    minHeight: '100%',
+                    marginTop: 16,
+                    paddingTop: 16
+                }}>
+                    <Paper style={{ borderRadius: '50%', width: 88, height: 88, marginLeft: 'auto', marginRight: 'auto', marginTop: -64, position: 'relative', zIndex: 2 }}>
+                        <img style={{ margin: '10%', width: '80%', height: '80%', borderRadius: '50%' }} src={Earth} />
+                    </Paper>
+                    <Desktop.Host
+                        room={props.room}
+                        showDesktop={loadDesktop}
+                        editMode={editMode}
+                        style={{ width: window.innerWidth }}
+                        desktopKey={desktop.key}
+                        onWidgetClick={(workerId: string) => {
+                            let onClickOfMetadata = metadataRef.current[workerId]?.onClick
+                            if (onClickOfMetadata) {
+                                overlaySafezoneData.set({ code: onClickOfMetadata.code, workerId, room: props.room })
+                            } else {
+                                openAppletSheet(props.room, workerId)
+                            }
+                        }}
+                        onWidgetRemove={(workerId: string) => {
+                            if (window.confirm('do you to delete this widget ?')) {
+                                api.services.worker.remove({ towerId: props.room.towerId, roomId: props.room.id, workerId }).then((body: any) => {
+                                    cachedWorkers = cachedWorkers.filter(w => w.id !== workerId)
+                                    desktop.removeWidget(workerId)
+                                })
+                            }
+                        }}
+                    />
+                    {
+                        loadDesktop ?
+                            null : (
+                                <div style={{ width: '100%', height: '100%', position: 'absolute', left: '50%', top: 'calc(50% - 32px)', transform: 'translate(-50%, -50%)' }}>
+                                    <CircularProgress style={{
+                                        width: 40,
+                                        height: 40,
+                                        position: 'absolute',
+                                        left: 'calc(50% - 16px)',
+                                        top: 'calc(50% - 16px)',
+                                        transform: 'translate(-50%, -50%)'
+                                    }} />
+                                </div>
+                            )
+                    }
+                </Paper>
             </div>
         </div>
     )

@@ -3,7 +3,7 @@ import { api } from "../../.."
 import { useHookstate } from "@hookstate/core"
 import useSafezone from "../../hooks/useSafezone"
 import IRoom from "../../../api/models/room"
-import { overlaySafezoneBack, overlaySafezoneData } from "./Overlay"
+import { overlaySafezoneData } from "./Overlay"
 import { themeColor, themeColorName } from "../../../App"
 import Loading from "./Loading"
 
@@ -41,7 +41,6 @@ const Safezone = (props: { code: string, machineId?: string, workerId?: string, 
                     if (!show) {
                         (document.getElementById(`safezone-${workerId}`) as any)?.contentWindow.postMessage({ key: 'start' }, 'https://safezone.liara.run/')
                         showState.set(true)
-                        readyState.set(true)
                     }
                 } else if (data.key === 'ask') {
                     let packet = data.packet
@@ -52,7 +51,7 @@ const Safezone = (props: { code: string, machineId?: string, workerId?: string, 
                 } else if (data.key === 'done') {
                     overlaySafezoneData.set(undefined)
                 } else if (data.key === 'onAuthorize') {
-                    overlaySafezoneBack.set(false)
+                    readyState.set(true)
                 }
             }
         }

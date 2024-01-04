@@ -2,29 +2,13 @@ import { IconButton, Paper, Typography } from "@mui/material"
 import { useEffect, useLayoutEffect, useRef, useState } from "react"
 import TowerCard from "./TowerCard"
 import { statusbarHeight } from "../../sections/StatusBar"
-import { SigmaRouter, themeColor, themeColorName } from "../../../App"
+import { SigmaRouter, darkWallpapers, lightWallpapers, themeColor, themeColorName } from "../../../App"
 import { SigmaTab, SigmaTabs } from "../elements/SigmaTabs"
 import { Add, AllInbox, AllOut, Edit, FamilyRestroom, Folder, Games, LocationCity, People, Work } from "@mui/icons-material"
 import { api } from "../../.."
 import SigmaFab from "../elements/SigmaFab"
 import { useHookstate } from "@hookstate/core"
 import HumanTag from "./HumanTag"
-
-const darkWallpapers = [
-    'https://i.pinimg.com/564x/85/38/d0/8538d0c0cc4ef43eaaccfca3060ad2db.jpg',
-    'https://i.pinimg.com/564x/6f/17/b6/6f17b6acf760db99cb3a0515798937ac.jpg',
-    'https://i.pinimg.com/564x/16/ea/2a/16ea2abe1d973acfdcbfe0e411fa7ed1.jpg',
-    'https://i.pinimg.com/564x/6b/64/10/6b6410ec170a6447823a7c606f389dda.jpg',
-    'https://i.pinimg.com/564x/c8/fb/d9/c8fbd9f8e240be49465781c734219789.jpg'
-]
-
-const lightWallpapers = [
-    'https://i.pinimg.com/564x/8c/0a/f5/8c0af58e75fb51ded414e430425c04dd.jpg',
-    'https://i.pinimg.com/564x/12/15/c1/1215c1d4a2d7271cf1209b703bbb3b34.jpg',
-    'https://i.pinimg.com/564x/98/4a/a1/984aa1708a8304e958360c6275712a1d.jpg',
-    'https://i.pinimg.com/564x/b5/70/68/b57068e5e9bfee48dc07eb73a4736f76.jpg',
-    'https://i.pinimg.com/564x/ca/1b/be/ca1bbeb87e3ab7c32c7846df9cdef545.jpg'
-]
 
 let cachedActiveTab: string | undefined = undefined, cachedPageType: string = 'home'
 
