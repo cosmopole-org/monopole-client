@@ -7,8 +7,15 @@ import { useState } from "react";
 import SigmaFab from "../elements/SigmaFab";
 import { Delete } from "@mui/icons-material";
 import IRoom from "../../../api/models/room";
+import { forceUpdate } from "../../../App";
 
 const ResponsiveReactGridLayout = RGL.WidthProvider(RGL.Responsive);
+export const columnsDict: { [id: string]: number } = { lg: 14, md: 12, sm: 10, xs: 6, xxs: 4 }
+export let sizeKey = window.innerWidth >= 1200 ? 'lg' : window.innerWidth >= 996 ? 'md' : window.innerWidth >= 768 ? 'sm' : window.innerWidth >= 480 ? 'xs' : 'xxs'
+window.onresize = () => {
+    sizeKey = window.innerWidth >= 1200 ? 'lg' : window.innerWidth >= 996 ? 'md' : window.innerWidth >= 768 ? 'sm' : window.innerWidth >= 480 ? 'xs' : 'xxs'
+    forceUpdate()
+}
 
 let desktops: { [id: string]: DesktopData } = {}
 
@@ -85,7 +92,7 @@ class DesktopData {
     }
 }
 
-const Host = (props: { room: IRoom, desktopKey: string, editMode: boolean, style: any, showDesktop: boolean, onWidgetClick: (workerId: string) => void, onWidgetRemove: (workerId: string) => void }) => {
+const Host = (props: { workersDict: { [id: string]: any }, room: IRoom, desktopKey: string, editMode: boolean, style: any, showDesktop: boolean, onWidgetClick: (workerId: string) => void, onWidgetRemove: (workerId: string) => void }) => {
     const [trigger, setTrigger] = useState(false)
     let desktop = desktops[props.desktopKey]
     desktop.onLayoutChangeByCodeInternally((_: RGL.Layouts) => setTrigger(!trigger))
@@ -94,7 +101,7 @@ const Host = (props: { room: IRoom, desktopKey: string, editMode: boolean, style
             className="layout"
             style={{ ...props.style, minWidth: window.innerWidth + 'px', display: props.showDesktop ? 'block' : 'hidden', paddingBottom: 200 }}
             cols={{ lg: 14, md: 12, sm: 10, xs: 6, xxs: 4 }}
-            rowHeight={8}
+            rowHeight={window.innerWidth / columnsDict[sizeKey] - 16}
             width={props.style.width}
             layouts={structuredClone(desktop.layouts)}
             isDraggable={props.editMode}
