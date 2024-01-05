@@ -7,7 +7,7 @@ import { overlaySafezoneData } from "./Overlay"
 import { themeColor, themeColorName } from "../../../App"
 import Loading from "./Loading"
 
-const Safezone = (props: { code: string, machineId?: string, workerId?: string, room?: IRoom, onCancel: () => void, overlay?: boolean }) => {
+const Safezone = (props: { isWidget?: boolean, code: string, machineId?: string, workerId?: string, room?: IRoom, onCancel: () => void, overlay?: boolean }) => {
     const safezoneRepo = useSafezone()
     const randomPostFix = useRef(Math.random())
     let id = props.room ? props.workerId : props.machineId
@@ -98,7 +98,7 @@ const Safezone = (props: { code: string, machineId?: string, workerId?: string, 
             />
             {
                 (!props.code || (props.code && props.code?.startsWith('safezone/') && !ready)) ? (
-                    <Loading overlay={props.overlay} key={'safezone-loading'} onCancel={() => {
+                    <Loading isWidget={props.isWidget} overlay={props.overlay} key={'safezone-loading'} onCancel={() => {
                         readyState.set(false)
                         props.onCancel()
                     }} />

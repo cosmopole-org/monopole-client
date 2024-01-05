@@ -27,7 +27,7 @@ const unloadAllHosts = () => {
     hostLoaded = {}
 }
 
-const Host = (props: { appletKey: string, code: string, index: number, entry: string, onClick?: () => void, room?: IRoom, onCancel?: () => void, overlay?: boolean }) => {
+const Host = (props: { isWidget?: boolean, appletKey: string, code: string, index: number, entry: string, onClick?: () => void, room?: IRoom, onCancel?: () => void, overlay?: boolean }) => {
     const hostContainerrId = `AppletHost:${props.appletKey}`
     const appletRef = useRef(new Applet(props.appletKey))
     const rootRef = useRef(null)
@@ -105,6 +105,7 @@ const Host = (props: { appletKey: string, code: string, index: number, entry: st
             {
                 isSafezone ? (
                     <Safezone
+                        isWidget={props.isWidget}
                         overlay={props.overlay}
                         onCancel={() => props.onCancel && props.onCancel()}
                         code={props.code}

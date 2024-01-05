@@ -83,15 +83,16 @@ export const addWidgetToSDesktop = (room: any, machineId: string) => {
     if (cachedWorkers.length > 0) {
         workersMax = Math.max(...cachedWorkers.map(w => w.secret.grid[sizeKey].y + w.secret.grid[sizeKey].h)) + 1
     }
+    let unit = window.innerWidth / columnsDict[sizeKey] - 16
     api.services.worker.create({
         towerId: room.towerId, roomId: room.id, machineId: machineId,
         secret: {
             grid: {
-                lg: { x: 0, y: workersMax, w: 2, h: 2 },
-                md: { x: 0, y: workersMax, w: 2, h: 2 },
-                sm: { x: 0, y: workersMax, w: 2, h: 2 },
-                xs: { x: 0, y: workersMax, w: 2, h: 2 },
-                xxs: { x: 0, y: workersMax, w: 2, h: 2 }
+                lg: { x: 0, y: workersMax, w: 2, h: unit / 8 },
+                md: { x: 0, y: workersMax, w: 2, h: unit / 8 },
+                sm: { x: 0, y: workersMax, w: 2, h: unit / 8 },
+                xs: { x: 0, y: workersMax, w: 2, h: unit / 8 },
+                xxs: { x: 0, y: workersMax, w: 2, h: unit / 8 }
             }
         }
     }).then((body: any) => {

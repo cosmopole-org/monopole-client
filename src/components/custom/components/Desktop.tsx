@@ -101,7 +101,7 @@ const Host = (props: { workersDict: { [id: string]: any }, room: IRoom, desktopK
             className="layout"
             style={{ ...props.style, minWidth: window.innerWidth + 'px', display: props.showDesktop ? 'block' : 'hidden', paddingBottom: 200 }}
             cols={{ lg: 14, md: 12, sm: 10, xs: 6, xxs: 4 }}
-            rowHeight={window.innerWidth / columnsDict[sizeKey] - 16}
+            rowHeight={8}
             width={props.style.width}
             layouts={structuredClone(desktop.layouts)}
             isDraggable={props.editMode}
@@ -137,6 +137,7 @@ const Host = (props: { workersDict: { [id: string]: any }, room: IRoom, desktopK
                     return (
                         <div key={key} style={{ overflow: 'hidden', borderRadius: 4 }} data-grid={desktop.layouts[window.innerWidth >= 1200 ? 'lg' : window.innerWidth >= 996 ? 'md' : window.innerWidth >= 768 ? 'sm' : window.innerWidth >= 480 ? 'xs' : 'xxs'][index]}>
                             <AppletHost.Host
+                                isWidget
                                 appletKey={key}
                                 onClick={() => props.onWidgetClick(key)}
                                 entry={desktop.jsxContent[key] ? 'Test' : 'Dummy'}
