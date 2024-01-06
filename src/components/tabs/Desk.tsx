@@ -1,6 +1,6 @@
 import { CircularProgress, Paper, Typography } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
-import Desktop, { columnsDict, sizeKey } from '../custom/components/Desktop';
+import Desktop, { columnsDict, rowHeight, sizeKey } from '../custom/components/Desktop';
 import useDesk from "../hooks/useDesk";
 import { api } from "../..";
 import { hookstate, useHookstate } from "@hookstate/core";
@@ -71,7 +71,7 @@ const measureWidgetSize = (worker: any) => {
         w: worker.secret.grid[sizeKey].w,
         width: worker.secret.grid[sizeKey].w * unit,
         h: worker.secret.grid[sizeKey].h,
-        height: worker.secret.grid[sizeKey].h * unit
+        height: worker.secret.grid[sizeKey].h * rowHeight
     }
     return widSize
 }

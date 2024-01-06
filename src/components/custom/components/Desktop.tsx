@@ -10,6 +10,7 @@ import IRoom from "../../../api/models/room";
 import { forceUpdate } from "../../../App";
 
 const ResponsiveReactGridLayout = RGL.WidthProvider(RGL.Responsive);
+export const rowHeight = 8
 export const columnsDict: { [id: string]: number } = { lg: 14, md: 12, sm: 10, xs: 6, xxs: 4 }
 export let sizeKey = window.innerWidth >= 1200 ? 'lg' : window.innerWidth >= 996 ? 'md' : window.innerWidth >= 768 ? 'sm' : window.innerWidth >= 480 ? 'xs' : 'xxs'
 window.onresize = () => {
@@ -101,7 +102,7 @@ const Host = (props: { workersDict: { [id: string]: any }, room: IRoom, desktopK
             className="layout"
             style={{ ...props.style, minWidth: window.innerWidth + 'px', display: props.showDesktop ? 'block' : 'hidden', paddingBottom: 200 }}
             cols={{ lg: 14, md: 12, sm: 10, xs: 6, xxs: 4 }}
-            rowHeight={8}
+            rowHeight={rowHeight}
             width={props.style.width}
             layouts={structuredClone(desktop.layouts)}
             isDraggable={props.editMode}
