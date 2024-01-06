@@ -140,7 +140,7 @@ const Host = (props: { workersDict: { [id: string]: any }, room: IRoom, desktopK
                             <AppletHost.Host
                                 isWidget
                                 appletKey={key}
-                                onClick={() => props.onWidgetClick(key)}
+                                onClick={() => (!props.editMode && props.onWidgetClick(key))}
                                 entry={desktop.jsxContent[key] ? 'Test' : 'Dummy'}
                                 code={
                                     desktop.jsxContent[key] ?

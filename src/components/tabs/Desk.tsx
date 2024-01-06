@@ -113,10 +113,12 @@ const Desk = (props: { show: boolean, room: any }) => {
         props.show,
         editMode,
         (layouts: ReactGridLayout.Layouts) => {
-            saveLayouts(layouts).forEach((worker: any) => {
-                api.services.worker.update({ towerId: props.room.towerId, roomId: props.room.id, worker })
-                api.services.worker.use({ towerId: props.room.towerId, roomId: props.room.id, workerId: worker.id, packet: { tag: 'get/widget', widgetSize: measureWidgetSize(worker), secondaryColor: themeColorSecondary.get({ noproxy: true }), colorName: themeColorName.get({ noproxy: true }), colors: themeColor.get({ noproxy: true }) } })
-            })
+            if (editMode) {
+                saveLayouts(layouts).forEach((worker: any) => {
+                    api.services.worker.update({ towerId: props.room.towerId, roomId: props.room.id, worker })
+                    api.services.worker.use({ towerId: props.room.towerId, roomId: props.room.id, workerId: worker.id, packet: { tag: 'get/widget', widgetSize: measureWidgetSize(worker), secondaryColor: themeColorSecondary.get({ noproxy: true }), colorName: themeColorName.get({ noproxy: true }), colors: themeColor.get({ noproxy: true }) } })
+                })
+            }
         },
         () => buildLayoutOfWorkers()
     )
@@ -212,7 +214,7 @@ const Desk = (props: { show: boolean, room: any }) => {
                             ))
                         }
                         <Typography style={{ padding: 6, textAlign: 'center', width: 24, height: 24, maxHeight: 24, marginLeft: -16, backgroundColor: themeColor.get({ noproxy: true })[100], borderRadius: '50%' }}>
-                            3+
+                            ...
                         </Typography>
                     </Paper>
                     <Desktop.Host
