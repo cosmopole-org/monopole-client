@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Card, CircularProgress, Fab, IconButton, Paper, SwipeableDrawer, Typography } from '@mui/material';
+import { Card, CircularProgress, Fab, IconButton, Paper, SwipeableDrawer, Typography, createTheme } from '@mui/material';
 import AppletHost from './AppletHost';
 import { themeBasedTextColor, themeColor, themeColorName, themeColorSecondary } from '../../../App';
 import { api } from '../../..';
@@ -14,6 +14,24 @@ let openAppletSheet = (room: IRoom, workerId: string) => { }
 let closeAppletSheet = () => { }
 let notifyAppletSheetReady = () => { }
 let appletsheetOpen = false
+
+const theme = createTheme({
+    transitions: {
+        duration: {
+            shortest: 150,
+            shorter: 200,
+            short: 250,
+            // most basic recommended timing
+            standard: 300,
+            // this is to be used in complex animations
+            complex: 375,
+            // recommended when something is entering screen
+            enteringScreen: 225,
+            // recommended when something is leaving screen
+            leavingScreen: 195,
+        },
+    },
+})
 
 const AppletSheet = () => {
     const [code, setCode]: [any, any] = React.useState(undefined)
@@ -52,9 +70,19 @@ const AppletSheet = () => {
                 setShown(false)
             }}
                 disableSwipeToOpen
+
+                SlideProps={{
+                    onEntering: (node, isAppearing) => {
+                        node.style.transition = theme.transitions.create(['transform', 'margin', 'height', 'width', 'top', 'left'], {
+                            easing: theme.transitions.easing.easeOut,
+                            duration: '250ms',
+                        });
+                    },
+                }}
+
                 PaperProps={{
                     style: {
-                        borderRadius: '24px 24px 0px 0px',
+                        borderRadius: full ? 0 : '24px 24px 0px 0px',
                         minHeight: window.innerHeight * 80 / 100 + 'px',
                         height: (full ? window.innerHeight : (window.innerHeight * 80 / 100)) + 'px',
                         backgroundColor: themeColor.get({ noproxy: true })[50],
@@ -63,7 +91,7 @@ const AppletSheet = () => {
                 }}
             >
                 <div style={{ width: '100%', position: 'relative', height: 32 }}>
-                    <Card style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', width: 100, height: 6, borderRadius: 3, background: themeColor.get({ noproxy: true })[100], top: 12 }} />
+                    {full ? null : <Card style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', width: 100, height: 6, borderRadius: 3, background: themeColor.get({ noproxy: true })[100], top: 12 }} />}
                     <IconButton
                         style={{ backgroundColor: themeColor.get({ noproxy: true })[200], position: 'absolute', right: 4, top: 4 }}
                         onClick={() => setFull(!full)}

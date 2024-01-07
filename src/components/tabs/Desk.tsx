@@ -113,12 +113,10 @@ const Desk = (props: { show: boolean, room: any }) => {
         props.show,
         editMode,
         (layouts: ReactGridLayout.Layouts) => {
-            if (editMode) {
-                saveLayouts(layouts).forEach((worker: any) => {
-                    api.services.worker.update({ towerId: props.room.towerId, roomId: props.room.id, worker })
-                    api.services.worker.use({ towerId: props.room.towerId, roomId: props.room.id, workerId: worker.id, packet: { tag: 'get/widget', widgetSize: measureWidgetSize(worker), secondaryColor: themeColorSecondary.get({ noproxy: true }), colorName: themeColorName.get({ noproxy: true }), colors: themeColor.get({ noproxy: true }) } })
-                })
-            }
+            saveLayouts(layouts).forEach((worker: any) => {
+                api.services.worker.update({ towerId: props.room.towerId, roomId: props.room.id, worker })
+                api.services.worker.use({ towerId: props.room.towerId, roomId: props.room.id, workerId: worker.id, packet: { tag: 'get/widget', widgetSize: measureWidgetSize(worker), secondaryColor: themeColorSecondary.get({ noproxy: true }), colorName: themeColorName.get({ noproxy: true }), colors: themeColor.get({ noproxy: true }) } })
+            })
         },
         () => buildLayoutOfWorkers()
     )
