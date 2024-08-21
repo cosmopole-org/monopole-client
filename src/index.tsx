@@ -73,7 +73,7 @@ const providerConfig = {
   onRedirectCallback,
   authorizationParams: {
     redirect_uri: window.location.origin,
-    ...(config.audience ? { audience: config.audience } : null),
+    // ...(config.audience ? { audience: config.audience } : null),
     scope: 'openid profile email'
   },
 };

@@ -29,7 +29,7 @@ const MetaContent = (props: { room: IRoom, needToCloseRecorder?: boolean }) => {
         <div style={{ width: '100%', height: '100%', overflow: 'hidden' }}>
             <div style={{ borderRadius: '24px 24px 0px 0px', width: '100%', height: 80, backgroundColor: themeColor.get({ noproxy: true })[50] }}>
                 <Puller />
-            </div>,
+            </div>
             <div
                 style={{
                     height: 'calc(100% - 48px)',
