@@ -32,7 +32,7 @@ const MetaContent = (props: { room: IRoom, needToCloseRecorder?: boolean }) => {
             </div>
             <div
                 style={{
-                    height: 'calc(100% - 48px)',
+                    height: 'calc(100% - 24px)',
                     marginTop: -56
                 }}
             >

@@ -259,9 +259,12 @@ export let SigmaRouter = {
     unregisterListener: (path: string) => {
         delete listeners[path]
     },
-    navigate: (path: string, options?: { overPrevious?: boolean, initialData?: any }) => {
+    navigate: (path: string, options?: { overPrevious?: boolean, vertical?: boolean, initialData?: any }) => {
         if (historyStack.length > 0 && !options?.overPrevious && listeners[historyStack[historyStack.length - 1].id]) {
             listeners[historyStack[historyStack.length - 1].id]('exit-left')
+        }
+        if (options?.vertical) {
+            
         }
         historyStack.push({ id: Math.random().toString(), path, initialData: options?.initialData })
         lastNaviationType = 'navigate'
