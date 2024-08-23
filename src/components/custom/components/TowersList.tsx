@@ -41,7 +41,7 @@ const TowersList = (props: { fullscreen?: boolean, towers?: Array<any>, humans?:
             ref={props.towersContainerRef}
             style={{
                 ...props.overridenStyle,
-                width: '100%', height: `calc(100% - ${162 + (props.fullscreen ? -22 : statusbarHeight())}px)`,
+                width: '100%', height: `calc(100% - ${120 + (props.fullscreen ? -22 : statusbarHeight())}px)`,
                 position: 'absolute',
                 left: 0,
                 top: 0,
@@ -67,13 +67,14 @@ const TowersList = (props: { fullscreen?: boolean, towers?: Array<any>, humans?:
                     minHeight: 'min(100% - 8px)',
                     borderRadius: '24px 24px 0px 0px',
                     position: 'relative',
-                    backgroundColor: props.overridenStyle?.paper?.backgroundColor ?? themeColor.get({ noproxy: true })['plain'],
+                    backgroundColor: props.overridenStyle?.paper?.backgroundColor ?? themeColor.get({ noproxy: true })[50],
                     backdropFilter: props.overridenStyle?.paper?.backdropFilter ?? undefined
                 }}
             >
                 <Paper elevation={0} style={{
                     width: '100%', height: 'auto', borderRadius: '24px 24px 0px 0px',
-                    backgroundColor: props.overridenStyle?.paper?.backgroundColor ??  themeColor.get({ noproxy: true })[50]
+                    backgroundColor: props.overridenStyle?.paper?.backgroundColor ? "transparent" : themeColor.get({ noproxy: true })[50],
+                    ...props.overridenStyle.header
                 }}>
                     {
                         props.showRating ? (

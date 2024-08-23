@@ -20,7 +20,8 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
     }, [])
     const messagesList = useHookstate(props.showRating ? [] : api.memory.messages[(Object.values(props.tower.rooms)[0] as IRoom).id])?.get({ noproxy: true })
     const lastMessage = messagesList ? messagesList[messagesList.length - 1] : undefined
-    const backPatternColor0 = themeColorName.get({ noproxy: true }) === "night" ? ('#' + props.tower.color[900].substring(1) + "cc") : props.tower.color[50];
+    const backPatternColor0 = themeColor.get({noproxy: true})["plain"];
+    // const backPatternColor0 = themeColorName.get({ noproxy: true }) === "night" ? ('#' + props.tower.color[900].substring(1) + "cc") : props.tower.color[50];
     const backPatternColor1 = themeColorName.get({ noproxy: true }) === "night" ? props.tower.color[800] : props.tower.color[100];
     const unseenMsgCount = useHookstate(api.services.messenger.unseenMsgCount).get({ noproxy: true })
     const calls = useHookstate(api.services.call.calls).get({ noproxy: true })
