@@ -55,8 +55,7 @@ const Home = (props: { isOnTop: boolean, show: boolean, isPage?: boolean }) => {
             paddingTop: 112 + statusbarHeight(),
             ...(themeColorName.get({ noproxy: true }) === 'night' && {
                 paper: {
-                    backgroundColor: '#' + themeColor.get({ noproxy: true })[600].substring(1) + "bb",
-                    backdropFilter: 'blur(10px)'
+                    backgroundColor: themeColor.get({ noproxy: true })[600]
                 }
             })
         },
@@ -82,7 +81,7 @@ const Home = (props: { isOnTop: boolean, show: boolean, isPage?: boolean }) => {
         <div ref={containerRef} style={{ backgroundColor: themeColor.get({ noproxy: true })[50], position: 'relative', width: '100%', height: '100%', zIndex: 2 }}>
             <div className="area" style={{
                 width: '100%',
-                height: themeColorName.get({ noproxy: true }) === 'night' ? '100%' : 176,
+                height: 176,
                 overflow: 'hidden',
                 background: themeColorName.get({ noproxy: true }) === "night" ?
                     `linear-gradient(to left, ${colors.blue[900]}, ${colors.blue[800]})` :

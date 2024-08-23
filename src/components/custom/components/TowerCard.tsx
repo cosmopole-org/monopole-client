@@ -32,7 +32,7 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
                 backgroundColor: backPatternColor0,
                 borderRadius: 24,
                 overflow: 'hidden',
-                border: `1px solid ${themeColor.get({ noproxy: true })['plain']}`
+                border: '2px solid ' + backPatternColor1
             }}>
                 <div style={{
                     position: 'absolute', left: 0, top: 0,
@@ -69,7 +69,7 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
                             position: 'absolute',
                             left: 0,
                             top: 0,
-                            backgroundColor: themeColor.get({ noproxy: true })[100],
+                            backgroundColor: backPatternColor0,
                             zIndex: 0
                         }} />
                         <div style={{
