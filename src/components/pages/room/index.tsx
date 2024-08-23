@@ -4,7 +4,7 @@ import { Paper, Typography } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { SigmaRouter, interfaceMode, themeColor, themeColorName } from '../../../App';
 import SliderPage from '../../layouts/SliderPage';
-import { Edit, Info, KeyboardCommandKey, Message, People, SmartToy } from '@mui/icons-material';
+import { Edit, Forum, Info, KeyboardCommandKey, Message, People, SmartToy } from '@mui/icons-material';
 import Desk, { addWidgetToSDesktop, desktopEditMode } from '../../tabs/Desk';
 import IRoom from '../../../api/models/room';
 import MachineBox from '../../custom/components/MachineBox';
@@ -82,77 +82,49 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
     <SliderPage id={props.id}>
       <div style={{ width: '100%', height: '100%' }} ref={containerRef}>
         <Desk show={true} room={props.room} />
-        {
-          isOs ?
-            null : (
-              <Paper style={{
-                borderRadius: '24px 24px 0px 0px', width: '100%', height: 48, backgroundColor: themeColor.get({ noproxy: true })[50],
-                position: 'absolute', left: 0, bottom: 0
-              }}>
-                <div style={{ display: 'flex', marginTop: 12 }}>
-                  <Message style={{ marginLeft: 16, marginRight: 8 }} />
-                  <Typography variant='body2' style={{
-                    maxWidth: 'calc(100% - 128px)',
-                    wordWrap: 'break-word', textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap', overflow: 'hidden'
-                  }}>
-                    {lastMessage ?
-                      lastMessage.author.firstName + ' : ' + (
-                        lastMessage.type === 'text' ? lastMessage.data.text :
-                          ['photo', 'audio', 'video'].includes(lastMessage.type) ? lastMessage.type :
-                            'Unsupported message type'
-                      ) :
-                      'No messages yet'
-                    }
-                  </Typography>
-                </div>
-              </Paper>
-            )
-        }
-        {
-          !isOs ? [
-            <SigmaFab size={'medium'} style={{ position: 'absolute', right: 16, bottom: 16, zIndex: 1 }} onClick={() => {
-              openMeta()
-            }}
-            >
-              <People />
-            </SigmaFab>,
-            <SigmaFab size={'medium'} style={{ position: 'absolute', bottom: 16, right: 16 + 56, zIndex: 1 }} onClick={() => {
-              
-            }}>
-              <KeyboardCommandKey />
-            </SigmaFab>
-          ] : (
-            <Paper style={{ display: 'flex', borderRadius: 16, padding: 4, width: 'auto', height: 'auto', position: 'absolute', left: '50%', bottom: 16, transform: 'translateX(-50%)' }}>
-              <SigmaFab style={{ margin: 4 }} onClick={() => {
-                openMeta()
-              }}
-              >
-                <People />
-              </SigmaFab>
-              <SigmaFab style={{ margin: 4 }} onClick={() => {
+        <Paper style={{
+          borderRadius: '24px 24px 0px 0px', width: '100%', height: 48, backgroundColor: themeColor.get({ noproxy: true })[50],
+          position: 'absolute', left: 0, bottom: 0
+        }}>
 
+        </Paper>
+        <div style={{ width: '100%', position: 'absolute', left: 0, bottom: 16, zIndex: 1, textAlign: 'center', justifyContent: 'center', alignItems: 'center' }}>
+          {
+            isOs ? (
+              <SigmaFab size={'medium'} style={{ marginLeft: 4, marginRight: 4 }} onClick={() => {
+                SigmaRouter.navigate('chats')
               }}>
-                <KeyboardCommandKey />
+                <Forum />
               </SigmaFab>
-              <SigmaFab style={{ margin: 4 }} onClick={() => {
-                desktopEditMode.set(!desktopEditMode.get({ noproxy: true }))
-              }}>
-                <Edit />
-              </SigmaFab>
-              <SigmaFab style={{ margin: 4 }} onClick={() => {
-                setShowMachineBox(true)
-              }}>
-                <SmartToy />
-              </SigmaFab>
-              <SigmaFab style={{ margin: 4 }} onClick={() => {
-                
-              }}>
-                <Info />
-              </SigmaFab>
-            </Paper>
-          )
-        }
+            ) : null
+          }
+          <SigmaFab size={'medium'} style={{ marginLeft: 4, marginRight: 4 }} onClick={() => {
+            openMeta()
+          }}
+          >
+            <People />
+          </SigmaFab>
+          <SigmaFab size={'medium'} style={{ marginLeft: 4, marginRight: 4 }} onClick={() => {
+
+          }}>
+            <KeyboardCommandKey />
+          </SigmaFab>
+          <SigmaFab size={'medium'} style={{ marginLeft: 4, marginRight: 4 }} onClick={() => {
+            setShowMachineBox(true)
+          }}>
+            <SmartToy />
+          </SigmaFab>
+          <SigmaFab size={'medium'} style={{ marginLeft: 4, marginRight: 4 }} onClick={() => {
+            desktopEditMode.set(!desktopEditMode.get({ noproxy: true }))
+          }}>
+            <Edit />
+          </SigmaFab>
+          <SigmaFab size={'medium'} style={{ marginLeft: 4, marginRight: 4 }} onClick={() => {
+
+          }}>
+            <Info />
+          </SigmaFab>
+        </div>
         <Shadow onClick={() => closeMeta(false)} />
         {
           utils.screen.isTouchDevice() ? (

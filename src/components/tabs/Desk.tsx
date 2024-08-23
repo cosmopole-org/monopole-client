@@ -5,7 +5,7 @@ import useDesk from "../hooks/useDesk";
 import { api } from "../..";
 import { hookstate, useHookstate } from "@hookstate/core";
 import { openAppletSheet } from "../custom/components/AppletSheet";
-import { darkWallpapers, forceUpdate, lightWallpapers, switchSwipeable, themeColor, themeColorName, themeColorSecondary } from "../../App";
+import { allThemeColors, darkWallpapers, forceUpdate, lightWallpapers, switchSwipeable, themeColor, themeColorName, themeColorSecondary } from "../../App";
 import AppHostUtils from '../custom/components/AppletHost';
 import { overlaySafezoneData } from "../custom/components/Overlay";
 import Earth from '../../resources/images/earth.png';
@@ -179,6 +179,7 @@ const Desk = (props: { show: boolean, room: any }) => {
     if (tower.wallpaper === undefined) {
         let wallpapers = themeColorName.get({ noproxy: true }) === 'night' ? darkWallpapers : lightWallpapers
         tower.wallpaper = wallpapers[Math.floor(Math.random() * wallpapers.length)]
+        tower.color = allThemeColors[Math.floor(Math.random() * allThemeColors.length)];
     }
     let wd: { [id: string]: any } = {}
     cachedWorkers.forEach(worker => wd[worker.id] = worker)

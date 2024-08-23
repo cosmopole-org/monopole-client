@@ -84,14 +84,6 @@ export default function HomeMenu(props: { style?: any }) {
                     Settings
                 </MenuItem>
                 <MenuItem onClick={() => {
-                    SigmaRouter.navigate('chats')
-                }}>
-                    <ListItemIcon>
-                        <Forum />
-                    </ListItemIcon>
-                    Chats
-                </MenuItem>
-                <MenuItem onClick={() => {
                     SigmaRouter.navigate('inbox')
                 }}>
                     <ListItemIcon>

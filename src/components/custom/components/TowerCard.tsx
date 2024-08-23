@@ -1,7 +1,7 @@
 import { Badge, Card, IconButton, Rating, Typography } from "@mui/material"
 import SigmaBadgeButton from "../elements/SigmaBadgeButton"
 import { AllOut, ArrowForward, Call, Done, DoneAll, LocationCity, MoreVert } from "@mui/icons-material"
-import { SigmaRouter, interfaceMode, themeBasedTextColor, themeColor, themeColorSecondary } from "../../../App"
+import { SigmaRouter, interfaceMode, themeBasedTextColor, themeColor, themeColorName, themeColorSecondary } from "../../../App"
 import SigmaAvatar from "../elements/SigmaAvatar"
 import { api } from "../../.."
 import '../../../resources/styles/towercard.css'
@@ -20,8 +20,8 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
     }, [])
     const messagesList = useHookstate(props.showRating ? [] : api.memory.messages[(Object.values(props.tower.rooms)[0] as IRoom).id])?.get({ noproxy: true })
     const lastMessage = messagesList ? messagesList[messagesList.length - 1] : undefined
-    const backPatternColor0 = themeColor.get({ noproxy: true })[50];
-    const backPatternColor1 = themeColor.get({ noproxy: true })[100];
+    const backPatternColor0 = themeColorName.get({ noproxy: true }) === "night" ? ('#' + props.tower.color[900].substring(1) + "cc") : props.tower.color[50];
+    const backPatternColor1 = themeColorName.get({ noproxy: true }) === "night" ? props.tower.color[800] : props.tower.color[100];
     const unseenMsgCount = useHookstate(api.services.messenger.unseenMsgCount).get({ noproxy: true })
     const calls = useHookstate(api.services.call.calls).get({ noproxy: true })
     const isOs = useHookstate(interfaceMode).get({ noproxy: true }) === 'os'
@@ -31,7 +31,8 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
                 ...props.style, position: 'relative', width: 'calc(100% - 32px)', padding: 16, height: 168,
                 backgroundColor: backPatternColor0,
                 borderRadius: 24,
-                overflow: 'hidden'
+                overflow: 'hidden',
+                border: `1px solid ${themeColor.get({ noproxy: true })['plain']}`
             }}>
                 <div style={{
                     position: 'absolute', left: 0, top: 0,
@@ -149,7 +150,8 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
                 ...props.style, position: 'relative', width: 'calc(100% - 32px)', padding: 16, height: 168,
                 backgroundColor: backPatternColor0,
                 borderRadius: 24,
-                overflow: 'hidden'
+                overflow: 'hidden',
+                border: '2px solid ' + backPatternColor1
             }}>
                 <div style={{
                     position: 'absolute', left: 0, top: 0,
@@ -196,7 +198,7 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
                             position: 'absolute',
                             left: 0,
                             top: 0,
-                            backgroundColor: themeColor.get({ noproxy: true })[100],
+                            backgroundColor: backPatternColor0,
                             zIndex: 0
                         }} />
                         <div style={{

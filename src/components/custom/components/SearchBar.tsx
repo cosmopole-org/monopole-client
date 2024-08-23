@@ -4,7 +4,7 @@ import { IconButton, InputBase, Paper } from "@mui/material"
 import { useRef, useState } from "react"
 import { themeColor } from "../../../App"
 
-const SearchBar = (props: { containerRef: any, placeHolder: string, onSearch?: (text: string) => void }) => {
+const SearchBar = (props: { containerRef: any, placeHolder: string, onSearch?: (text: string) => void, style?: any }) => {
     const [searchText, setSearchText] = useState('')
     return (
         <Paper
@@ -21,7 +21,8 @@ const SearchBar = (props: { containerRef: any, placeHolder: string, onSearch?: (
                 borderRadius: 20,
                 display: 'flex',
                 zIndex: 0,
-                border: `1px solid ${themeColor.get({ noproxy: true })['plain']}`
+                border: `1px solid ${themeColor.get({ noproxy: true })['plain']}`,
+                ...props.style
             }}>
             <IconButton>
                 <Search />

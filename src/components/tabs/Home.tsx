@@ -7,10 +7,11 @@ import { statusbarHeight } from "../sections/StatusBar"
 import { api } from "../.."
 import { useHookstate } from "@hookstate/core"
 import { Add } from "@mui/icons-material"
-import { SigmaRouter, themeColor } from "../../App"
+import { SigmaRouter, themeColor, themeColorName } from "../../App"
 import SigmaFab from "../custom/elements/SigmaFab"
 import SearchBar from "../custom/components/SearchBar"
 import '../../resources/styles/home.css'
+import { colors, hexToRgb } from "@mui/material"
 
 let savedSCrollTop = 0,
     cachedSearchBarTop: { value: number, maxValue: number } = {
@@ -51,7 +52,13 @@ const Home = (props: { isOnTop: boolean, show: boolean, isPage?: boolean }) => {
         },
         savedSCrollTop,
         {
-            paddingTop: 112 + statusbarHeight()
+            paddingTop: 112 + statusbarHeight(),
+            ...(themeColorName.get({ noproxy: true }) === 'night' && {
+                paper: {
+                    backgroundColor: '#' + themeColor.get({ noproxy: true })[600].substring(1) + "bb",
+                    backdropFilter: 'blur(10px)'
+                }
+            })
         },
         80,
         false,
@@ -75,22 +82,30 @@ const Home = (props: { isOnTop: boolean, show: boolean, isPage?: boolean }) => {
         <div ref={containerRef} style={{ backgroundColor: themeColor.get({ noproxy: true })[50], position: 'relative', width: '100%', height: '100%', zIndex: 2 }}>
             <div className="area" style={{
                 width: '100%',
-                height: 176,
+                height: themeColorName.get({ noproxy: true }) === 'night' ? '100%' : 176,
                 overflow: 'hidden',
-                background: `linear-gradient(to left, ${themeColor.get({ noproxy: true })[200]}, ${themeColor.get({ noproxy: true })[100]})`
+                background: themeColorName.get({ noproxy: true }) === "night" ?
+                    `linear-gradient(to left, ${colors.blue[900]}, ${colors.blue[800]})` :
+                    `linear-gradient(to left, ${themeColor.get({ noproxy: true })[200]}, ${themeColor.get({ noproxy: true })[100]})`
             }}>
                 <ul className="circles">
                     {
-                        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(i => (
+                        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19].map(i => (
                             <li key={`particle-${i}`} style={{
-                                background: themeColor.get({ noproxy: true })[500]
+                                background: themeColorName.get({ noproxy: true }) === "night" ?
+                                    colors.blue[500] :
+                                    themeColor.get({ noproxy: true })[500]
                             }}></li>
                         ))
                     }
                 </ul>
-            </div >
+            </div>
             <TowersList.Component />
-            <SearchBar containerRef={SearchBarHandler.searchContainerRef} placeHolder={'Search Towers...'} onSearch={(text: string) => setSearchText(text)} />
+            <SearchBar
+                style={{
+                    backgroundColor: '#' + themeColor.get({ noproxy: true })[100].substring(1) + "99"
+                }}
+                containerRef={SearchBarHandler.searchContainerRef} placeHolder={'Search Towers...'} onSearch={(text: string) => setSearchText(text)} />
             <TowerMoreMenu
                 tower={pointedTower}
                 onClose={() => setPointedTower(undefined)}

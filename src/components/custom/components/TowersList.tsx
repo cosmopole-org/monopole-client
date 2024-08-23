@@ -2,7 +2,7 @@ import { IconButton, Paper, Typography } from "@mui/material"
 import { useEffect, useLayoutEffect, useRef, useState } from "react"
 import TowerCard from "./TowerCard"
 import { statusbarHeight } from "../../sections/StatusBar"
-import { SigmaRouter, darkWallpapers, lightWallpapers, themeColor, themeColorName } from "../../../App"
+import { SigmaRouter, allThemeColors, darkWallpapers, lightWallpapers, themeColor, themeColorName } from "../../../App"
 import { SigmaTab, SigmaTabs } from "../elements/SigmaTabs"
 import { Add, AllInbox, AllOut, Edit, FamilyRestroom, Folder, Games, LocationCity, People, Work } from "@mui/icons-material"
 import { api } from "../../.."
@@ -25,6 +25,7 @@ const TowersList = (props: { fullscreen?: boolean, towers?: Array<any>, humans?:
     props.towers?.forEach(t => {
         if (t.wallpaper === undefined) {
             t.wallpaper = wallpapers[Math.floor(Math.random() * wallpapers.length)]
+            t.color = allThemeColors[Math.floor(Math.random() * allThemeColors.length)];
         }
     });
     useLayoutEffect(() => {
@@ -66,12 +67,13 @@ const TowersList = (props: { fullscreen?: boolean, towers?: Array<any>, humans?:
                     minHeight: 'min(100% - 8px)',
                     borderRadius: '24px 24px 0px 0px',
                     position: 'relative',
-                    backgroundColor: themeColor.get({ noproxy: true })['plain']
+                    backgroundColor: props.overridenStyle?.paper?.backgroundColor ?? themeColor.get({ noproxy: true })['plain'],
+                    backdropFilter: props.overridenStyle?.paper?.backdropFilter ?? undefined
                 }}
             >
                 <Paper elevation={0} style={{
                     width: '100%', height: 'auto', borderRadius: '24px 24px 0px 0px',
-                    backgroundColor: themeColor.get({ noproxy: true })[50],
+                    backgroundColor: props.overridenStyle?.paper?.backgroundColor ??  themeColor.get({ noproxy: true })[50]
                 }}>
                     {
                         props.showRating ? (
@@ -129,9 +131,13 @@ const TowersList = (props: { fullscreen?: boolean, towers?: Array<any>, humans?:
                         props.showRating ?
                             activeTab === 'towers' ?
                                 props.towers?.map((tower: any) => (
-                                    <TowerCard tower={tower} key={`tower-card-${tower.id}`} showRating={props.showRating} style={{ marginTop: 16 }} onMoreClicked={() => {
-                                        props.showTowerMoreMenu && props.showTowerMoreMenu(tower)
-                                    }} />
+                                    <TowerCard tower={tower} key={`tower-card-${tower.id}`} showRating={props.showRating}
+                                        style={{
+                                            marginTop: 16,
+                                        }}
+                                        onMoreClicked={() => {
+                                            props.showTowerMoreMenu && props.showTowerMoreMenu(tower)
+                                        }} />
                                 )) : (
                                     <div style={{
                                         width: '100%', height: '100%', overflowY: 'auto', display: 'flex', flexWrap: 'wrap',

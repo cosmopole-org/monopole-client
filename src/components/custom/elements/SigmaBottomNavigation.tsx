@@ -32,7 +32,7 @@ const SigmaBottomNavigation = (props: { activeTab: number, items: Array<{ label:
     })
     return (
         <BottomNavigation onChange={(e, newValue) => props.onSwitch(newValue)} value={props.activeTab} component={Paper} elevation={4} style={{
-            ...props.style, width: '100%', height: 64, position: 'absolute', bottom: 0, left: 0, borderRadius: 0,
+            ...props.style, width: '100%', height: 64, position: 'absolute', bottom: 0, left: 0, borderRadius: '24px 24px 0px 0px',
             backgroundColor: themeColor.get({ noproxy: true })[themeColorName.get({ noproxy: true }) === 'night' ? 200 : 50], backdropFilter: 'blur(10px)', zIndex: 2
         }}>
             {children}

@@ -62,6 +62,8 @@ export const lightWallpapers = [
     'https://i.pinimg.com/564x/ca/1b/be/ca1bbeb87e3ab7c32c7846df9cdef545.jpg'
 ]
 
+export const allThemeColors = Object.keys(colors).filter(c => c !== 'common').map(c => (colors as any)[c]);
+
 let tempInterfaceMode = localStorage.getItem('interfaceMode')
 if (tempInterfaceMode === null) {
     tempInterfaceMode = 'sn'
@@ -85,6 +87,7 @@ export let forceUpdate = () => { };
 const currentRoute = hookstate('')
 
 export const fixedNightColor = {
+    '600': '#131726',
     '500': '#1e2135',
     '400': '#1e2135',
     '200': '#282b42',
@@ -93,7 +96,7 @@ export const fixedNightColor = {
     'plain': '#36394f',
     'activeText': '#ffffff',
     'passiveText': '#dddddd',
-    'antiColor': '#fff',
+    'antiColor': '#ffffff',
     'absolutePlain': '#1e2135'
 }
 
