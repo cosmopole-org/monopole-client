@@ -5,7 +5,7 @@ import SigmaMenuItem from '../elements/SigmaMenuItem';
 import { SigmaRouter, themeColor } from '../../../App';
 import { api } from '../../..';
 
-const RoomMoreMenu = (props: { shown: boolean, onClose: () => void, room: any }) => {
+const RoomMoreMenu = (props: { shown: boolean, onClose: () => void, onOpeningNewPage?: () => void, room: any }) => {
     return (
         <React.Fragment>
             <Drawer anchor='bottom' open={props.shown} onClose={() => props.onClose()}
@@ -20,6 +20,7 @@ const RoomMoreMenu = (props: { shown: boolean, onClose: () => void, room: any })
                 <SigmaMenuItem
                     onClick={() => {
                         props.onClose();
+                        props.onOpeningNewPage && props.onOpeningNewPage();
                         SigmaRouter.navigate('createRoom', { initialData: { room: props.room, towerId: props.room.towerId } })
                     }}
                     icon={Edit}

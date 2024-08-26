@@ -18,8 +18,10 @@ import MetaTouch from './metaTouch';
 import { useHookstate } from '@hookstate/core';
 import { api } from '../../..';
 import RoomWallpaper from '../../../resources/images/room.jpg';
-import RoomDrawer, { roomDrawerOpen } from '../../sections/RoomDrawer';
+import RoomDrawer, { checkForRoomDrawerRecovery, roomDrawerOpen } from '../../sections/RoomDrawer';
 import room from '../../../api/drivers/database/schemas/room';
+import RoomMoreMenu from '../../custom/components/RoomMoreMenu';
+import HumanBox from '../../custom/components/HumanBox';
 
 const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
   const containerRef: any = useRef(null)
@@ -76,6 +78,9 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
   useEffect(() => {
     if (isMetaOpen.current) onMetaOpen();
     else onMetaClose()
+    if (props.isOnTop) {
+      checkForRoomDrawerRecovery();
+    }
   }, [props.isOnTop, im])
 
   const lastMessage = messagesList ? messagesList[messagesList.length - 1] : undefined
@@ -135,7 +140,11 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
             <MetaNonTouch container={containerRef.current} needToCloseRecorder={needToCloseRecorder} room={props.room} onClose={() => { closeMeta(true); }} />
           )
         }
-        {isOs ? <RoomDrawer room={props.room} /> : null}
+        {
+          isOs ?
+            <RoomDrawer room={props.room} container={containerRef.current} />
+            : null
+        }
         <MachineBox
           createWorker={(machineId: string) => addWidgetToSDesktop(props.room, machineId)}
           onClose={() => setShowMachineBox(false)}
