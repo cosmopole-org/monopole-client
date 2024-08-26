@@ -49,9 +49,9 @@ const RoomDrawer = (props: Readonly<{ room: any }>) => {
                 borderRadius: 24,
                 display: 'flex',
                 overflow: 'hidden',
-                backgroundColor: themeColor.get({noproxy: true})[50]
+                backgroundColor: themeColor.get({ noproxy: true })[50]
             }}>
-                <div style={{ marginTop: 8, marginLeft: 8, backgroundColor: themeColor.get({noproxy: true})[200], width: 84, height: 'calc(100% - 16px)', paddingLeft: 8, overflowY: 'auto', borderRadius: 24 }}>
+                <div style={{ marginTop: 8, marginLeft: 8, backgroundColor: themeColor.get({ noproxy: true })[200], width: 84, height: 'calc(100% - 16px)', paddingLeft: 8, overflowY: 'auto', borderRadius: 24 }}>
                     {
                         Object.values(towers).map((item: any) => (
                             <div
@@ -76,7 +76,7 @@ const RoomDrawer = (props: Readonly<{ room: any }>) => {
                                 style={{ width: '100%', height: '100%', borderRadius: 16 }}
                                 src={(tower as any).wallpaper} />
                             <div style={{ padding: 8, backgroundColor: 'rgba(0, 0, 0, 0.35)', width: 'calc(100%-16px)', position: 'absolute', left: 8, bottom: 8, borderRadius: 12, textAlign: 'center' }}>
-                                <Typography>{tower.title}</Typography>
+                                <Typography style={{ color: '#fff' }}>{tower.title}</Typography>
                             </div>
                         </Card>
                         <div
@@ -87,7 +87,7 @@ const RoomDrawer = (props: Readonly<{ room: any }>) => {
                                     onClick={() => {
                                         roomDrawerOpen.set(false);
                                         setTimeout(() => {
-                                            setOsCurrentRoom(item);                                           
+                                            setOsCurrentRoom(item);
                                         }, 250);
                                     }}
                                     style={{ marginTop: 16, backgroundColor: 'transparent' }}
