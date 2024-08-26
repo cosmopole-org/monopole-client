@@ -120,7 +120,7 @@ const TowersList = (props: { fullscreen?: boolean, towers?: Array<any>, humans?:
                 </Paper>
                 {
                     props.showRating ? null : (
-                        <SigmaFab elevation={0} style={{ position: 'absolute', width: 40, height: 40, right: 4, top: 4, borderRadius: '8px 24px 8px 8px', backgroundColor: themeColor.get({ noproxy: true })[100] }} onClick={() => {
+                        <SigmaFab elevation={0} style={{ position: 'absolute', width: 40, height: 40, right: 4, top: 4, borderRadius: '50%' }} onClick={() => {
                             SigmaRouter.navigate('manageHomeFolders')
                         }}>
                             <Edit />

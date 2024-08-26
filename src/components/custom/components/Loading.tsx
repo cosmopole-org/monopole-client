@@ -32,7 +32,7 @@ const Loading = (props: { onCancel: () => void, overlay?: boolean, isWidget?: bo
                                         }}
                                         variant="extended"
                                     >
-                                        <Close style={{ fill: themeBasedTextColor.get({ noproxy: true }), marginRight: 12 }} />
+                                        <Close style={{ marginRight: 12 }} />
                                         Cancel
                                     </SigmaFab>
                                 </div>
@@ -65,7 +65,7 @@ const Loading = (props: { onCancel: () => void, overlay?: boolean, isWidget?: bo
                                             }}
                                             variant="extended"
                                         >
-                                            <Close style={{ fill: themeBasedTextColor.get({ noproxy: true }), marginRight: 12 }} />
+                                            <Close style={{ marginRight: 12 }} />
                                             Cancel
                                         </SigmaFab>
                                     </div>

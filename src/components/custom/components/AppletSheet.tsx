@@ -135,7 +135,7 @@ const AppletSheet = () => {
                                     }}
                                     variant="extended"
                                 >
-                                    <Close style={{ fill: themeBasedTextColor.get({ noproxy: true }), marginRight: 12 }} />
+                                    <Close style={{ marginRight: 12 }} />
                                     Cancel
                                 </SigmaFab>
                             </div>

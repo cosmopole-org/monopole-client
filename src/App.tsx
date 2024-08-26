@@ -144,6 +144,13 @@ let theme = createTheme({
                     },
                 },
             },
+        },
+        MuiCircularProgress: {
+            styleOverrides: {
+                circle: {
+                    color: tempThemeColorName === 'night' ? colors.blue[200] : colors.purple[200],
+                }
+            }
         }
     },
     palette: {
@@ -152,7 +159,7 @@ let theme = createTheme({
             main: themeColor.get({ noproxy: true })[200],
         },
         secondary: {
-            main: tempThemeColorName === 'night' ? '#fff' : colors.purple[200],
+            main: tempThemeColorName === 'night' ? colors.blue[200] : colors.purple[200],
         },
         background: {
             paper: tempThemeColorName === 'night' ? fixedNightColor[100] : '#fff'
@@ -193,6 +200,13 @@ export let reconstructMaterialPalette = (name: string, color: any) => {
                         },
                     },
                 },
+            },
+            MuiCircularProgress: {
+                styleOverrides: {
+                    circle: {
+                        color: tempThemeColorName === 'night' ? colors.blue[200] : colors.purple[200],
+                    }
+                }
             }
         },
         palette: {
@@ -201,7 +215,7 @@ export let reconstructMaterialPalette = (name: string, color: any) => {
                 main: color[200],
             },
             secondary: {
-                main: name === 'night' ? '#fff' : colors.purple[200],
+                main: name === 'night' ? colors.blue[200] : colors.purple[200],
             },
             background: {
                 paper: color[50]
@@ -267,7 +281,7 @@ export let SigmaRouter = {
             listeners[historyStack[historyStack.length - 1].id]('exit-left')
         }
         if (options?.vertical) {
-            
+
         }
         historyStack.push({ id: Math.random().toString(), path, initialData: options?.initialData })
         lastNaviationType = 'navigate'
