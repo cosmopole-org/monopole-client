@@ -34,14 +34,24 @@ const RoomDrawer = (props: Readonly<{ room: any }>) => {
         <SwipeableDrawer
             open={open}
             onOpen={() => roomDrawerOpen.set(true)}
-            onClose={() => roomDrawerOpen.set(false)}>
-            <div style={{
-                width: 320,
-                height: '100%',
-                backgroundColor: themeColor.get({ noproxy: true })[400],
-                display: 'flex'
+            onClose={() => roomDrawerOpen.set(false)}
+            PaperProps={{
+                style: {
+                    background: 'transparent'
+                },
+                elevation: 0
             }}>
-                <Card style={{ width: 84, height: '100%', paddingLeft: 8, overflowY: 'auto', borderRadius: 0 }}>
+            <div style={{
+                width: (window.innerWidth * 8 / 10) + 'px',
+                height: (window.innerHeight * 7 / 10) + 'px',
+                marginLeft: (window.innerWidth / 10) + 'px',
+                marginTop: (window.innerHeight * 1.5 / 10) + 'px',
+                borderRadius: 24,
+                display: 'flex',
+                overflow: 'hidden',
+                backgroundColor: themeColor.get({noproxy: true})[50]
+            }}>
+                <div style={{ marginTop: 8, marginLeft: 8, backgroundColor: themeColor.get({noproxy: true})[200], width: 84, height: 'calc(100% - 16px)', paddingLeft: 8, overflowY: 'auto', borderRadius: 24 }}>
                     {
                         Object.values(towers).map((item: any) => (
                             <div
@@ -58,7 +68,7 @@ const RoomDrawer = (props: Readonly<{ room: any }>) => {
                             </div>
                         ))
                     }
-                </Card>
+                </div>
                 <div style={{ width: '100%', height: '100%' }}>
                     <div style={{ overflowY: 'auto', width: '100%', height: '100%' }}>
                         <Card style={{ position: 'relative', borderRadius: 16, marginTop: 12, height: 176, width: 'calc(100% - 24px)', marginLeft: 12 }}>
