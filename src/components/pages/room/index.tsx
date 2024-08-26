@@ -1,6 +1,6 @@
 
 import { LeftControlTypes, RightControlTypes, StatusThemes, switchColor, switchLeftControl, switchRightControl, switchTitle } from '../../sections/StatusBar';
-import { Paper, Typography } from '@mui/material';
+import { Paper, SwipeableDrawer, Typography } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { SigmaRouter, interfaceMode, themeColor, themeColorName } from '../../../App';
 import SliderPage from '../../layouts/SliderPage';
@@ -18,6 +18,8 @@ import MetaTouch from './metaTouch';
 import { useHookstate } from '@hookstate/core';
 import { api } from '../../..';
 import RoomWallpaper from '../../../resources/images/room.jpg';
+import RoomDrawer, { roomDrawerOpen } from '../../sections/RoomDrawer';
+import room from '../../../api/drivers/database/schemas/room';
 
 const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
   const containerRef: any = useRef(null)
@@ -59,7 +61,7 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
   }
   const onMetaClose = () => {
     switchLeftControl && switchLeftControl(isOs ? LeftControlTypes.CITY : LeftControlTypes.BACK, isOs ? () => {
-      SigmaRouter.navigate('home')
+      roomDrawerOpen.set(true);
     } : close)
     switchRightControl && switchRightControl(RightControlTypes.CALL, () => SigmaRouter.navigate('call', { initialData: { room: props.room } }))
     switchTitle && switchTitle(props.room.title)
@@ -133,6 +135,7 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
             <MetaNonTouch container={containerRef.current} needToCloseRecorder={needToCloseRecorder} room={props.room} onClose={() => { closeMeta(true); }} />
           )
         }
+        {isOs ? <RoomDrawer room={props.room} /> : null}
         <MachineBox
           createWorker={(machineId: string) => addWidgetToSDesktop(props.room, machineId)}
           onClose={() => setShowMachineBox(false)}
