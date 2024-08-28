@@ -84,6 +84,13 @@ export const addWidgetToSDesktop = (room: any, machineId: string) => {
         workersMax = Math.max(...cachedWorkers.map(w => w.secret.grid[sizeKey].y + w.secret.grid[sizeKey].h)) + 1
     }
     let unit = window.innerWidth / columnsDict[sizeKey] - 16
+    let url = "";
+    if (machineId === "5c23a6dea8c7e58ec93459e85bb64de8") {
+        let str = prompt("input the url to embed:");
+        if (str) {
+            url = str;
+        }
+    }
     api.services.worker.create({
         towerId: room.towerId, roomId: room.id, machineId: machineId,
         secret: {
@@ -93,7 +100,8 @@ export const addWidgetToSDesktop = (room: any, machineId: string) => {
                 sm: { x: 0, y: workersMax, w: 2, h: unit / 8 },
                 xs: { x: 0, y: workersMax, w: 2, h: unit / 8 },
                 xxs: { x: 0, y: workersMax, w: 2, h: unit / 8 }
-            }
+            },
+            url
         }
     }).then((body: any) => {
         cachedWorkers.push(body.worker)

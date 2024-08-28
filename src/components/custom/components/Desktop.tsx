@@ -5,7 +5,7 @@ import 'react-resizable/css/styles.css'
 import AppletHost from "./AppletHost";
 import { useState } from "react";
 import SigmaFab from "../elements/SigmaFab";
-import { Delete } from "@mui/icons-material";
+import { Delete, DragHandle } from "@mui/icons-material";
 import IRoom from "../../../api/models/room";
 import { forceUpdate } from "../../../App";
 
@@ -108,6 +108,7 @@ const Host = (props: { workersDict: { [id: string]: any }, room: IRoom, desktopK
             isDraggable={props.editMode}
             isResizable={props.editMode}
             draggableCancel=".cancelSelectorName"
+            draggableHandle=".drag-handle"
             breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
             onLayoutChange={(currentLayout: RGL.Layout[], layouts: RGL.Layouts) => {
                 let updates: Array<any> = []
@@ -137,25 +138,49 @@ const Host = (props: { workersDict: { [id: string]: any }, room: IRoom, desktopK
                 desktop.layouts[window.innerWidth >= 1200 ? 'lg' : window.innerWidth >= 996 ? 'md' : window.innerWidth >= 768 ? 'sm' : window.innerWidth >= 480 ? 'xs' : 'xxs'].map(item => item.i).map((key, index) => {
                     return (
                         <div key={key} style={{ overflow: 'hidden', borderRadius: 4 }} data-grid={desktop.layouts[window.innerWidth >= 1200 ? 'lg' : window.innerWidth >= 996 ? 'md' : window.innerWidth >= 768 ? 'sm' : window.innerWidth >= 480 ? 'xs' : 'xxs'][index]}>
-                            <AppletHost.Host
-                                isWidget
-                                appletKey={key}
-                                onClick={() => (!props.editMode && props.onWidgetClick(key))}
-                                entry={desktop.jsxContent[key] ? 'Test' : 'Dummy'}
-                                code={
-                                    desktop.jsxContent[key] ?
-                                        desktop.jsxContent[key] :
-                                        'class Dummy { constructor() {} onMount() {} render() { return "" } }'
-                                }
-                                index={index}
-                            />
+                            {
+                                (props.workersDict[key]?.secret?.url && props.workersDict[key]?.secret?.url.length > 0) ? (
+                                    <iframe
+                                        frameBorder={'none'}
+                                        src={props.workersDict[key]?.secret?.url}
+                                        style={{
+                                            width: '100%',
+                                            height: '100%'
+                                        }}
+                                    />
+                                ) : (
+                                    <AppletHost.Host
+                                        isWidget
+                                        appletKey={key}
+                                        onClick={() => (!props.editMode && props.onWidgetClick(key))}
+                                        entry={desktop.jsxContent[key] ? 'Test' : 'Dummy'}
+                                        code={
+                                            desktop.jsxContent[key] ?
+                                                desktop.jsxContent[key] :
+                                                'class Dummy { constructor() {} onMount() {} render() { return "" } }'
+                                        }
+                                        index={index}
+                                    />
+                                )
+                            }
                             {
                                 props.editMode ? (
                                     <SigmaFab
+                                        size={'small'}
                                         style={{ transform: 'translate(8px, -68px)' }}
                                         onClick={() => props.onWidgetRemove(key)}
                                         className="cancelSelectorName">
                                         <Delete />
+                                    </SigmaFab>
+                                ) : null
+                            }
+                            {
+                                props.editMode ? (
+                                    <SigmaFab
+                                        size={'small'}
+                                        className="drag-handle"
+                                        style={{ transform: 'translate(16px, -68px)' }}>
+                                        <DragHandle />
                                     </SigmaFab>
                                 ) : null
                             }
