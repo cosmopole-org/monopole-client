@@ -4,7 +4,7 @@ import { Paper, SwipeableDrawer, Typography } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { SigmaRouter, interfaceMode, themeColor, themeColorName } from '../../../App';
 import SliderPage from '../../layouts/SliderPage';
-import { Edit, Forum, Info, KeyboardCommandKey, Message, People, SmartToy } from '@mui/icons-material';
+import { Edit, Forum, Info, KeyboardCommandKey, LocationCity, Message, People, SmartToy } from '@mui/icons-material';
 import Desk, { addWidgetToSDesktop, desktopEditMode } from '../../tabs/Desk';
 import IRoom from '../../../api/models/room';
 import MachineBox from '../../custom/components/MachineBox';
@@ -63,7 +63,7 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
   }
   const onMetaClose = () => {
     switchLeftControl && switchLeftControl(isOs ? LeftControlTypes.CITY : LeftControlTypes.BACK, isOs ? () => {
-      roomDrawerOpen.set(true);
+      SigmaRouter.navigate('chats')
     } : close)
     switchRightControl && switchRightControl(RightControlTypes.CALL, () => SigmaRouter.navigate('call', { initialData: { room: props.room } }))
     switchTitle && switchTitle(props.room.title)
@@ -99,9 +99,9 @@ const Room = (props: { id: string, isOnTop: boolean, room: IRoom }) => {
           {
             isOs ? (
               <SigmaFab size={'medium'} style={{ marginLeft: 4, marginRight: 4 }} onClick={() => {
-                SigmaRouter.navigate('chats')
+                roomDrawerOpen.set(true);
               }}>
-                <Forum />
+                <LocationCity />
               </SigmaFab>
             ) : null
           }

@@ -69,6 +69,7 @@ const RoomDrawer = (props: Readonly<{ room: any, container: any }>) => {
                     elevation: 0
                 }}>
                 <div style={{
+                    border: '4px solid ' + themeColor.get({ noproxy: true })[500],
                     width: (window.innerWidth * 8 / 10) + 'px',
                     height: (window.innerHeight * 7 / 10) + 'px',
                     marginLeft: (window.innerWidth / 10) + 'px',
@@ -79,7 +80,7 @@ const RoomDrawer = (props: Readonly<{ room: any, container: any }>) => {
                     backgroundColor: themeColor.get({ noproxy: true })[50],
                     position: 'relative'
                 }}>
-                    <div style={{ marginTop: 8, marginLeft: 8, backgroundColor: themeColor.get({ noproxy: true })[200], width: 84, height: 'calc(100% - 16px)', paddingLeft: 8, overflowY: 'auto', borderRadius: 24 }}>
+                    <div style={{ marginTop: 8, marginLeft: 8, backgroundColor: themeColor.get({ noproxy: true })[100], width: 72, height: 'calc(100% - 18px)', paddingLeft: 8, overflowY: 'auto', borderRadius: 24 }}>
                         {
                             Object.values(towers).map((item: any) => (
                                 <div
@@ -87,11 +88,15 @@ const RoomDrawer = (props: Readonly<{ room: any, container: any }>) => {
                                         setSelectedTowerId(item.id);
                                     }}
                                     key={item.id}
-                                    style={{ width: 56, height: 56, marginTop: 16, marginLeft: 0, borderRadius: '50%' }}>
+                                    style={{
+                                        overflow: 'hidden',
+                                        borderRadius: 18,  border: item.color ? ('3px solid ' + item.color[300]) : undefined,
+                                        width: 42, height: 42, marginTop: 16, marginLeft: 0
+                                    }}>
                                     <SigmaAvatar
-                                        style={{ width: '100%', height: '100%' }}
+                                        style={{ borderRadius: 0, backgroundColor: item.color ? item.color[600] : undefined, width: '100%', height: '100%' }}
                                     >
-                                        <img style={{ width: '100%', height: '100%' }} src={(item as any).wallpaper} alt={item.id.toString()} />
+                                        {item.title.substring(0, 1)}
                                     </SigmaAvatar>
                                 </div>
                             ))
@@ -99,11 +104,11 @@ const RoomDrawer = (props: Readonly<{ room: any, container: any }>) => {
                     </div>
                     <div style={{ width: '100%', height: '100%' }}>
                         <div style={{ overflowY: 'auto', width: '100%', height: '100%' }}>
-                            <Card style={{ position: 'relative', borderRadius: 16, marginTop: 12, height: 176, width: 'calc(100% - 24px)', marginLeft: 12 }}>
+                            <Card style={{ position: 'relative', borderRadius: 16, marginTop: 12, height: 176, width: 'calc(100% - 16px)', marginLeft: 8 }}>
                                 <img
                                     style={{ width: '100%', height: '100%', borderRadius: 16 }}
                                     src={(tower as any).wallpaper} />
-                                <div style={{ padding: 8, backgroundColor: 'rgba(0, 0, 0, 0.35)', width: 'calc(100%-16px)', position: 'absolute', left: 8, bottom: 8, borderRadius: 12, textAlign: 'center' }}>
+                                <div style={{ padding: 8, backgroundColor: 'rgba(0, 0, 0, 0.35)', width: 'calc(100%-16px)', position: 'absolute', left: 0, bottom: 8, borderRadius: 12, textAlign: 'center' }}>
                                     <Typography style={{ color: '#fff' }}>{tower.title}</Typography>
                                 </div>
                             </Card>
@@ -160,7 +165,7 @@ const RoomDrawer = (props: Readonly<{ room: any, container: any }>) => {
                             )
                     }
                 </div>
-            </SwipeableDrawer>
+            </SwipeableDrawer >
             <RoomMoreMenu
                 onOpeningNewPage={() => tryMoveoutMenu(true)}
                 room={pointedRoom}

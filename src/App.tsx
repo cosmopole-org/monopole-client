@@ -159,7 +159,7 @@ let theme = createTheme({
             main: themeColor.get({ noproxy: true })[200],
         },
         secondary: {
-            main: tempThemeColorName === 'night' ? colors.blue[200] : colors.purple[200],
+            main: tempThemeColorName === 'night' ? colors.blue[200] : colors.blue[500],
         },
         background: {
             paper: tempThemeColorName === 'night' ? fixedNightColor[100] : '#fff'
@@ -204,7 +204,7 @@ export let reconstructMaterialPalette = (name: string, color: any) => {
             MuiCircularProgress: {
                 styleOverrides: {
                     circle: {
-                        color: tempThemeColorName === 'night' ? colors.blue[200] : colors.purple[200],
+                        color: name === 'night' ? colors.blue[200] : colors.purple[200],
                     }
                 }
             }
