@@ -101,7 +101,7 @@ export const addWidgetToSDesktop = (room: any, machineId: string) => {
                 xs: { x: 0, y: workersMax, w: 2, h: unit / 8 },
                 xxs: { x: 0, y: workersMax, w: 2, h: unit / 8 }
             },
-            url
+            frameUrl: url
         }
     }).then((body: any) => {
         cachedWorkers.push(body.worker)

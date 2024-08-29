@@ -139,10 +139,10 @@ const Host = (props: { workersDict: { [id: string]: any }, room: IRoom, desktopK
                     return (
                         <div key={key} style={{ overflow: 'hidden', borderRadius: 4 }} data-grid={desktop.layouts[window.innerWidth >= 1200 ? 'lg' : window.innerWidth >= 996 ? 'md' : window.innerWidth >= 768 ? 'sm' : window.innerWidth >= 480 ? 'xs' : 'xxs'][index]}>
                             {
-                                (key === "5c23a6dea8c7e58ec93459e85bb64de8") ? (
+                                (props.workersDict[key].machineId === "5c23a6dea8c7e58ec93459e85bb64de8") ? (
                                     <iframe
                                         frameBorder={'none'}
-                                        src={props.workersDict[key]?.secret?.url}
+                                        src={props.workersDict[key]?.secret?.frameUrl}
                                         style={{
                                             width: '100%',
                                             height: '100%'

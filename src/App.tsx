@@ -5,7 +5,7 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import * as StatusBar from "./components/sections/StatusBar";
 import './App.css';
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import * as colors from "@mui/material/colors";
 import Auth from "./components/pages/auth";
@@ -234,33 +234,40 @@ let lastNaviationType: string | undefined = undefined
 let loaded: boolean = false;
 let historyStack: Array<{ id: string, path: string, initialData?: string }> = [];
 let listeners: { [path: string]: (type: string) => void } = {};
+
+const LazyPage = (Component: any) => (props: any) => (
+    <React.Suspense fallback={<div style={{ width: '100%', height: '100%', backgroundColor: themeColor.get({ noproxy: true })[100] }} />}>
+        <Component {...props} />
+    </React.Suspense>
+)
+
 let pages: { [id: string]: any } = {
     // activities
-    'splash': Splash,
-    'auth': Auth,
-    'main': Main,
-    'room': Room,
-    'tower': Tower,
-    'profile': Profile,
-    'machines': Machines,
-    'towerPicker': TowerPicker,
-    'gallery': Gallery,
-    'videoPlayer': VideoPlayer,
-    'audioPlayer': AudioPlayer,
-    'explore': Explore,
-    'chat': ChatPage,
-    'call': Call,
-    'sn': SnMain,
-    'chats': ChatsPage,
-    'settings': SettingsPage,
-    'inbox': InboxPage,
-    'home': HomePage,
+    'main': LazyPage(React.lazy(async () => (await import('./components/pages/main/index')) as any)),
+    'splash':  LazyPage(React.lazy(() => import('./components/pages/splash'))),
+    'auth': LazyPage(React.lazy(() => import('./components/pages/auth'))),
+    'room': LazyPage(React.lazy(() => import('./components/pages/room'))),
+    'tower': LazyPage(React.lazy(() => import('./components/pages/tower'))),
+    'profile': LazyPage(React.lazy(() => import('./components/pages/profile'))),
+    'machines': LazyPage(React.lazy(() => import('./components/pages/machines'))),
+    'towerPicker': LazyPage(React.lazy(() => import('./components/pages/towerPicker'))),
+    'gallery': LazyPage(React.lazy(() => import('./components/pages/gallery'))),
+    'videoPlayer': LazyPage(React.lazy(() => import('./components/pages/videoPlayer'))),
+    'audioPlayer': LazyPage(React.lazy(() => import('./components/pages/audioPlayer'))),
+    'explore': LazyPage(React.lazy(() => import('./components/pages/explore'))),
+    'chat': LazyPage(React.lazy(() => import('./components/pages/chat'))),
+    'call': LazyPage(React.lazy(() => import('./components/pages/call'))),
+    'sn': LazyPage(React.lazy(() => import('./components/pages/main/sn'))),
+    'chats': LazyPage(React.lazy(() => import('./components/pages/chats'))),
+    'settings': LazyPage(React.lazy(() => import('./components/pages/settings'))),
+    'inbox': LazyPage(React.lazy(() => import('./components/pages/inbox'))),
+    'home': LazyPage(React.lazy(() => import('./components/pages/home'))),
     // forms
-    'createTower': CreateTower,
-    'createRoom': CreateRoom,
-    'updateProfile': UpdateProfile,
-    'createMachine': CreateMachine,
-    'manageHomeFolders': ManageHomeFolders
+    'createTower': LazyPage(React.lazy(() => import('./components/forms/createTower'))),
+    'createRoom': LazyPage(React.lazy(() => import('./components/forms/createRoom'))),
+    'updateProfile': LazyPage(React.lazy(() => import('./components/forms/updateProfile'))),
+    'createMachine': LazyPage(React.lazy(() => import('./components/forms/createMachine'))),
+    'manageHomeFolders': LazyPage(React.lazy(() => import('./components/forms/manageHomeFolders'))),
 }
 
 export let SigmaRouter = {
