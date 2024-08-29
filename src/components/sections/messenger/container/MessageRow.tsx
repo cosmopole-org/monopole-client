@@ -27,7 +27,7 @@ const MessageRow = (props: { message: any, side: string, children: any, lastOfSe
                 {
                     (props.side === 'left' && props.lastOfSection) ? (
                         <Badge color="secondary" overlap="circular" variant="dot" invisible={isOnline !== -1} style={{ marginTop: 'auto', marginBottom: 0 }}>
-                            <SigmaAvatar style={{ backgroundColor: props.message.author.color[themeColorName.get({noproxy: true}) === "night" ? 500 : 200], marginRight: -4, width: 32, height: 32 }}
+                            <SigmaAvatar style={{ backgroundColor: props.message.author.color ? props.message.author.color[themeColorName.get({noproxy: true}) === "night" ? 500 : 200] : undefined, marginRight: -4, width: 32, height: 32 }}
                                 onClick={(e: any) => {
                                     e.stopPropagation()
                                     SigmaRouter.navigate('profile', { initialData: { human: props.message.author } })

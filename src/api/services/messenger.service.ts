@@ -244,9 +244,23 @@ class MessengerService {
         return this.network.request('messenger/read', { towerId: data.towerId, roomId: data.roomId, offset: data.offset, count: data.count }).then((body: any) => {
             this.check(data.roomId)
             if (data.count === undefined || data.count > 1) {
+                let dict: { [id: string]: any } = {};
+                let promises: (() => Promise<void>)[] = [];
                 body.messages.forEach((msg: any) => {
-                    msg.author = api.memory.humans[msg.authorId].get({ noproxy: true });
+                    if (dict[msg.authorId]) {
+                        msg.author = dict[msg.authorId];
+                    } else if (this.memory.humans.get({ noproxy: true })[msg.authorId]) {
+                        msg.author = this.memory.humans.get({ noproxy: true })[msg.authorId];
+                    } else {
+                        promises.push(async () => {
+                            let user = await api.services.human.readById({ targetHumanId: msg.authorId });
+                            dict[msg.authorId] = user;
+                            msg.author = user;
+                            (user as any).color = allThemeColors[Math.floor(Math.random() * allThemeColors.length)];
+                        });
+                    }
                 });
+                Promise.all(promises);
                 this.memory.messages[data.roomId].set(body.messages)
             }
             this.roomUnseenCount({ towerId: data.towerId, roomId: data.roomId })

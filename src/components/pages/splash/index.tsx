@@ -55,7 +55,7 @@ const Splash = (props: { id: string, isOnTop: boolean }) => {
                 width: 176,
                 height: 176,
                 borderRadius: '50%',
-                backgroundColor: themeColor.get({ noproxy: true })[100],
+                backgroundColor: themeColor.get({ noproxy: true })[200],
                 position: 'absolute',
                 left: '50%',
                 top: '50%',
