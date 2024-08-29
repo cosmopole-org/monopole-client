@@ -1,6 +1,6 @@
 import { Code, CopyAll, SmartToy } from "@mui/icons-material"
 import { Box, Button, Card, Typography } from "@mui/material"
-import { SigmaRouter, themeColor } from "../../../App"
+import { SigmaRouter, themeColor, themeColorName } from "../../../App"
 import SigmaAvatar from "../elements/SigmaAvatar"
 import SigmaFab from "../elements/SigmaFab"
 
@@ -24,7 +24,7 @@ const HumanTag = (props: { onClick?: () => void, human: any, caption: string, in
                     </Button>
                 </Box>
             </Card>
-            <SigmaAvatar style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', top: 16, width: 64, height: 64 }}>
+            <SigmaAvatar style={{ backgroundColor: props.human.color[themeColorName.get({noproxy: true}) === "night" ? 500 : 200], position: 'absolute', left: '50%', transform: 'translateX(-50%)', top: 16, width: 64, height: 64 }}>
                 {props.human.firstName.substring(0, 1) + (props.human.lastName ? props.human.lastName.substring(0, 1) : '')}
             </SigmaAvatar>
         </div>

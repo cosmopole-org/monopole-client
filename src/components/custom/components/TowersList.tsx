@@ -28,6 +28,11 @@ const TowersList = (props: { fullscreen?: boolean, towers?: Array<any>, humans?:
             t.color = allThemeColors[Math.floor(Math.random() * allThemeColors.length)];
         }
     });
+    props.humans?.forEach(human => {
+        if (!human.color) {
+            human.color = allThemeColors[Math.floor(Math.random() * allThemeColors.length)];
+        }
+    });
     useLayoutEffect(() => {
         if (props.hasFocus && (props.defaultSCrollTop !== undefined)) {
             if (props.towersContainerRef.current !== null) {

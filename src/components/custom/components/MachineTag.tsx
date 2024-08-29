@@ -1,6 +1,6 @@
 import { SmartToy } from "@mui/icons-material"
 import { Avatar, Box, Button, Card, Rating, Typography } from "@mui/material"
-import { SigmaRouter, themeColor } from "../../../App"
+import { SigmaRouter, themeColor, themeColorName } from "../../../App"
 import IMachine from "../../../api/models/machine"
 import SigmaAvatar from "../elements/SigmaAvatar"
 
@@ -23,7 +23,10 @@ const MachineTag = (props: { machine: IMachine }) => {
                     </Button>
                 </Box>
             </Card>
-            <SigmaAvatar style={{ position: 'absolute', left: 'calc(50% - 28px)', top: 0, width: 72, height: 72 }}>
+            <SigmaAvatar style={{
+                backgroundColor: (props.machine as any).color[themeColorName.get({noproxy: true}) === "night" ? 500 : 200],
+                position: 'absolute', left: 'calc(50% - 28px)', top: 0, width: 72, height: 72
+            }}>
                 <SmartToy />
             </SigmaAvatar>
         </div>

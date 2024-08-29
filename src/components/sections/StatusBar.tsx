@@ -1,7 +1,7 @@
 import { ArrowBack, Call, CallEnd, Close, Explore, Forum, Home, LocationCity, MusicNote, Notifications, Rocket, Settings, Wallet } from "@mui/icons-material"
-import { Badge, IconButton, Paper, Typography } from "@mui/material"
+import { Badge, colors, IconButton, Paper, Typography } from "@mui/material"
 import { useState } from "react"
-import { SigmaRouter, interfaceMode, themeBasedTextColor, themeColor } from "../../App"
+import { SigmaRouter, interfaceMode, themeBasedTextColor, themeColor, themeColorName } from "../../App"
 import SigmaAvatar from "../custom/elements/SigmaAvatar"
 import { api } from "../.."
 import { useHookstate } from "@hookstate/core"
@@ -113,7 +113,7 @@ const StatusBar = () => {
                                     }
                                 }}>
                                 <Badge color="secondary" overlap="circular" variant="dot" invisible={isOnline[avatarHumanId] !== -1}>
-                                    <SigmaAvatar style={{ width: 24, height: 24, backgroundColor: themeColor.get({ noproxy: true })[100] }}>
+                                    <SigmaAvatar style={{ width: 24, height: 24, backgroundColor: api.memory.known.humans.get({ noproxy: true })[avatarHumanId].color[themeColorName.get({ noproxy: true }) === "night" ? 500 : 200] }}>
                                         {api.memory.known.humans.get({ noproxy: true })[avatarHumanId].firstName.substring(0, 1)}
                                     </SigmaAvatar>
                                 </Badge>

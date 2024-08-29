@@ -4,7 +4,7 @@ import IMessage from "../models/message"
 import { none } from "@hookstate/core"
 import memoryUtils from "../utils/memory"
 import encodingUtils from "../utils/encoding"
-import { SigmaRouter } from "../../App"
+import { allThemeColors, SigmaRouter } from "../../App"
 import { api } from "../.."
 import utils from "../../components/utils"
 
@@ -74,6 +74,7 @@ class MessengerService {
                     this.memory.messages[message.roomId].merge([message])
                 })
             } else {
+                message.author = this.memory.humans.get({ noproxy: true })[message.authorId]
                 this.memory.messages[message.roomId].merge([message])
             }
             let tower: any = Object.values(this.memory.spaces.get({ noproxy: true })).find((tower: any) => tower.rooms[message.roomId] !== undefined)
@@ -243,6 +244,9 @@ class MessengerService {
         return this.network.request('messenger/read', { towerId: data.towerId, roomId: data.roomId, offset: data.offset, count: data.count }).then((body: any) => {
             this.check(data.roomId)
             if (data.count === undefined || data.count > 1) {
+                body.messages.forEach((msg: any) => {
+                    msg.author = api.memory.humans[msg.authorId].get({ noproxy: true });
+                });
                 this.memory.messages[data.roomId].set(body.messages)
             }
             this.roomUnseenCount({ towerId: data.towerId, roomId: data.roomId })
@@ -269,6 +273,11 @@ class MessengerService {
                 .filter((msg: any) => msg !== undefined)
                 .map((msg: any) => msg.author)
             this.storage.factories.human?.createBatch(authors)
+            authors.forEach((a: any) => {
+                if (!this.memory.humans.get({ noproxy: true })[a.id]) {
+                    a.color = allThemeColors[Math.floor(Math.random() * allThemeColors.length)];
+                }
+            });
             this.memory.humans.set(memoryUtils.humans.prepareHumans(authors, { ...this.memory.humans.get({ noproxy: true }) }))
             return body
         })

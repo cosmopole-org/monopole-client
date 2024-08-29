@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react"
 import { Badge, Card, IconButton, Typography } from "@mui/material"
 import { LeftControlTypes, RightControlTypes, switchLeftControl, switchRightControl, switchTitle } from "../../sections/StatusBar"
-import { SigmaRouter, themeColor } from "../../../App"
+import { SigmaRouter, themeColor, themeColorName } from "../../../App"
 import SliderPage from "../../layouts/SliderPage"
 import IHuman from "../../../api/models/human"
 import IMachine from "../../../api/models/machine"
@@ -48,9 +48,11 @@ const Profile = (props: { id: string, isOnTop: boolean, human?: IHuman, machine?
                     padding: 16, backgroundColor: themeColor.get({ noproxy: true })[100], borderRadius: 24, height: 'auto',
                     marginLeft: 16, width: 'calc(100% - 64px)', paddingTop: 32, position: 'relative'
                 }}>
-
                     <Badge color="secondary" overlap="circular" variant="dot" invisible={!isOnline} style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
-                        <SigmaAvatar style={{ width: 112, height: 112 }}>
+                        <SigmaAvatar style={{
+                            backgroundColor: props.human ? (props.human as any).color[themeColorName.get({noproxy: true}) === "night" ? 500 : 200] : (props.machine as any).color[themeColorName.get({noproxy: true}) === "night" ? 500 : 200],
+                            width: 112, height: 112
+                        }}>
                             {titleShort}
                         </SigmaAvatar>
                     </Badge>

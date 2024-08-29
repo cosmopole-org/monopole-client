@@ -59,10 +59,12 @@ const Splash = (props: { id: string, isOnTop: boolean }) => {
                 position: 'absolute',
                 left: '50%',
                 top: '50%',
-                transform: 'translate(-50%, -75%)'
+                transform: 'translate(-50%, -75%)',
+                border: '4px solid black'
             }}>
-                <img src={Logo} style={{ width: '100%', height: '100%' }} alt={'logo'} />
-                <Typography variant='h5' style={{ width: '100%', textAlign: 'center', marginTop: 16, color: themeBasedTextColor.get({ noproxy: true }) }}>Welcome !</Typography>
+                <Typography variant='h1' style={{ width: '100%', textAlign: 'center', marginTop: 32, color: themeBasedTextColor.get({ noproxy: true }) }}>
+                    Σ
+                </Typography>
             </div>
         </div>
     )

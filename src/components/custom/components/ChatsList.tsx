@@ -2,16 +2,22 @@ import { IconButton, List, ListItemButton, Paper, Typography } from "@mui/materi
 import { useEffect, useLayoutEffect, useRef, useState } from "react"
 import TowerCard from "./TowerCard"
 import { statusbarHeight } from "../../sections/StatusBar"
-import { SigmaRouter, themeColor, themeColorName } from "../../../App"
+import { allThemeColors, SigmaRouter, themeColor, themeColorName } from "../../../App"
 import { SigmaTab, SigmaTabs } from "../elements/SigmaTabs"
 import { Add, AllInbox, AllOut, Edit, FamilyRestroom, Folder, Games, Work } from "@mui/icons-material"
 import { api } from "../../.."
 import SigmaFab from "../elements/SigmaFab"
 import { useHookstate } from "@hookstate/core"
 import ChatItem from "./ChatItem"
+import IChat from "../../../api/models/chat"
 
 const ChatsList = (props: { chats: any, hasFocus: boolean, showRating: boolean, bottomSpace: number, overridenStyle: any, defaultSCrollTop?: number, onScroll: (scrollTop: number) => void, chatsContainerRef: any, onCollapsibleBarStateChange: (dy: number, v: boolean, collapsibleScrollTop: number) => void, showTowerMoreMenu?: (towerId: string) => void }) => {
     const lastScrollRef = useRef(props.defaultSCrollTop !== undefined ? props.defaultSCrollTop : 0)
+    props.chats.forEach((chat: IChat) => {
+        if (!(chat as any).human.color) {
+            (chat as any).human.color = allThemeColors[Math.floor(Math.random() * allThemeColors.length)];
+        }
+    });
     useLayoutEffect(() => {
         if (props.hasFocus && (props.defaultSCrollTop !== undefined)) {
             if (props.chatsContainerRef.current !== null) {

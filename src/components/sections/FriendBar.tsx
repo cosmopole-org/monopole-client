@@ -1,8 +1,14 @@
 
+import { allThemeColors } from "../../App";
 import FriendTag from "../custom/components/FriendTag"
 import { statusbarHeight } from "./StatusBar"
 
 const FriendBar = (props: { containerRef: any, humans: Array<any> }) => {
+    props.humans.forEach(human => {
+        if (!human.color) {
+            human.color = allThemeColors[Math.floor(Math.random() * allThemeColors.length)];
+        }
+    });
     return (
         <div ref={props.containerRef} style={{
             width: '100%',

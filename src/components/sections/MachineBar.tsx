@@ -1,8 +1,15 @@
 
+import IMachine from "../../api/models/machine";
+import { allThemeColors } from "../../App";
 import MachineTag from "../custom/components/MachineTag"
 import { statusbarHeight } from "./StatusBar"
 
 const MachineBar = (props: { containerRef: any, machines: Array<any> }) => {
+    props.machines.forEach((mac: IMachine) => {
+        if (!(mac as any).color) {
+            (mac as any).color = allThemeColors[Math.floor(Math.random() * allThemeColors.length)];
+        }
+    });
     return (
         <div ref={props.containerRef} style={{
             width: '100%',

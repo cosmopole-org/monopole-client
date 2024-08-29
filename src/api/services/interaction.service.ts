@@ -53,6 +53,7 @@ class InteractionService {
             this.memory.humans.set({ ...this.memory.humans.get({ noproxy: true }), [human.id]: human })
             this.memory.known.humans.set({ ...this.memory.known.humans.get({ noproxy: true }), [human.id]: human })
             api.services.messenger.check(room.id)
+            chat.human = human;
         })
     }
 
@@ -83,6 +84,7 @@ class InteractionService {
                 this.memory.chats.set({ ...this.memory.chats.get({ noproxy: true }), [data.peerId]: chat })
                 this.memory.humans.set({ ...this.memory.humans.get({ noproxy: true }), [peer.id]: peer })
                 this.memory.known.humans.set({ ...this.memory.known.humans.get({ noproxy: true }), [peer.id]: peer })
+                chat.human = peer;
                 return body
             })
         }
@@ -104,6 +106,9 @@ class InteractionService {
             this.storage.factories.human?.createBatch(peers)
             this.memory.humans.set(memoryUtils.humans.prepareHumans(peers, { ...this.memory.humans.get({ noproxy: true }) }))
             this.memory.known.humans.set(memoryUtils.humans.prepareHumans(peers, { ...this.memory.known.humans.get({ noproxy: true }) }))
+            chats.forEach((chat: any) => {
+                chat.human = chat.peer;
+            });
             return body
         })
     }

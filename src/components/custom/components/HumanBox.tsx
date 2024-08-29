@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Card, SwipeableDrawer } from '@mui/material';
-import { themeColor } from '../../../App';
+import { allThemeColors, themeColor } from '../../../App';
 import { api } from '../../..';
 import HumanTag from './HumanTag';
 
@@ -9,7 +9,12 @@ const HumanBox = (props: { shown: boolean, onClose: () => void, tower: any, onMe
     React.useEffect(() => {
         if (props.shown) {
             api.services.tower.readMembers({ towerId: props.tower.id }).then((body: any) => {
-                setMembers(body.members.map((m: any) => m.human).filter((human: any) => (human !== undefined)))
+                setMembers(body.members.map((m: any) => m.human).filter((human: any) => (human !== undefined)).
+                    map((m: any) => {
+                        if (!m.human.color) {
+                            m.human.color = allThemeColors[Math.floor(Math.random() * allThemeColors.length)];
+                        }
+                    }))
             })
         }
     }, [props.shown])

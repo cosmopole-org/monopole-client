@@ -1,6 +1,6 @@
 
 import { Badge, Card, Paper, Typography } from "@mui/material"
-import { SigmaRouter, themeBasedTextColor, themeColor } from "../../../App"
+import { SigmaRouter, themeBasedTextColor, themeColor, themeColorName } from "../../../App"
 import SigmaAvatar from "../elements/SigmaAvatar"
 import { useHookstate } from "@hookstate/core"
 import { api } from "../../.."
@@ -33,13 +33,13 @@ const ChatItem = (props: { chat: any, style?: any, onMoreClicked?: () => void })
             {
                 isCall ? (
                     <Badge color="secondary" overlap="circular" variant="standard" badgeContent={<Call style={{ width: 12, height: 12 }} />}>
-                        <SigmaAvatar style={{ width: 56, height: 56 }}>
+                        <SigmaAvatar style={{ backgroundColor: props.chat.human.color[themeColorName.get({noproxy: true}) === "night" ? 500 : 200], width: 56, height: 56 }}>
                             {(peer.firstName + ' ' + peer.lastName).substring(0, 1)}
                         </SigmaAvatar>
                     </Badge>
                 ) : (
                     <Badge color="secondary" overlap="circular" variant="dot" invisible={isOnline !== -1}>
-                        <SigmaAvatar style={{ width: 56, height: 56 }}>
+                        <SigmaAvatar style={{ backgroundColor: props.chat.human.color[themeColorName.get({noproxy: true}) === "night" ? 500 : 200], width: 56, height: 56 }}>
                             {(peer.firstName + ' ' + peer.lastName).substring(0, 1)}
                         </SigmaAvatar>
                     </Badge>

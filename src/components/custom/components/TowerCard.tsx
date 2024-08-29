@@ -56,6 +56,7 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
                     {props.tower.title}
                 </Typography>
                 <SigmaAvatar style={{
+                    backgroundColor: props.tower.color[300],
                     width: 44, height: 44, position: 'absolute', left: 16, top: 16,
                 }}>
                     {props.tower.title.substring(0, 1)}
@@ -177,7 +178,8 @@ const TowerCard = (props: { tower: any, style?: any, onMoreClicked?: () => void,
                     position: 'absolute', left: 16, top: 16
                 }}>
                     <SigmaAvatar style={{
-                        width: 48, height: 48
+                        width: 48, height: 48,
+                        backgroundColor: props.tower.color[300],
                     }}>
                         {props.tower.title.substring(0, 1)}
                     </SigmaAvatar>

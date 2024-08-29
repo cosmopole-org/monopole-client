@@ -1,5 +1,6 @@
 
 import {
+    colors,
     Paper,
     Typography
 } from "@mui/material";
@@ -8,7 +9,7 @@ import {
     DoneAll, History
 } from "@mui/icons-material";
 import './bubble.css'
-import { themeColor } from "../../../../App";
+import { themeColor, themeColorName } from "../../../../App";
 import IMessage from "../../../../api/models/message";
 import { api } from "../../../..";
 
@@ -28,7 +29,7 @@ const TextMessage = (props: { message: IMessage, side?: string, lastOfSection?: 
                 background: props.isQuote ?
                     themeColor.get({ noproxy: true })[200] :
                     (props.side === 'right' || props.isQuote) ?
-                        `linear-gradient(135deg, ${themeColor.get({ noproxy: true })[500]}, ${themeColor.get({ noproxy: true })[200]}) border-box` :
+                        `linear-gradient(135deg, ${themeColorName.get({ noproxy: true }) === "night" ? colors.blue[600] : colors.blue[400]}, ${themeColorName.get({ noproxy: true }) === "night" ? colors.purple[600] : colors.purple[300]}) border-box` :
                         themeColor.get({ noproxy: true })['plain'],
                 marginLeft: props.side === 'left' ? 0 : 'auto',
                 marginRight: props.side === 'left' ? 'auto' : 0,
