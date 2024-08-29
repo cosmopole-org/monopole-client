@@ -215,7 +215,7 @@ export let reconstructMaterialPalette = (name: string, color: any) => {
                 main: color[200],
             },
             secondary: {
-                main: name === 'night' ? colors.blue[200] : colors.purple[200],
+                main: name === 'night' ? colors.blue[200] : colors.blue[500],
             },
             background: {
                 paper: color[50]
@@ -244,7 +244,7 @@ const LazyPage = (Component: any) => (props: any) => (
 let pages: { [id: string]: any } = {
     // activities
     'main': LazyPage(React.lazy(async () => (await import('./components/pages/main/index')) as any)),
-    'splash':  LazyPage(React.lazy(() => import('./components/pages/splash'))),
+    'splash': LazyPage(React.lazy(() => import('./components/pages/splash'))),
     'auth': LazyPage(React.lazy(() => import('./components/pages/auth'))),
     'room': LazyPage(React.lazy(() => import('./components/pages/room'))),
     'tower': LazyPage(React.lazy(() => import('./components/pages/tower'))),
