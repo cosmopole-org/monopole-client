@@ -1,7 +1,7 @@
 
 import './index.css';
 import { useEffect } from 'react';
-import { SigmaRouter, themeBasedTextColor, themeColor } from '../../../App';
+import { SigmaRouter, themeBasedTextColor, themeColor, themeColorName } from '../../../App';
 import { api } from '../../..';
 import { useAuth0 } from '@auth0/auth0-react';
 import Logo from '../../../resources/images/logo.png';
@@ -60,7 +60,7 @@ const Splash = (props: { id: string, isOnTop: boolean }) => {
                 left: '50%',
                 top: '50%',
                 transform: 'translate(-50%, -75%)',
-                border: '4px solid black'
+                border: '4px solid ' + (themeBasedTextColor.get({ noproxy: true }) )
             }}>
                 <Typography variant='h1' style={{ width: '100%', textAlign: 'center', marginTop: 32, color: themeBasedTextColor.get({ noproxy: true }) }}>
                     Σ
