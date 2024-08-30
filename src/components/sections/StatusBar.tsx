@@ -65,7 +65,6 @@ const StatusBar = () => {
                 style={{
                     width: 'calc(100% - 16px)',
                     height: 40,
-                    backgroundColor: themeColor.get({ noproxy: true })[200].toString(),
                     backdropFilter: 'blur(10px)',
                     zIndex: 99999,
                     position: 'fixed',
@@ -75,6 +74,7 @@ const StatusBar = () => {
                     borderRadius: '24px 24px 24px 24px',
                     transition: 'color .5s'
                 }}
+                className="bg-white"
             >
                 {
                     SigmaRouter.topPath() === 'auth' ?

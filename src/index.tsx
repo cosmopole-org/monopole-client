@@ -7,6 +7,7 @@ import { BrowserRouter } from 'react-router-dom';
 import Api from './api';
 import { Auth0Provider } from '@auth0/auth0-react';
 import config from './config';
+import { NextUIProvider } from "@nextui-org/system";
 
 window.addEventListener('error', e => {
   if (e.message === 'ResizeObserver loop limit exceeded') {
@@ -90,7 +91,9 @@ Api.initilize().then((instance: Api) => {
       {...providerConfig}
     >
       <BrowserRouter>
-        <App key={api.key} />
+        <NextUIProvider>
+          <App key={api.key} />
+        </NextUIProvider>
       </BrowserRouter>
     </Auth0Provider>
   );
